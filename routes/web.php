@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProvinceController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -11,10 +12,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
-    Route::get('province', function () {
-        return Inertia::render('province');
-    })->name('province');
+    // Route::get('province', function () {
+    //     return Inertia::render('province');
+    // })->name('province');
+
+    Route::get('/province', [ProvinceController::class, 'index'])->name('province.index');
+    Route::get('/province/create', [ProvinceController::class, 'create'])->name('province.create');
+    Route::post('/province', [ProvinceController::class, 'store'])->name('province.store');
 });
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

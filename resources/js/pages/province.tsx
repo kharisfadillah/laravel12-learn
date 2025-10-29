@@ -1,7 +1,14 @@
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
+
+interface Province {
+    id: number;
+    province_code: string;
+    province_name: string;
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -11,27 +18,35 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Province() {
+    // const { provinces } = usePage<PageProps<{ provinces: Province[] }>>().props;
+    const { provinces } = usePage<{ provinces: Province[] }>().props;
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Province" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+                <div className="flex justify-end mb-4">
+                    <Link href="/province/create">
+                        <Button>Tambah Provinsi</Button>
+                    </Link>
+                </div>
                 <Table>
-                    <TableCaption>A list of your recent invoices.</TableCaption>
+                    {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[100px]">Invoice</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Method</TableHead>
-                            <TableHead className="text-right">Amount</TableHead>
+                            <TableHead className="w-[100px]">ID</TableHead>
+                            <TableHead>Kode Provinsi</TableHead>
+                            <TableHead>Nama Provinsi</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableRow>
-                            <TableCell className="font-medium">INV001</TableCell>
-                            <TableCell>Paid</TableCell>
-                            <TableCell>Credit Card</TableCell>
-                            <TableCell className="text-right">$250.00</TableCell>
-                        </TableRow>
+                        {provinces.map((province) => (
+                            <TableRow key={province.id}>
+                                <TableCell>{province.id}</TableCell>
+                                <TableCell>{province.province_code}</TableCell>
+                                <TableCell>{province.province_name}</TableCell>
+                            </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             </div>
