@@ -3,11 +3,20 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 
 interface Province {
     id: number;
     province_code: string;
     province_name: string;
+}
+
+interface Props {
+    provinces: Province[],
+    flash?: {
+        success?: string;
+        error?: string;
+    }
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -17,9 +26,16 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Province() {
-    // const { provinces } = usePage<PageProps<{ provinces: Province[] }>>().props;
-    const { provinces } = usePage<{ provinces: Province[] }>().props;
+export default function Index({ provinces, flash }: Props) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+
+    useEffect(() => {
+        if (flash?.success) {
+            setToastMessage(flash.success);
+        }
+    });
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

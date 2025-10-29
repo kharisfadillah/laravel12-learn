@@ -13,8 +13,12 @@ class ProvinceController extends Controller
     {
         $provinces = Province::select('id', 'province_code', 'province_name')->get();
 
-        return Inertia::render('province', [
+        return Inertia::render('province/index', [
             'provinces' => $provinces,
+            'flash' => [
+                'success' => session('success'),
+                'error' => session('error')
+            ]
         ]);
     }
 
