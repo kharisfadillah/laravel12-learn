@@ -22,6 +22,11 @@ class ProvinceController extends Controller
         ]);
     }
 
+    public function create()
+    {
+        return Inertia::render('province/create');
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
