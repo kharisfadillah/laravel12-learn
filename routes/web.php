@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProvinceController;
+use App\Http\Controllers\RegencyController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -16,11 +17,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //     return Inertia::render('province');
     // })->name('province');
 
-    Route::get('/province', [ProvinceController::class, 'index'])->name('province.index');
-    Route::get('/province/create', [ProvinceController::class, 'create'])->name('province.create');
-    Route::post('/province', [ProvinceController::class, 'store'])->name('province.store');
-    Route::put('/province/{id}', [ProvinceController::class, 'update'])->name('province.update');
-    Route::delete('/province/{id}', [ProvinceController::class, 'destroy'])->name('province.destroy');
+    // Route::get('/province', [ProvinceController::class, 'index'])->name('province.index');
+    // Route::get('/province/create', [ProvinceController::class, 'create'])->name('province.create');
+    // Route::post('/province', [ProvinceController::class, 'store'])->name('province.store');
+    // Route::put('/province/{id}', [ProvinceController::class, 'update'])->name('province.update');
+    // Route::delete('/province/{id}', [ProvinceController::class, 'destroy'])->name('province.destroy');
+
+    Route::resource('province', ProvinceController::class)->only([
+        'index',
+        'store',
+        'update',
+        'destroy'
+    ]);
+
+    Route::resource('regency', RegencyController::class)->only([
+        'index',
+        'store',
+        'update',
+        'destroy'
+    ]);
 });
 
 require __DIR__ . '/settings.php';

@@ -124,9 +124,9 @@ export default function Index({ provinces }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Province" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4 max-w-3xl">
                 {/* Button Tambah */}
-                <div className="flex justify-start">
+                <div className="flex justify-end">
                     <Dialog open={openCreate} onOpenChange={setOpenCreate}>
                         <DialogTrigger asChild>
                             <Button>Tambah Provinsi</Button>
@@ -172,7 +172,7 @@ export default function Index({ provinces }: Props) {
                     </Dialog>
                 </div>
 
-                <div className="max-w-3xl">
+                {/* <div className="max-w-3xl"> */}
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -210,7 +210,7 @@ export default function Index({ provinces }: Props) {
                             )}
                         </TableBody>
                     </Table>
-                </div>
+                {/* </div> */}
                 {/* Table */}
 
                 {/* Modal Edit */}
@@ -269,7 +269,7 @@ export default function Index({ provinces }: Props) {
                             <AlertDialogCancel>Batal</AlertDialogCancel>
                             <AlertDialogAction
                                 onClick={handleDeleteConfirm}
-                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                className="bg-destructive text-white hover:bg-destructive/90"
                             >
                                 Hapus
                             </AlertDialogAction>

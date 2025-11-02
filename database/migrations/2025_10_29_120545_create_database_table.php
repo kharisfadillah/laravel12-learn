@@ -18,6 +18,15 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        Schema::create('regencies', function (Blueprint $table) {
+            $table->id();
+            $table->bigInteger('province_id');
+            $table->string('regency_code')->nullable();
+            $table->string('regency_name');
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
     /**
@@ -25,6 +34,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('regencies');
         Schema::dropIfExists('provinces');
     }
 };
