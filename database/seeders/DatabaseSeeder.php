@@ -23,14 +23,14 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $province = Province::create([
-            'province_code' => 'KALSEL',
-            'province_name' => 'KALIMANTAN SELATAN',
+            'code' => 'KALSEL',
+            'name' => 'KALIMANTAN SELATAN',
         ]);
 
         Regency::create([
             'province_id' => $province->id,
-            'regency_code' => 'TANBU',
-            'regency_name' => 'TANAH BUMBU',
+            'code' => 'TANBU',
+            'name' => 'TANAH BUMBU',
         ]);
     }
 }

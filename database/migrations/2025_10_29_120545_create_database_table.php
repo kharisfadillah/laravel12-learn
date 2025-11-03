@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('provinces', function (Blueprint $table) {
             $table->id();
-            $table->string('province_code')->nullable();
-            $table->string('province_name');
+            $table->string('code')->nullable();
+            $table->string('name');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -22,11 +22,13 @@ return new class extends Migration
         Schema::create('regencies', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('province_id');
-            $table->string('regency_code')->nullable();
-            $table->string('regency_name');
+            $table->string('code')->nullable();
+            $table->string('name');
             $table->timestamps();
             $table->softDeletes();
         });
+
+
     }
 
     /**

@@ -12,13 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->string('username')->unique()->nullable();
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -29,11 +31,92 @@ return new class extends Migration
 
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
+            $table->foreignUlid('user_id')->nullable()->index();
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
             $table->longText('payload');
             $table->integer('last_activity')->index();
+        });
+
+        Schema::create('companies', function (Blueprint $table) {
+            $table->ulid('id')->primary();
+            $table->string('code', 10);
+            $table->string('name', 50);
+            $table->foreignUlid('created_id')
+                ->nullable()
+                ->constrained('users', 'id')
+                ->restrictOnDelete();
+            $table->foreignUlid('updated_id')
+                ->nullable()
+                ->constrained('users')
+                ->restrictOnDelete();
+            $table->foreignUlid('deleted_id')
+                ->nullable()
+                ->constrained('users')
+                ->restrictOnDelete();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('permissions', function (Blueprint $table) {
+            $table->ulid('id')->primary();
+            $table->string('name');
+            $table->longText('notes')->nullable();
+            $table->foreignUlid('created_id')
+                ->nullable()
+                ->constrained('users', 'id')
+                ->restrictOnDelete();
+            $table->foreignUlid('updated_id')
+                ->nullable()
+                ->constrained('users')
+                ->restrictOnDelete();
+            $table->foreignUlid('deleted_id')
+                ->nullable()
+                ->constrained('users')
+                ->restrictOnDelete();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('roles', function (Blueprint $table) {
+            $table->ulid('id')->primary();
+            $table->string('name');
+            $table->longText('notes')->nullable();
+            $table->foreignUlid('created_id')
+                ->nullable()
+                ->constrained('users', 'id')
+                ->restrictOnDelete();
+            $table->foreignUlid('updated_id')
+                ->nullable()
+                ->constrained('users')
+                ->restrictOnDelete();
+            $table->foreignUlid('deleted_id')
+                ->nullable()
+                ->constrained('users')
+                ->restrictOnDelete();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('role_permission', function (Blueprint $table) {
+            $table->foreignUlid('role_id')
+                ->constrained('roles', 'id')
+                ->restrictOnDelete();
+            $table->foreignUlid('permission_id')
+                ->constrained('permissions', 'id')
+                ->restrictOnDelete();
+        });
+
+        Schema::create('user_role_company', function (Blueprint $table) {
+            $table->foreignUlid('user_id')
+                ->constrained('users', 'id')
+                ->restrictOnDelete();
+            $table->foreignUlid('role_id')
+                ->constrained('roles', 'id')
+                ->restrictOnDelete();
+            $table->foreignUlid('company_id')
+                ->constrained('companies', 'id')
+                ->restrictOnDelete();
         });
     }
 
@@ -42,6 +125,11 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('user_role_company');
+        Schema::dropIfExists('role_permission');
+        Schema::dropIfExists('roles');
+        Schema::dropIfExists('permissions');
+        Schema::dropIfExists('companies');
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');

@@ -21,8 +21,8 @@ import { useState } from 'react';
 
 interface Province {
     id: number;
-    province_code: string;
-    province_name: string;
+    code: string;
+    name: string;
 }
 
 interface Props {
@@ -51,8 +51,8 @@ export default function Index({ provinces }: Props) {
         errors: createErrors,
         reset: resetCreate,
     } = useForm({
-        province_code: '',
-        province_name: '',
+        code: '',
+        name: '',
     });
 
     // Form untuk Edit
@@ -64,8 +64,8 @@ export default function Index({ provinces }: Props) {
         errors: editErrors,
         reset: resetEdit,
     } = useForm({
-        province_code: '',
-        province_name: '',
+        code: '',
+        name: '',
     });
 
     // Handle Create
@@ -83,8 +83,8 @@ export default function Index({ provinces }: Props) {
     const handleEditClick = (province: Province) => {
         setSelectedProvince(province);
         setEditData({
-            province_code: province.province_code,
-            province_name: province.province_name,
+            code: province.code,
+            name: province.name,
         });
         setOpenEdit(true);
     };
@@ -142,21 +142,21 @@ export default function Index({ provinces }: Props) {
                                         <Label htmlFor="create_province_code">Kode Provinsi</Label>
                                         <Input
                                             id="create_province_code"
-                                            value={createData.province_code}
-                                            onChange={(e) => setCreateData('province_code', e.target.value)}
+                                            value={createData.code}
+                                            onChange={(e) => setCreateData('code', e.target.value)}
                                             placeholder="Masukkan kode provinsi"
                                         />
-                                        {createErrors.province_code && <p className="text-sm text-red-500">{createErrors.province_code}</p>}
+                                        {createErrors.code && <p className="text-sm text-red-500">{createErrors.code}</p>}
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="create_province_name">Nama Provinsi</Label>
                                         <Input
                                             id="create_province_name"
-                                            value={createData.province_name}
-                                            onChange={(e) => setCreateData('province_name', e.target.value)}
+                                            value={createData.name}
+                                            onChange={(e) => setCreateData('name', e.target.value)}
                                             placeholder="Masukkan nama provinsi"
                                         />
-                                        {createErrors.province_name && <p className="text-sm text-red-500">{createErrors.province_name}</p>}
+                                        {createErrors.name && <p className="text-sm text-red-500">{createErrors.name}</p>}
                                     </div>
                                 </div>
                                 <DialogFooter>
@@ -187,8 +187,8 @@ export default function Index({ provinces }: Props) {
                                 provinces.map((province) => (
                                     <TableRow key={province.id}>
                                         {/* <TableCell>{province.id}</TableCell> */}
-                                        <TableCell>{province.province_code}</TableCell>
-                                        <TableCell>{province.province_name}</TableCell>
+                                        <TableCell>{province.code}</TableCell>
+                                        <TableCell>{province.name}</TableCell>
                                         <TableCell>
                                             <div className="flex gap-2">
                                                 <Button size="sm" variant="outline" onClick={() => handleEditClick(province)}>
@@ -226,21 +226,21 @@ export default function Index({ provinces }: Props) {
                                     <Label htmlFor="edit_province_code">Kode Provinsi</Label>
                                     <Input
                                         id="edit_province_code"
-                                        value={editData.province_code}
-                                        onChange={(e) => setEditData('province_code', e.target.value)}
+                                        value={editData.code}
+                                        onChange={(e) => setEditData('code', e.target.value)}
                                         placeholder="Masukkan kode provinsi"
                                     />
-                                    {editErrors.province_code && <p className="text-sm text-red-500">{editErrors.province_code}</p>}
+                                    {editErrors.code && <p className="text-sm text-red-500">{editErrors.code}</p>}
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="edit_province_name">Nama Provinsi</Label>
                                     <Input
                                         id="edit_province_name"
-                                        value={editData.province_name}
-                                        onChange={(e) => setEditData('province_name', e.target.value)}
+                                        value={editData.name}
+                                        onChange={(e) => setEditData('name', e.target.value)}
                                         placeholder="Masukkan nama provinsi"
                                     />
-                                    {editErrors.province_name && <p className="text-sm text-red-500">{editErrors.province_name}</p>}
+                                    {editErrors.name && <p className="text-sm text-red-500">{editErrors.name}</p>}
                                 </div>
                             </div>
                             <DialogFooter>
@@ -261,7 +261,7 @@ export default function Index({ provinces }: Props) {
                         <AlertDialogHeader>
                             <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
                             <AlertDialogDescription>
-                                Tindakan ini tidak dapat dibatalkan. Data provinsi <strong>{selectedProvince?.province_name}</strong> akan dihapus
+                                Tindakan ini tidak dapat dibatalkan. Data provinsi <strong>{selectedProvince?.name}</strong> akan dihapus
                                 secara permanen.
                             </AlertDialogDescription>
                         </AlertDialogHeader>

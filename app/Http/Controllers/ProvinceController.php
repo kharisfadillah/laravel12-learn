@@ -11,9 +11,9 @@ class ProvinceController extends Controller
 {
     public function index(): Response
     {
-        $provinces = Province::select('id', 'province_code', 'province_name')->get();
+        $provinces = Province::select('id', 'code', 'name')->get();
 
-        return Inertia::render('province/index', [
+        return Inertia::render('Province/Index', [
             'provinces' => $provinces,
             'flash' => [
                 'success' => session('success'),
@@ -24,14 +24,14 @@ class ProvinceController extends Controller
 
     public function create()
     {
-        return Inertia::render('province/create');
+        return Inertia::render('Province/Create');
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'province_code' => 'required|string|max:10|unique:provinces,province_code',
-            'province_name' => 'required|string|max:100',
+            'code' => 'required|string|max:10|unique:provinces,code',
+            'name' => 'required|string|max:100',
         ]);
 
         Province::create($validated);
@@ -44,8 +44,8 @@ class ProvinceController extends Controller
         $province = Province::findOrFail($id);
 
         $validated = $request->validate([
-            'province_code' => 'required|string|max:10|unique:provinces,province_code,' . $id,
-            'province_name' => 'required|string|max:100',
+            'code' => 'required|string|max:10|unique:provinces,code,' . $id,
+            'name' => 'required|string|max:100',
         ]);
 
         $province->update($validated);

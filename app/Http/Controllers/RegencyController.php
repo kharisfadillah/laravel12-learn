@@ -12,15 +12,15 @@ class RegencyController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('regency/index', [
+        return Inertia::render('Regency/Index', [
             // Ambil data provinsi (misalnya untuk combobox)
-            'provinces' => Province::select('id', 'province_code', 'province_name')
-                ->orderBy('province_name')
+            'provinces' => Province::select('id', 'code', 'name')
+                ->orderBy('id')
                 ->get(),
 
             // Ambil daftar kabupaten/kota
-            'regencies' => Regency::select('id', 'province_id', 'regency_code', 'regency_name')
-                ->with('province:id,province_name') // jika ada relasi
+            'regencies' => Regency::select('id', 'province_id', 'code', 'name')
+                ->with('province:id,name') // jika ada relasi
                 ->latest()
                 ->get(),
 
@@ -34,15 +34,15 @@ class RegencyController extends Controller
 
     public function create()
     {
-        return Inertia::render('regency/create');
+        return Inertia::render('Regency/Create');
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'province_id' => 'required',
-            'regency_code' => 'required|string|max:10|unique:regencies,regency_code',
-            'regency_name' => 'required|string|max:100',
+            'code' => 'required|string|max:10|unique:regencies,code',
+            'name' => 'required|string|max:100',
         ]);
 
         Regency::create($validated);
@@ -56,8 +56,8 @@ class RegencyController extends Controller
 
         $validated = $request->validate([
             'province_id' => 'required',
-            'regency_code' => 'required|string|max:10|unique:regencies,regency_code,' . $id,
-            'regency_name' => 'required|string|max:100',
+            'code' => 'required|string|max:10|unique:regencies,code,' . $id,
+            'name' => 'required|string|max:100',
         ]);
 
         $regency->update($validated);
