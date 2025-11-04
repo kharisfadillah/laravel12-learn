@@ -54,6 +54,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         'index',
         'create',
         'store',
+        'edit',
         'update',
         'destroy'
     ]);

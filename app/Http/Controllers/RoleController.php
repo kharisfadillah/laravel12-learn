@@ -55,13 +55,20 @@ class RoleController extends Controller
     public function edit($id): Response
     {
         $role = Role::with('permissions:id')->findOrFail($id);
+
         $permissions = Permission::select('id', 'name', 'notes')->get();
 
         return Inertia::render('Role/Edit', [
-            'role' => $role,
+            'role' => [
+                'id' => $role->id,
+                'name' => $role->name,
+                'notes' => $role->notes,
+                'permissions' => $role->permissions->pluck('id'),
+            ],
             'permissions' => $permissions,
         ]);
     }
+
 
     public function update(Request $request, $id)
     {
@@ -90,8 +97,11 @@ class RoleController extends Controller
     public function destroy($id)
     {
         $role = Role::findOrFail($id);
+        $role->permissions()->detach();
         $role->delete();
 
-        return redirect()->route('role.index')->with('success', 'Role berhasil dihapus.');
+        return redirect()
+            ->route('role.index')
+            ->with('success', 'Role berhasil dihapus.');
     }
 }
