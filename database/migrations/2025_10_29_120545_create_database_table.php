@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('provinces', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
             $table->string('code')->nullable();
             $table->string('name');
             $table->timestamps();
@@ -20,8 +20,10 @@ return new class extends Migration
         });
 
         Schema::create('regencies', function (Blueprint $table) {
-            $table->id();
-            $table->bigInteger('province_id');
+            $table->ulid('id')->primary();
+            $table->foreignUlid('province_id')
+                ->constrained('provinces', 'id')
+                ->restrictOnDelete();
             $table->string('code')->nullable();
             $table->string('name');
             $table->timestamps();

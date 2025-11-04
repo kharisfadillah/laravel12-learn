@@ -1,0 +1,140 @@
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import AppLayout from '@/layouts/app-layout';
+import type { BreadcrumbItem } from '@/types';
+import { Head, useForm } from '@inertiajs/react';
+import { Plus, Trash2 } from 'lucide-react';
+
+interface Role {
+    id: number;
+    name: string;
+}
+
+interface Company {
+    id: number;
+    name: string;
+}
+
+interface Props {
+    roles: Role[];
+    companies: Company[];
+}
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Pengguna', href: '/user' },
+    { title: 'Tambah', href: '/user/create' },
+];
+
+export default function Create({ roles, companies }: Props) {
+    const { data, setData, post, processing, errors } = useForm({
+        username: '',
+        name: '',
+        email: '',
+        role_company: [{ role_id: '', company_id: '' }],
+    });
+
+    const addRow = () => {
+        setData('role_company', [...data.role_company, { role_id: '', company_id: '' }]);
+    };
+
+    const removeRow = (index: number) => {
+        const updated = [...data.role_company];
+        updated.splice(index, 1);
+        setData('role_company', updated);
+    };
+
+    const handleChange = (index: number, field: 'role_id' | 'company_id', value: string) => {
+        const updated = [...data.role_company];
+        updated[index][field] = value;
+        setData('role_company', updated);
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        post('/user');
+    };
+
+    return (
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Tambah Pengguna" />
+            {/* <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6 rounded-lg bg-white p-6 shadow-sm"> */}
+            <form onSubmit={handleSubmit} className="max-w-2xl space-y-6 px-6">
+                {/* <form onSubmit={handleSubmit} className="max-w-2xl space-y-6"> */}
+                <div className="grid gap-4">
+                    <Label htmlFor="username">Username</Label>
+                    <Input id="username" value={data.username} onChange={(e) => setData('username', e.target.value)} />
+                    {errors.username && <p className="text-sm text-red-500">{errors.username}</p>}
+                </div>
+
+                <div>
+                    <Label htmlFor="name">Nama</Label>
+                    <Input id="name" value={data.name} onChange={(e) => setData('name', e.target.value)} />
+                    {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
+                </div>
+
+                <div className="grid gap-4">
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" value={data.email} onChange={(e) => setData('email', e.target.value)} />
+                    {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+                </div>
+
+                <div className="grid gap-4">
+                    <Label>Role</Label>
+                    <div className="space-y-2">
+                        {data.role_company.map((rc, index) => (
+                            <div key={index} className="flex items-center gap-2">
+                                <Select value={rc.role_id} onValueChange={(v) => handleChange(index, 'role_id', v)}>
+                                    <SelectTrigger className="w-1/2">
+                                        <SelectValue placeholder="Pilih Role" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {roles.map((role) => (
+                                            <SelectItem key={role.id} value={role.id.toString()}>
+                                                {role.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+
+                                <Select value={rc.company_id} onValueChange={(v) => handleChange(index, 'company_id', v)}>
+                                    <SelectTrigger className="w-1/2">
+                                        <SelectValue placeholder="Pilih Company" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {companies.map((company) => (
+                                            <SelectItem key={company.id} value={company.id.toString()}>
+                                                {company.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+
+                                <Button
+                                    type="button"
+                                    variant="destructive"
+                                    size="icon"
+                                    onClick={() => removeRow(index)}
+                                    disabled={data.role_company.length === 1}
+                                >
+                                    <Trash2 size={16} />
+                                </Button>
+                            </div>
+                        ))}
+                    </div>
+
+                    <Button type="button" variant="secondary" size="sm" className="mt-2" onClick={addRow}>
+                        <Plus className="mr-1" size={14} /> Tambah Baris
+                    </Button>
+
+                    {errors['role_company'] && <p className="text-sm text-red-500">{errors['role_company']}</p>}
+                </div>
+
+                <Button type="submit" disabled={processing}>
+                    Simpan
+                </Button>
+            </form>
+        </AppLayout>
+    );
+}

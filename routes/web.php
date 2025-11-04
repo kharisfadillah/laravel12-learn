@@ -1,7 +1,11 @@
 <?php
 
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\RegencyController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -22,6 +26,35 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route::post('/province', [ProvinceController::class, 'store'])->name('province.store');
     // Route::put('/province/{id}', [ProvinceController::class, 'update'])->name('province.update');
     // Route::delete('/province/{id}', [ProvinceController::class, 'destroy'])->name('province.destroy');
+
+    Route::resource('company', CompanyController::class)->only([
+        'index',
+        'store',
+        'update',
+        'destroy'
+    ]);
+
+    Route::resource('role', RoleController::class)->only([
+        'index',
+        'store',
+        'update',
+        'destroy'
+    ]);
+
+    Route::resource('permission', PermissionController::class)->only([
+        'index',
+        'store',
+        'update',
+        'destroy'
+    ]);
+
+    Route::resource('user', UserController::class)->only([
+        'index',
+        'create',
+        'store',
+        'update',
+        'destroy'
+    ]);
 
     Route::resource('province', ProvinceController::class)->only([
         'index',

@@ -4,10 +4,15 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { /* BookOpen, Folder,*/ LandPlot } from 'lucide-react';
+import { /* BookOpen, Folder,*/ Building, FileKey, LandPlot, User, UserCog } from 'lucide-react';
 import AppLogo from './app-logo';
 
-const mainNavItems: NavItem[] = [
+const masterItems: NavItem[] = [
+    {
+        title: 'Unit Usaha',
+        href: '/company',
+        icon: Building,
+    },
     {
         title: 'Provinsi',
         href: '/province',
@@ -17,6 +22,24 @@ const mainNavItems: NavItem[] = [
         title: 'Kabupaten',
         href: '/regency',
         icon: LandPlot,
+    },
+];
+
+const userManagementItems: NavItem[] = [
+    {
+        title: 'Role',
+        href: '/role',
+        icon: UserCog,
+    },
+    {
+        title: 'Hak Akses',
+        href: '/permission',
+        icon: FileKey,
+    },
+    {
+        title: 'Pengguna',
+        href: '/user',
+        icon: User,
     },
 ];
 
@@ -49,7 +72,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain masterItems={masterItems} userManagementItems={userManagementItems} />
             </SidebarContent>
 
             <SidebarFooter>

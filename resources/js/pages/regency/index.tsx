@@ -21,15 +21,15 @@ import { useState } from 'react';
 
 interface Province {
     id: number;
-    province_code: string;
-    province_name: string;
+    code: string;
+    name: string;
 }
 
 interface Regency {
     id: number;
     province_id: number;
-    regency_code: string;
-    regency_name: string;
+    code: string;
+    name: string;
     province?: Province; // optional to avoid undefined errors
 }
 
@@ -61,8 +61,8 @@ export default function Index({ provinces, regencies }: Props) {
         reset: resetCreate,
     } = useForm({
         province_id: 0,
-        regency_code: '',
-        regency_name: '',
+        code: '',
+        name: '',
     });
 
     // Form Edit
@@ -75,8 +75,8 @@ export default function Index({ provinces, regencies }: Props) {
         reset: resetEdit,
     } = useForm({
         province_id: 0,
-        regency_code: '',
-        regency_name: '',
+        code: '',
+        name: '',
     });
 
     // Create
@@ -95,8 +95,8 @@ export default function Index({ provinces, regencies }: Props) {
         setSelectedRegency(regency);
         setEditData({
             province_id: regency.province_id,
-            regency_code: regency.regency_code,
-            regency_name: regency.regency_name,
+            code: regency.code,
+            name: regency.name,
         });
         setOpenEdit(true);
     };
@@ -162,7 +162,7 @@ export default function Index({ provinces, regencies }: Props) {
                                             <option value={0}>Pilih Provinsi</option>
                                             {provinces.map((province) => (
                                                 <option key={province.id} value={province.id}>
-                                                    {province.province_name}
+                                                    {province.name}
                                                 </option>
                                             ))}
                                         </select>
@@ -174,11 +174,11 @@ export default function Index({ provinces, regencies }: Props) {
                                         <Label htmlFor="create_regency_code">Kode Kabupaten</Label>
                                         <Input
                                             id="create_regency_code"
-                                            value={createData.regency_code}
-                                            onChange={(e) => setCreateData('regency_code', e.target.value)}
+                                            value={createData.code}
+                                            onChange={(e) => setCreateData('code', e.target.value)}
                                             placeholder="Masukkan kode kabupaten"
                                         />
-                                        {createErrors.regency_code && <p className="text-sm text-red-500">{createErrors.regency_code}</p>}
+                                        {createErrors.code && <p className="text-sm text-red-500">{createErrors.code}</p>}
                                     </div>
 
                                     {/* Nama Kabupaten */}
@@ -186,11 +186,11 @@ export default function Index({ provinces, regencies }: Props) {
                                         <Label htmlFor="create_regency_name">Nama Kabupaten</Label>
                                         <Input
                                             id="create_regency_name"
-                                            value={createData.regency_name}
-                                            onChange={(e) => setCreateData('regency_name', e.target.value)}
+                                            value={createData.name}
+                                            onChange={(e) => setCreateData('name', e.target.value)}
                                             placeholder="Masukkan nama kabupaten"
                                         />
-                                        {createErrors.regency_name && <p className="text-sm text-red-500">{createErrors.regency_name}</p>}
+                                        {createErrors.name && <p className="text-sm text-red-500">{createErrors.name}</p>}
                                     </div>
                                 </div>
                                 <DialogFooter>
@@ -220,9 +220,9 @@ export default function Index({ provinces, regencies }: Props) {
                         {regencies.length > 0 ? (
                             regencies.map((regency) => (
                                 <TableRow key={regency.id}>
-                                    <TableCell>{regency.province?.province_name ?? '-'}</TableCell>
-                                    <TableCell>{regency.regency_code}</TableCell>
-                                    <TableCell>{regency.regency_name}</TableCell>
+                                    <TableCell>{regency.province?.name ?? '-'}</TableCell>
+                                    <TableCell>{regency.code}</TableCell>
+                                    <TableCell>{regency.name}</TableCell>
                                     <TableCell>
                                         <div className="flex gap-2">
                                             <Button size="sm" variant="outline" onClick={() => handleEditClick(regency)}>
@@ -266,7 +266,7 @@ export default function Index({ provinces, regencies }: Props) {
                                         <option value={0}>Pilih Provinsi</option>
                                         {provinces.map((province) => (
                                             <option key={province.id} value={province.id}>
-                                                {province.province_name}
+                                                {province.name}
                                             </option>
                                         ))}
                                     </select>
@@ -278,11 +278,11 @@ export default function Index({ provinces, regencies }: Props) {
                                     <Label htmlFor="edit_regency_code">Kode Kabupaten</Label>
                                     <Input
                                         id="edit_regency_code"
-                                        value={editData.regency_code}
-                                        onChange={(e) => setEditData('regency_code', e.target.value)}
+                                        value={editData.code}
+                                        onChange={(e) => setEditData('code', e.target.value)}
                                         placeholder="Masukkan kode kabupaten"
                                     />
-                                    {editErrors.regency_code && <p className="text-sm text-red-500">{editErrors.regency_code}</p>}
+                                    {editErrors.code && <p className="text-sm text-red-500">{editErrors.code}</p>}
                                 </div>
 
                                 {/* Nama Kabupaten */}
@@ -290,11 +290,11 @@ export default function Index({ provinces, regencies }: Props) {
                                     <Label htmlFor="edit_regency_name">Nama Kabupaten</Label>
                                     <Input
                                         id="edit_regency_name"
-                                        value={editData.regency_name}
-                                        onChange={(e) => setEditData('regency_name', e.target.value)}
+                                        value={editData.name}
+                                        onChange={(e) => setEditData('name', e.target.value)}
                                         placeholder="Masukkan nama kabupaten"
                                     />
-                                    {editErrors.regency_name && <p className="text-sm text-red-500">{editErrors.regency_name}</p>}
+                                    {editErrors.name && <p className="text-sm text-red-500">{editErrors.name}</p>}
                                 </div>
                             </div>
                             <DialogFooter>
@@ -315,7 +315,7 @@ export default function Index({ provinces, regencies }: Props) {
                         <AlertDialogHeader>
                             <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
                             <AlertDialogDescription>
-                                Tindakan ini tidak dapat dibatalkan. Data kabupaten <strong>{selectedRegency?.regency_name}</strong> akan dihapus
+                                Tindakan ini tidak dapat dibatalkan. Data kabupaten <strong>{selectedRegency?.name}</strong> akan dihapus
                                 secara permanen.
                             </AlertDialogDescription>
                         </AlertDialogHeader>

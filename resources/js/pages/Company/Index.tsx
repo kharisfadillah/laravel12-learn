@@ -19,28 +19,28 @@ import { Head, router, useForm } from '@inertiajs/react';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-interface Province {
+interface Company {
     id: number;
     code: string;
     name: string;
 }
 
 interface Props {
-    provinces: Province[];
+    companies: Company[];
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Provinsi',
-        href: '/province',
+        title: 'Unit Usaha',
+        href: '/company',
     },
 ];
 
-export default function Index({ provinces }: Props) {
+export default function Index({ companies }: Props) {
     const [openCreate, setOpenCreate] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
-    const [selectedProvince, setSelectedProvince] = useState<Province | null>(null);
+    const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
 
     // Form untuk Create
     const {
@@ -71,7 +71,7 @@ export default function Index({ provinces }: Props) {
     // Handle Create
     const handleCreate = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/province', {
+        post('/company', {
             onSuccess: () => {
                 setOpenCreate(false);
                 resetCreate();
@@ -80,11 +80,11 @@ export default function Index({ provinces }: Props) {
     };
 
     // Handle Edit - Open Modal
-    const handleEditClick = (province: Province) => {
-        setSelectedProvince(province);
+    const handleEditClick = (company: Company) => {
+        setSelectedCompany(company);
         setEditData({
-            code: province.code,
-            name: province.name,
+            code: company.code,
+            name: company.name,
         });
         setOpenEdit(true);
     };
@@ -92,30 +92,30 @@ export default function Index({ provinces }: Props) {
     // Handle Edit - Submit
     const handleEditSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (selectedProvince) {
-            put(`/province/${selectedProvince.id}`, {
+        if (selectedCompany) {
+            put(`/company/${selectedCompany.id}`, {
                 onSuccess: () => {
                     setOpenEdit(false);
                     resetEdit();
-                    setSelectedProvince(null);
+                    setSelectedCompany(null);
                 },
             });
         }
     };
 
     // Handle Delete - Open Modal
-    const handleDeleteClick = (province: Province) => {
-        setSelectedProvince(province);
+    const handleDeleteClick = (company: Company) => {
+        setSelectedCompany(company);
         setOpenDelete(true);
     };
 
     // Handle Delete - Confirm
     const handleDeleteConfirm = () => {
-        if (selectedProvince) {
-            router.delete(`/province/${selectedProvince.id}`, {
+        if (selectedCompany) {
+            router.delete(`/company/${selectedCompany.id}`, {
                 onSuccess: () => {
                     setOpenDelete(false);
-                    setSelectedProvince(null);
+                    setSelectedCompany(null);
                 },
             });
         }
@@ -123,38 +123,38 @@ export default function Index({ provinces }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Province" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4 max-w-3xl">
+            <Head title="Unit Usaha" />
+            <div className="flex h-full max-w-3xl flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 {/* Button Tambah */}
                 <div className="flex justify-end">
                     <Dialog open={openCreate} onOpenChange={setOpenCreate}>
                         <DialogTrigger asChild>
-                            <Button>Tambah Provinsi</Button>
+                            <Button>Tambah Unit Usaha</Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[425px]">
                             <form onSubmit={handleCreate}>
                                 <DialogHeader>
-                                    <DialogTitle>Tambah Provinsi</DialogTitle>
-                                    <DialogDescription>Masukkan data provinsi baru. Klik simpan untuk menyimpan data.</DialogDescription>
+                                    <DialogTitle>Tambah Unit Usaha</DialogTitle>
+                                    <DialogDescription>Masukkan data unit usaha baru. Klik simpan untuk menyimpan data.</DialogDescription>
                                 </DialogHeader>
                                 <div className="grid gap-4 py-4">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="create_province_code">Kode Provinsi</Label>
+                                        <Label htmlFor="create_company_code">Kode Unit Usaha</Label>
                                         <Input
-                                            id="create_province_code"
+                                            id="create_company_code"
                                             value={createData.code}
                                             onChange={(e) => setCreateData('code', e.target.value)}
-                                            placeholder="Masukkan kode provinsi"
+                                            placeholder="Masukkan kode unit usaha"
                                         />
                                         {createErrors.code && <p className="text-sm text-red-500">{createErrors.code}</p>}
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="create_province_name">Nama Provinsi</Label>
+                                        <Label htmlFor="create_company_name">Nama Unit Usaha</Label>
                                         <Input
-                                            id="create_province_name"
+                                            id="create_company_name"
                                             value={createData.name}
                                             onChange={(e) => setCreateData('name', e.target.value)}
-                                            placeholder="Masukkan nama provinsi"
+                                            placeholder="Masukkan nama unit usaha"
                                         />
                                         {createErrors.name && <p className="text-sm text-red-500">{createErrors.name}</p>}
                                     </div>
@@ -173,43 +173,42 @@ export default function Index({ provinces }: Props) {
                 </div>
 
                 {/* <div className="max-w-3xl"> */}
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                {/* <TableHead className="w-[100px]">ID</TableHead> */}
-                                <TableHead>Kode Provinsi</TableHead>
-                                <TableHead>Nama Provinsi</TableHead>
-                                <TableHead className="w-[150px]"></TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {provinces.length > 0 ? (
-                                provinces.map((province) => (
-                                    <TableRow key={province.id}>
-                                        {/* <TableCell>{province.id}</TableCell> */}
-                                        <TableCell>{province.code}</TableCell>
-                                        <TableCell>{province.name}</TableCell>
-                                        <TableCell>
-                                            <div className="flex gap-2">
-                                                <Button size="sm" variant="outline" onClick={() => handleEditClick(province)}>
-                                                    <Pencil className="h-4 w-4" />
-                                                </Button>
-                                                <Button size="sm" variant="destructive" onClick={() => handleDeleteClick(province)}>
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            ) : (
-                                <TableRow>
-                                    <TableCell colSpan={4} className="text-center text-muted-foreground">
-                                        Tidak ada data provinsi
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            {/* <TableHead className="w-[100px]">ID</TableHead> */}
+                            <TableHead>Kode Unit Usaha</TableHead>
+                            <TableHead>Nama Unit Usaha</TableHead>
+                            <TableHead className="w-[150px]"></TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {companies.length > 0 ? (
+                            companies.map((company) => (
+                                <TableRow key={company.id}>
+                                    <TableCell>{company.code}</TableCell>
+                                    <TableCell>{company.name}</TableCell>
+                                    <TableCell>
+                                        <div className="flex gap-2">
+                                            <Button size="sm" variant="outline" onClick={() => handleEditClick(company)}>
+                                                <Pencil className="h-4 w-4" />
+                                            </Button>
+                                            <Button size="sm" variant="destructive" onClick={() => handleDeleteClick(company)}>
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
                                     </TableCell>
                                 </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={4} className="text-center text-muted-foreground">
+                                    Tidak ada data unit usaha
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
                 {/* </div> */}
                 {/* Table */}
 
@@ -218,27 +217,27 @@ export default function Index({ provinces }: Props) {
                     <DialogContent className="sm:max-w-[425px]">
                         <form onSubmit={handleEditSubmit}>
                             <DialogHeader>
-                                <DialogTitle>Edit Provinsi</DialogTitle>
-                                <DialogDescription>Ubah data provinsi. Klik simpan untuk menyimpan perubahan.</DialogDescription>
+                                <DialogTitle>Edit Unit Usaha</DialogTitle>
+                                <DialogDescription>Ubah data unit usaha. Klik simpan untuk menyimpan perubahan.</DialogDescription>
                             </DialogHeader>
                             <div className="grid gap-4 py-4">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="edit_province_code">Kode Provinsi</Label>
+                                    <Label htmlFor="edit_company_code">Kode Unit Usaha</Label>
                                     <Input
-                                        id="edit_province_code"
+                                        id="edit_company_code"
                                         value={editData.code}
                                         onChange={(e) => setEditData('code', e.target.value)}
-                                        placeholder="Masukkan kode provinsi"
+                                        placeholder="Masukkan kode unit usaha"
                                     />
                                     {editErrors.code && <p className="text-sm text-red-500">{editErrors.code}</p>}
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="edit_province_name">Nama Provinsi</Label>
+                                    <Label htmlFor="edit_company_name">Nama Unit Usaha</Label>
                                     <Input
-                                        id="edit_province_name"
+                                        id="edit_company_name"
                                         value={editData.name}
                                         onChange={(e) => setEditData('name', e.target.value)}
-                                        placeholder="Masukkan nama provinsi"
+                                        placeholder="Masukkan nama unit usaha"
                                     />
                                     {editErrors.name && <p className="text-sm text-red-500">{editErrors.name}</p>}
                                 </div>
@@ -261,16 +260,13 @@ export default function Index({ provinces }: Props) {
                         <AlertDialogHeader>
                             <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
                             <AlertDialogDescription>
-                                Tindakan ini tidak dapat dibatalkan. Data provinsi <strong>{selectedProvince?.name}</strong> akan dihapus
-                                secara permanen.
+                                Tindakan ini tidak dapat dibatalkan. Data unit usaha <strong>{selectedCompany?.name}</strong> akan dihapus secara
+                                permanen.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                             <AlertDialogCancel>Batal</AlertDialogCancel>
-                            <AlertDialogAction
-                                onClick={handleDeleteConfirm}
-                                className="bg-destructive text-white hover:bg-destructive/90"
-                            >
+                            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive text-white hover:bg-destructive/90">
                                 Hapus
                             </AlertDialogAction>
                         </AlertDialogFooter>
