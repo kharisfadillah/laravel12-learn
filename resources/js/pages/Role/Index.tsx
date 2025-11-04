@@ -25,13 +25,19 @@ interface Role {
     notes: string;
 }
 
+interface Permission {
+    id: number;
+    name: string;
+}
+
 interface Props {
     roles: Role[];
+    permissions: Permission[];
 }
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Role', href: '/role' }];
 
-export default function Index({ roles }: Props) {
+export default function Index({ roles, permissions }: Props) {
     const [openCreate, setOpenCreate] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
@@ -48,6 +54,7 @@ export default function Index({ roles }: Props) {
     } = useForm({
         name: '',
         notes: '',
+        permissions: [] as number[],
     });
 
     // Form Edit
@@ -61,6 +68,7 @@ export default function Index({ roles }: Props) {
     } = useForm({
         name: '',
         notes: '',
+        permissions: [] as number[],
     });
 
     // Handle Create
@@ -152,6 +160,30 @@ export default function Index({ roles }: Props) {
                                             placeholder="Masukkan keterangan"
                                         />
                                         {createErrors.notes && <p className="text-sm text-red-500">{createErrors.notes}</p>}
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label>Permissions</Label>
+                                        <div className="max-h-40 overflow-y-auto rounded border p-2">
+                                            {permissions.map((perm) => (
+                                                <label key={perm.id} className="flex items-center gap-2 py-1">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={createData.permissions.includes(perm.id)}
+                                                        onChange={(e) => {
+                                                            const checked = e.target.checked;
+                                                            setCreateData(
+                                                                'permissions',
+                                                                checked
+                                                                    ? [...createData.permissions, perm.id]
+                                                                    : createData.permissions.filter((id) => id !== perm.id),
+                                                            );
+                                                        }}
+                                                    />
+                                                    <span>{perm.label}</span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                        {createErrors.permissions && <p className="text-sm text-red-500">{createErrors.permissions}</p>}
                                     </div>
                                 </div>
                                 <DialogFooter>
