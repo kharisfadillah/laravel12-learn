@@ -48,4 +48,32 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'user_role', 'user_id', 'role_id');
+    }
+
+    public function permissions()
+    {
+        return $this->roles()
+            ->with('permissions')
+            ->get()
+            ->pluck('permissions')
+            ->flatten()
+            ->unique('id');
+    }
+
+    /**
+     * Cek apakah user memiliki permission tertentu
+     */
+    public function hasPermission(string $permissionSlug): bool
+    {
+        // Super Administrator bisa segalanya
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
+        return $this->permissions()->where('slug', $permissionSlug)->count() > 0;
+    }
 }

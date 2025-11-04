@@ -36,9 +36,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('role', RoleController::class)->only([
         'index',
+        'create',
         'store',
+        'edit',
         'update',
-        'destroy'
+        'destroy',
     ]);
 
     Route::resource('permission', PermissionController::class)->only([

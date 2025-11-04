@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -22,16 +23,44 @@ class RoleController extends Controller
         ]);
     }
 
+    public function create(): Response
+    {
+        $permissions = Permission::select('id', 'name', 'notes')->get();
+
+        return Inertia::render('Role/Create', [
+            'permissions' => $permissions,
+        ]);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:100|unique:roles,name',
             'notes' => 'nullable|string|max:300',
+            'permissions' => 'array',
         ]);
 
-        Role::create($validated);
+        $role = Role::create([
+            'name' => $validated['name'],
+            'notes' => $validated['notes'] ?? null,
+        ]);
+
+        if (!empty($validated['permissions'])) {
+            $role->permissions()->sync($validated['permissions']);
+        }
 
         return redirect()->route('role.index')->with('success', 'Role berhasil ditambahkan.');
+    }
+
+    public function edit($id): Response
+    {
+        $role = Role::with('permissions:id')->findOrFail($id);
+        $permissions = Permission::select('id', 'name', 'notes')->get();
+
+        return Inertia::render('Role/Edit', [
+            'role' => $role,
+            'permissions' => $permissions,
+        ]);
     }
 
     public function update(Request $request, $id)
@@ -41,9 +70,19 @@ class RoleController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:100|unique:roles,name,' . $id,
             'notes' => 'nullable|string|max:300',
+            'permissions' => 'array',
         ]);
 
-        $role->update($validated);
+        $role->update([
+            'name' => $validated['name'],
+            'notes' => $validated['notes'] ?? null,
+        ]);
+
+        if (!empty($validated['permissions'])) {
+            $role->permissions()->sync($validated['permissions']);
+        } else {
+            $role->permissions()->detach();
+        }
 
         return redirect()->route('role.index')->with('success', 'Role berhasil diubah.');
     }

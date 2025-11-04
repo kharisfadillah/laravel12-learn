@@ -9,13 +9,10 @@ import {
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import { Head, router, useForm } from '@inertiajs/react';
+import type { BreadcrumbItem } from '@/types';
+import { Head, Link, router } from '@inertiajs/react';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -25,94 +22,21 @@ interface Role {
     notes: string;
 }
 
-interface Permission {
-    id: number;
-    name: string;
-}
-
 interface Props {
     roles: Role[];
-    permissions: Permission[];
 }
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Role', href: '/role' }];
 
-export default function Index({ roles, permissions }: Props) {
-    const [openCreate, setOpenCreate] = useState(false);
-    const [openEdit, setOpenEdit] = useState(false);
+export default function Index({ roles }: Props) {
     const [openDelete, setOpenDelete] = useState(false);
     const [selectedRole, setSelectedRole] = useState<Role | null>(null);
 
-    // Form Create
-    const {
-        data: createData,
-        setData: setCreateData,
-        post,
-        processing: createProcessing,
-        errors: createErrors,
-        reset: resetCreate,
-    } = useForm({
-        name: '',
-        notes: '',
-        permissions: [] as number[],
-    });
-
-    // Form Edit
-    const {
-        data: editData,
-        setData: setEditData,
-        put,
-        processing: editProcessing,
-        errors: editErrors,
-        reset: resetEdit,
-    } = useForm({
-        name: '',
-        notes: '',
-        permissions: [] as number[],
-    });
-
-    // Handle Create
-    const handleCreate = (e: React.FormEvent) => {
-        e.preventDefault();
-        post('/role', {
-            onSuccess: () => {
-                setOpenCreate(false);
-                resetCreate();
-            },
-        });
-    };
-
-    // Handle Edit - Open Modal
-    const handleEditClick = (role: Role) => {
-        setSelectedRole(role);
-        setEditData({
-            name: role.name,
-            notes: role.notes,
-        });
-        setOpenEdit(true);
-    };
-
-    // Handle Edit - Submit
-    const handleEditSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (selectedRole) {
-            put(`/role/${selectedRole.id}`, {
-                onSuccess: () => {
-                    setOpenEdit(false);
-                    resetEdit();
-                    setSelectedRole(null);
-                },
-            });
-        }
-    };
-
-    // Handle Delete - Open Modal
     const handleDeleteClick = (role: Role) => {
         setSelectedRole(role);
         setOpenDelete(true);
     };
 
-    // Handle Delete - Confirm
     const handleDeleteConfirm = () => {
         if (selectedRole) {
             router.delete(`/role/${selectedRole.id}`, {
@@ -128,84 +52,20 @@ export default function Index({ roles, permissions }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Role" />
             <div className="flex h-full max-w-3xl flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                {/* Tombol Tambah Role */}
-                <div className="flex justify-end">
-                    <Dialog open={openCreate} onOpenChange={setOpenCreate}>
-                        <DialogTrigger asChild>
-                            <Button>Tambah Role</Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
-                            <form onSubmit={handleCreate}>
-                                <DialogHeader>
-                                    <DialogTitle>Tambah Role</DialogTitle>
-                                    <DialogDescription>Masukkan data role baru. Klik simpan untuk menyimpan data.</DialogDescription>
-                                </DialogHeader>
-                                <div className="grid gap-4 py-4">
-                                    <div className="grid gap-2">
-                                        <Label htmlFor="create_role_name">Nama Role</Label>
-                                        <Input
-                                            id="create_role_name"
-                                            value={createData.name}
-                                            onChange={(e) => setCreateData('name', e.target.value)}
-                                            placeholder="Masukkan nama role"
-                                        />
-                                        {createErrors.name && <p className="text-sm text-red-500">{createErrors.name}</p>}
-                                    </div>
-                                    <div className="grid gap-2">
-                                        <Label htmlFor="create_role_notes">Keterangan</Label>
-                                        <Input
-                                            id="create_role_notes"
-                                            value={createData.notes}
-                                            onChange={(e) => setCreateData('notes', e.target.value)}
-                                            placeholder="Masukkan keterangan"
-                                        />
-                                        {createErrors.notes && <p className="text-sm text-red-500">{createErrors.notes}</p>}
-                                    </div>
-                                    <div className="grid gap-2">
-                                        <Label>Permissions</Label>
-                                        <div className="max-h-40 overflow-y-auto rounded border p-2">
-                                            {permissions.map((perm) => (
-                                                <label key={perm.id} className="flex items-center gap-2 py-1">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={createData.permissions.includes(perm.id)}
-                                                        onChange={(e) => {
-                                                            const checked = e.target.checked;
-                                                            setCreateData(
-                                                                'permissions',
-                                                                checked
-                                                                    ? [...createData.permissions, perm.id]
-                                                                    : createData.permissions.filter((id) => id !== perm.id),
-                                                            );
-                                                        }}
-                                                    />
-                                                    <span>{perm.label}</span>
-                                                </label>
-                                            ))}
-                                        </div>
-                                        {createErrors.permissions && <p className="text-sm text-red-500">{createErrors.permissions}</p>}
-                                    </div>
-                                </div>
-                                <DialogFooter>
-                                    <Button type="button" variant="outline" onClick={() => setOpenCreate(false)}>
-                                        Batal
-                                    </Button>
-                                    <Button type="submit" disabled={createProcessing}>
-                                        {createProcessing ? 'Menyimpan...' : 'Simpan'}
-                                    </Button>
-                                </DialogFooter>
-                            </form>
-                        </DialogContent>
-                    </Dialog>
+                {/* Header */}
+                <div className="flex items-center justify-end">
+                    <Link href="/role/create">
+                        <Button>Tambah Role</Button>
+                    </Link>
                 </div>
 
-                {/* Tabel Role */}
+                {/* Table */}
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Nama Role</TableHead>
+                            <TableHead>Nama</TableHead>
                             <TableHead>Keterangan</TableHead>
-                            <TableHead className="w-[150px]"></TableHead>
+                            <TableHead className="w-[120px]" />
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -215,10 +75,12 @@ export default function Index({ roles, permissions }: Props) {
                                     <TableCell>{role.name}</TableCell>
                                     <TableCell>{role.notes}</TableCell>
                                     <TableCell>
-                                        <div className="flex gap-2">
-                                            <Button size="sm" variant="outline" onClick={() => handleEditClick(role)}>
-                                                <Pencil className="h-4 w-4" />
-                                            </Button>
+                                        <div className="flex justify-end gap-2">
+                                            <Link href={`/role/${role.id}/edit`}>
+                                                <Button size="sm" variant="outline">
+                                                    <Pencil className="h-4 w-4" />
+                                                </Button>
+                                            </Link>
                                             <Button size="sm" variant="destructive" onClick={() => handleDeleteClick(role)}>
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
@@ -228,68 +90,29 @@ export default function Index({ roles, permissions }: Props) {
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={3} className="text-center text-muted-foreground">
-                                    Tidak ada data role
+                                <TableCell colSpan={4} className="text-center text-muted-foreground">
+                                    Tidak ada data role.
                                 </TableCell>
                             </TableRow>
                         )}
                     </TableBody>
                 </Table>
 
-                {/* Modal Edit */}
-                <Dialog open={openEdit} onOpenChange={setOpenEdit}>
-                    <DialogContent className="sm:max-w-[425px]">
-                        <form onSubmit={handleEditSubmit}>
-                            <DialogHeader>
-                                <DialogTitle>Edit Role</DialogTitle>
-                                <DialogDescription>Ubah data role. Klik simpan untuk menyimpan perubahan.</DialogDescription>
-                            </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="edit_role_name">Nama Role</Label>
-                                    <Input
-                                        id="edit_role_name"
-                                        value={editData.name}
-                                        onChange={(e) => setEditData('name', e.target.value)}
-                                        placeholder="Masukkan nama role"
-                                    />
-                                    {editErrors.name && <p className="text-sm text-red-500">{editErrors.name}</p>}
-                                </div>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="edit_role_notes">Keterangan</Label>
-                                    <Input
-                                        id="edit_role_notes"
-                                        value={editData.notes}
-                                        onChange={(e) => setEditData('notes', e.target.value)}
-                                        placeholder="Masukkan keterangan"
-                                    />
-                                    {editErrors.notes && <p className="text-sm text-red-500">{editErrors.notes}</p>}
-                                </div>
-                            </div>
-                            <DialogFooter>
-                                <Button type="button" variant="outline" onClick={() => setOpenEdit(false)}>
-                                    Batal
-                                </Button>
-                                <Button type="submit" disabled={editProcessing}>
-                                    {editProcessing ? 'Menyimpan...' : 'Simpan'}
-                                </Button>
-                            </DialogFooter>
-                        </form>
-                    </DialogContent>
-                </Dialog>
-
-                {/* Modal Delete */}
+                {/* Modal Konfirmasi Hapus */}
                 <AlertDialog open={openDelete} onOpenChange={setOpenDelete}>
                     <AlertDialogContent>
                         <AlertDialogHeader>
-                            <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
+                            <AlertDialogTitle>Hapus Role</AlertDialogTitle>
                             <AlertDialogDescription>
-                                Tindakan ini tidak dapat dibatalkan. Data role <strong>{selectedRole?.name}</strong> akan dihapus secara permanen.
+                                Apakah Anda yakin ingin menghapus role <strong>{selectedRole?.name}</strong>? Tindakan ini tidak dapat dibatalkan.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                             <AlertDialogCancel>Batal</AlertDialogCancel>
-                            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive text-white hover:bg-destructive/90">
+                            <AlertDialogAction
+                                onClick={handleDeleteConfirm}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
                                 Hapus
                             </AlertDialogAction>
                         </AlertDialogFooter>
