@@ -31,12 +31,12 @@ interface User {
 }
 
 interface Props {
-    user: User;
     roles: Role[];
     companies: Company[];
+    user: User;
 }
 
-export default function Edit({ user, roles, companies }: Props) {
+export default function Edit({ roles, companies, user }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Pengguna', href: '/user' },
         { title: 'Edit', href: `/user/${user.id}/edit` },
@@ -46,13 +46,12 @@ export default function Edit({ user, roles, companies }: Props) {
         username: user.username || '',
         name: user.name || '',
         email: user.email || '',
-        role_company:
-            user.role_company && user.role_company.length > 0
-                ? user.role_company.map((rc) => ({
-                      role_id: rc.role_id.toString(),
-                      company_id: rc.company_id.toString(),
-                  }))
-                : [{ role_id: '', company_id: '' }],
+        role_company: user.role_company.length
+            ? user.role_company.map((rc) => ({
+                  role_id: rc.role_id.toString(),
+                  company_id: rc.company_id.toString(),
+              }))
+            : [{ role_id: '', company_id: '' }],
     });
 
     const addRow = () => {
@@ -78,11 +77,11 @@ export default function Edit({ user, roles, companies }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`Edit Pengguna - ${user.name}`} />
+            <Head title="Edit Pengguna" />
 
             <div className="max-w-lg bg-white p-6">
                 <h2 className="text-xl font-semibold">Edit Pengguna</h2>
-                <p className="mt-1 text-sm text-gray-500">Ubah data pengguna yang sudah ada. Klik simpan untuk menyimpan perubahan.</p>
+                <p className="mt-1 text-sm text-gray-500">Perbarui data pengguna. Klik simpan untuk menyimpan perubahan.</p>
 
                 <form onSubmit={handleSubmit} className="mt-6 space-y-5">
                     <div>
@@ -109,7 +108,7 @@ export default function Edit({ user, roles, companies }: Props) {
                     </div>
 
                     <div>
-                        <Label>Role & Company</Label>
+                        <Label>Role</Label>
                         <div className="space-y-2">
                             {data.role_company.map((rc, index) => (
                                 <div key={index} className="flex items-center gap-2">
@@ -128,7 +127,7 @@ export default function Edit({ user, roles, companies }: Props) {
 
                                     <Select value={rc.company_id} onValueChange={(v) => handleChange(index, 'company_id', v)}>
                                         <SelectTrigger className="w-1/2">
-                                            <SelectValue placeholder="Pilih Company" />
+                                            <SelectValue placeholder="Pilih Unit usaha" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {companies.map((company) => (

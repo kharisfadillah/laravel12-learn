@@ -41,11 +41,20 @@ class UserController extends Controller
             'username' => 'required|string|max:100|unique:users,username',
             'name' => 'nullable|string|max:100',
             'email' => 'nullable|email|max:300',
-            'roles' => 'array',
-            'companies' => 'array',
+            'role_company' => 'required|array|min:1',
+            'role_company.*.role_id' => 'required|string|distinct',
+            'role_company.*.company_id' => 'required|string|distinct',
         ]);
 
+        $combinations = collect($request->role_company)
+            ->map(fn($rc) => $rc['role_id'] . '-' . $rc['company_id']);
+
+        if ($combinations->duplicates()->isNotEmpty()) {
+            return back()->withErrors(['role_company' => 'Terdapat kombinasi Role dan Company yang sama.'])->withInput();
+        }
+
         DB::transaction(function () use ($validated) {
+            // Buat user baru
             $user = User::create([
                 'username' => $validated['username'],
                 'name' => isset($validated['name']) ? strtoupper($validated['name']) : null,
@@ -53,16 +62,13 @@ class UserController extends Controller
                 'password' => Hash::make('Jhonlin@123'),
             ]);
 
-            if (!empty($validated['roles']) && !empty($validated['companies'])) {
-                foreach ($validated['roles'] as $roleId) {
-                    foreach ($validated['companies'] as $companyId) {
-                        DB::table('user_role_company')->insert([
-                            'user_id' => $user->id,
-                            'role_id' => $roleId,
-                            'company_id' => $companyId,
-                        ]);
-                    }
-                }
+            // Simpan data ke tabel pivot user_role_company
+            foreach ($validated['role_company'] as $rc) {
+                DB::table('user_role_company')->insert([
+                    'user_id' => $user->id,
+                    'role_id' => $rc['role_id'],
+                    'company_id' => $rc['company_id'],
+                ]);
             }
         });
 
@@ -73,52 +79,70 @@ class UserController extends Controller
     {
         $userRoleCompanies = DB::table('user_role_company')
             ->where('user_id', $user->id)
-            ->pluck('role_id', 'company_id');
+            ->select('role_id', 'company_id')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'role_id' => (string) $item->role_id,
+                    'company_id' => (string) $item->company_id,
+                ];
+            });
 
         return Inertia::render('User/Edit', [
-            'user' => $user,
+            'user' => [
+                'id' => $user->id,
+                'username' => $user->username,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role_company' => $userRoleCompanies,
+            ],
             'roles' => Role::select('id', 'name')->get(),
             'companies' => Company::select('id', 'name')->get(),
-            'userRoleCompanies' => $userRoleCompanies,
         ]);
     }
 
-    public function update(Request $request, User $user)
+
+    public function update(Request $request, $id)
     {
-        $validated = $request->validate([
-            'username' => 'required|string|max:100|unique:users,username,' . $user->id,
-            'name' => 'nullable|string|max:100',
-            'email' => 'nullable|email|max:300',
-            'roles' => 'array',
-            'companies' => 'array',
+        $request->validate([
+            'username' => 'required|string|max:255|unique:users,username,' . $id,
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $id,
+            'role_company' => 'required|array|min:1',
+            'role_company.*.role_id' => 'required|exists:roles,id',
+            'role_company.*.company_id' => 'required|exists:companies,id',
         ]);
 
-        DB::transaction(function () use ($user, $validated) {
+        $combinations = collect($request->role_company)
+            ->map(fn($rc) => $rc['role_id'] . '-' . $rc['company_id']);
+
+        if ($combinations->duplicates()->isNotEmpty()) {
+            return back()->withErrors(['role_company' => 'Terdapat kombinasi Role dan Unit usaha yang sama.'])->withInput();
+        }
+        $user = User::findOrFail($id);
+
+        DB::transaction(function () use ($user, $request) {
             $user->update([
-                'username' => strtoupper($validated['username']),
-                'name' => isset($validated['name']) ? strtoupper($validated['name']) : null,
-                'email' => $validated['email'] ?? null,
+                'username' => $request->username,
+                'name' => $request->name,
+                'email' => $request->email,
             ]);
 
             DB::table('user_role_company')->where('user_id', $user->id)->delete();
 
-            if (!empty($validated['roles']) && !empty($validated['companies'])) {
-                foreach ($validated['roles'] as $roleId) {
-                    foreach ($validated['companies'] as $companyId) {
-                        DB::table('user_role_company')->insert([
-                            'user_id' => $user->id,
-                            'role_id' => $roleId,
-                            'company_id' => $companyId,
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ]);
-                    }
-                }
+            foreach ($request->role_company as $rc) {
+                DB::table('user_role_company')->insert([
+                    'user_id' => $user->id,
+                    'role_id' => $rc['role_id'],
+                    'company_id' => $rc['company_id'],
+                ]);
             }
         });
 
-        return redirect()->route('user.index')->with('success', 'User berhasil diperbarui.');
+        return redirect()->route('user.index')->with('success', 'Pengguna berhasil diperbarui.');
     }
+
+
 
     public function destroy(User $user)
     {
