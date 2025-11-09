@@ -79,7 +79,7 @@ export default function Edit({ roles, companies, user }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Edit Pengguna" />
 
-            <div className="max-w-lg bg-white p-6">
+            <div className="max-w-lg p-6">
                 <h2 className="text-xl font-semibold">Edit Pengguna</h2>
                 <p className="mt-1 text-sm text-gray-500">Perbarui data pengguna. Klik simpan untuk menyimpan perubahan.</p>
 

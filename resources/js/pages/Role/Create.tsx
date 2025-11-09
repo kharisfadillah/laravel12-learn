@@ -46,7 +46,7 @@ export default function Create({ permissions }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Tambah Role" />
 
-            <div className="max-w-lg bg-white p-6">
+            <div className="max-w-lg p-6">
                 <h2 className="text-xl font-semibold">Tambah Role</h2>
                 <p className="mt-1 text-sm text-gray-500">Masukkan data role baru. Klik simpan untuk menyimpan data.</p>
 
