@@ -15,6 +15,18 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->string('code')->nullable();
             $table->string('name');
+            $table->foreignUlid('created_id')
+                ->nullable()
+                ->constrained('users', 'id')
+                ->restrictOnDelete();
+            $table->foreignUlid('updated_id')
+                ->nullable()
+                ->constrained('users')
+                ->restrictOnDelete();
+            $table->foreignUlid('deleted_id')
+                ->nullable()
+                ->constrained('users')
+                ->restrictOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -26,11 +38,74 @@ return new class extends Migration
                 ->restrictOnDelete();
             $table->string('code')->nullable();
             $table->string('name');
+            $table->foreignUlid('created_id')
+                ->nullable()
+                ->constrained('users', 'id')
+                ->restrictOnDelete();
+            $table->foreignUlid('updated_id')
+                ->nullable()
+                ->constrained('users')
+                ->restrictOnDelete();
+            $table->foreignUlid('deleted_id')
+                ->nullable()
+                ->constrained('users')
+                ->restrictOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });
 
+        Schema::create('departments', function (Blueprint $table) {
+            $table->ulid('id')->primary();
+            $table->foreignUlid('company_id')
+                ->constrained('companies', 'id')
+                ->restrictOnDelete();
+            $table->string('code')->nullable();
+            $table->string('name');
+            $table->foreignUlid('created_id')
+                ->nullable()
+                ->constrained('users', 'id')
+                ->restrictOnDelete();
+            $table->foreignUlid('updated_id')
+                ->nullable()
+                ->constrained('users')
+                ->restrictOnDelete();
+            $table->foreignUlid('deleted_id')
+                ->nullable()
+                ->constrained('users')
+                ->restrictOnDelete();
+            $table->timestamps();
+            $table->softDeletes();
+        });
 
+        Schema::create('participants', function (Blueprint $table) {
+            $table->ulid('id')->primary();
+            $table->foreignUlid('company_id')
+                ->constrained('companies', 'id')
+                ->restrictOnDelete();
+            $table->string('code')->nullable();
+            $table->string('name');
+            $table->string('position')->nullable();
+            $table->foreignUlid('department_id')
+                ->constrained('departments', 'id')
+                ->restrictOnDelete();
+            $table->date('birth_date')->nullable();
+            $table->enum('gender', ['Laki-laki', 'Perempuan']);
+            $table->string('phone')->nullable();
+            $table->foreignUlid('created_id')
+                ->nullable()
+                ->constrained('users', 'id')
+                ->restrictOnDelete();
+            $table->foreignUlid('updated_id')
+                ->nullable()
+                ->constrained('users')
+                ->restrictOnDelete();
+            $table->foreignUlid('deleted_id')
+                ->nullable()
+                ->constrained('users')
+                ->restrictOnDelete();
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
     /**
@@ -38,6 +113,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('participants');
+        Schema::dropIfExists('departments');
         Schema::dropIfExists('regencies');
         Schema::dropIfExists('provinces');
     }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\RegencyController;
@@ -28,6 +29,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route::delete('/province/{id}', [ProvinceController::class, 'destroy'])->name('province.destroy');
 
     Route::resource('company', CompanyController::class)->only([
+        'index',
+        'store',
+        'update',
+        'destroy'
+    ]);
+
+    Route::resource('department', DepartmentController::class)->only([
         'index',
         'store',
         'update',

@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Company;
+use App\Models\Department;
 use App\Models\Province;
 use App\Models\Regency;
 use App\Models\User;
@@ -25,6 +27,23 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
 
+        $company = Company::create([
+            'code' => 'JG',
+            'name' => 'PT. JHONLIN GROUP'
+        ]);
+
+        Department::create([
+            'company_id' => $company->id,
+            'code' => 'HR',
+            'name' => 'HUMAN RESOURCE',
+        ]);
+
+        Department::create([
+            'company_id' => $company->id,
+            'code' => 'SE',
+            'name' => 'SOFTWARE ENGINEER',
+        ]);
+
         $province = Province::create([
             'code' => 'KALSEL',
             'name' => 'KALIMANTAN SELATAN',
@@ -35,5 +54,6 @@ class DatabaseSeeder extends Seeder
             'code' => 'TANBU',
             'name' => 'TANAH BUMBU',
         ]);
+
     }
 }

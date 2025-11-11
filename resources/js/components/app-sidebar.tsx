@@ -14,6 +14,11 @@ const masterItems: NavItem[] = [
         icon: Building,
     },
     {
+        title: 'Departemen',
+        href: '/department',
+        icon: Building,
+    },
+    {
         title: 'Provinsi',
         href: '/province',
         icon: LandPlot,
