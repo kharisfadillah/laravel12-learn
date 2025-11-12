@@ -5,13 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 
-class Department extends Model
+class Participant extends Model
 {
     use HasUlids;
-    protected $fillable = ['code', 'name', 'company_id'];
+    protected $guarded = ['id'];
 
     public function company()
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
     }
 }

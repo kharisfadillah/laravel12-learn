@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { /* BookOpen, Folder,*/ Building, FileKey, LandPlot, User, UserCog } from 'lucide-react';
+import { /* BookOpen, Folder,*/ Building, FileKey, LandPlot, PersonStanding, User, UserCog } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const masterItems: NavItem[] = [
@@ -27,6 +27,11 @@ const masterItems: NavItem[] = [
         title: 'Kabupaten',
         href: '/regency',
         icon: LandPlot,
+    },
+    {
+        title: 'Kandidat',
+        href: '/participant',
+        icon: PersonStanding,
     },
 ];
 

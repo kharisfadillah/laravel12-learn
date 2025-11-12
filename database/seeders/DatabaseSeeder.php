@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Company;
 use App\Models\Department;
+use App\Models\Participant;
 use App\Models\Province;
 use App\Models\Regency;
 use App\Models\User;
@@ -32,7 +33,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'PT. JHONLIN GROUP'
         ]);
 
-        Department::create([
+        $department = Department::create([
             'company_id' => $company->id,
             'code' => 'HR',
             'name' => 'HUMAN RESOURCE',
@@ -53,6 +54,16 @@ class DatabaseSeeder extends Seeder
             'province_id' => $province->id,
             'code' => 'TANBU',
             'name' => 'TANAH BUMBU',
+        ]);
+
+        Participant::create([
+            'company_id' => $company->id,
+            'name' => 'MUHAMMAD HUSNI',
+            'position' => 'STAF HR',
+            'department_id' => $department->id,
+            'birth_date' => '1990-07-12',
+            'gender' => 'Laki-laki',
+            'phone' => '081234567899',
         ]);
 
     }

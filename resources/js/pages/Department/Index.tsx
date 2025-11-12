@@ -20,14 +20,14 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface Company {
-    id: number;
+    id: string;
     code: string;
     name: string;
 }
 
 interface Department {
-    id: number;
-    company_id: number;
+    id: string;
+    company_id: string;
     code: string;
     name: string;
     company?: Company;
@@ -60,7 +60,7 @@ export default function Index({ companies, departments }: Props) {
         errors: createErrors,
         reset: resetCreate,
     } = useForm({
-        company_id: 0,
+        company_id: '',
         code: '',
         name: '',
     });
@@ -74,7 +74,7 @@ export default function Index({ companies, departments }: Props) {
         errors: editErrors,
         reset: resetEdit,
     } = useForm({
-        company_id: 0,
+        company_id: '',
         code: '',
         name: '',
     });
@@ -156,7 +156,7 @@ export default function Index({ companies, departments }: Props) {
                                         <select
                                             id="create_company_id"
                                             value={createData.company_id}
-                                            onChange={(e) => setCreateData('company_id', Number(e.target.value))}
+                                            onChange={(e) => setCreateData('company_id', e.target.value)}
                                             className="rounded-md border p-2"
                                         >
                                             <option value={0}>Pilih Unit Usaha</option>
@@ -260,7 +260,7 @@ export default function Index({ companies, departments }: Props) {
                                     <select
                                         id="edit_company_id"
                                         value={editData.company_id}
-                                        onChange={(e) => setEditData('company_id', Number(e.target.value))}
+                                        onChange={(e) => setEditData('company_id', e.target.value)}
                                         className="rounded-md border p-2"
                                     >
                                         <option value={0}>Pilih Unit Usaha</option>

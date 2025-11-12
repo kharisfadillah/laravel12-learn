@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\ParticipantController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\RegencyController;
@@ -69,6 +70,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('regency', RegencyController::class)->only([
         'index',
+        'store',
+        'update',
+        'destroy'
+    ]);
+
+    Route::resource('participant', ParticipantController::class)->only([
+        'index',
+        'create',
         'store',
         'update',
         'destroy'

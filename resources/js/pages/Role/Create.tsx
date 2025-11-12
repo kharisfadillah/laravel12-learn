@@ -50,7 +50,7 @@ export default function Create({ permissions }: Props) {
                 <h2 className="text-xl font-semibold">Tambah Role</h2>
                 <p className="mt-1 text-sm text-gray-500">Masukkan data role baru. Klik simpan untuk menyimpan data.</p>
 
-                <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+                <form onSubmit={handleSubmit} className="mt-3 space-y-4">
                     <div>
                         <Label htmlFor="name">Nama Role</Label>
                         <Input id="name" value={data.name} onChange={(e) => setData('name', e.target.value)} placeholder="Masukkan nama role" />
