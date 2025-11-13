@@ -20,6 +20,7 @@ class ProvinceController extends Controller
                 'error' => session('error')
             ]
         ]);
+        
     }
 
     public function create()
