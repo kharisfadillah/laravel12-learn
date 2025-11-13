@@ -226,7 +226,7 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        Schema::create('mcu_i_details', function (Blueprint $table) {
+        Schema::create('mcu_i_items', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->foreignUlid('header_id')
                 ->constrained('mcu_i_headers', 'id')
@@ -292,7 +292,7 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        Schema::create('mcu_f_details', function (Blueprint $table) {
+        Schema::create('mcu_f_items', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->foreignUlid('header_id')
                 ->constrained('mcu_f_headers', 'id')
@@ -335,6 +335,13 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('mcu_f_items');
+        Schema::dropIfExists('mcu_f_headers');
+        Schema::dropIfExists('mcu_i_items');
+        Schema::dropIfExists('mcu_i_headers');
+        Schema::dropIfExists('mcu_parameters');
+        Schema::dropIfExists('mcu_categories');
+        Schema::dropIfExists('providers');
         Schema::dropIfExists('participants');
         Schema::dropIfExists('departments');
         Schema::dropIfExists('regencies');

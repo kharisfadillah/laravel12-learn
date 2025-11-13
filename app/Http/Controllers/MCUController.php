@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Province;
+use App\Models\MCUFHeader;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class ProvinceController extends Controller
+class MCUController extends Controller
 {
     public function index(Request $request): Response
     {
@@ -23,17 +23,18 @@ class ProvinceController extends Controller
 
         $search = $request->input('search');
 
-        $provinces = Province::query()
+        $mcus = MCUFHeader::query()
             ->when($search, function ($query, $search) {
                 $query->where('code', 'like', "%{$search}%")
                     ->orWhere('name', 'like', "%{$search}%");
             })
-            ->orderByDesc('id')
+            ->latest()
+            // ->orderByDesc('id')
             ->paginate(10)
             ->withQueryString();
 
-        return Inertia::render('Province/Index', [
-            'provinces' => $provinces,
+        return Inertia::render('MCU/Index', [
+            'mcus' => $mcus,
             'filters' => [
                 'search' => $search,
             ],

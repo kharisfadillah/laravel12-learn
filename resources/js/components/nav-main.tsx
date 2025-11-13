@@ -1,7 +1,7 @@
 import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutGrid } from 'lucide-react';
+import { LayoutGrid, Stethoscope } from 'lucide-react';
 
 export function NavMain({ masterItems = [], userManagementItems = [] }: { masterItems: NavItem[]; userManagementItems: NavItem[] }) {
     const page = usePage();
@@ -13,6 +13,16 @@ export function NavMain({ masterItems = [], userManagementItems = [] }: { master
                         <Link href="/dashboard" prefetch>
                             <LayoutGrid />
                             <span>Dashboard</span>
+                        </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+            </SidebarMenu>
+            <SidebarMenu>
+                <SidebarMenuItem key="Medical Check Up">
+                    <SidebarMenuButton asChild isActive={page.url.startsWith('/mcu')} tooltip={{ children: 'Medical Check Up' }}>
+                        <Link href="/mcu" prefetch>
+                            <Stethoscope />
+                            <span>Medical Check Up</span>
                         </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>

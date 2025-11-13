@@ -1,3 +1,7 @@
+'use client';
+
+import type React from 'react';
+
 import {
     AlertDialog,
     AlertDialogAction,
@@ -15,8 +19,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import { Head, router, useForm } from '@inertiajs/react';
+import type { BreadcrumbItem } from '@/types';
+import { Head, router } from '@inertiajs/react';
 import { Ellipsis, Pencil, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -45,56 +49,40 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Index({ provinces, filters }: Props) {
-    const [openDropdowns, setOpenDropdowns] = useState<{ [key: number]: boolean }>({});
-    const [search, setSearch] = useState(filters.search ?? '');
     const [openCreate, setOpenCreate] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
     const [selectedProvince, setSelectedProvince] = useState<Province | null>(null);
-
-    // Form untuk Create
-    const {
-        data: createData,
-        setData: setCreateData,
-        post,
-        processing: createProcessing,
-        errors: createErrors,
-        reset: resetCreate,
-    } = useForm({
-        code: '',
-        name: '',
-    });
-
-    // Form untuk Edit
-    const {
-        data: editData,
-        setData: setEditData,
-        put,
-        processing: editProcessing,
-        errors: editErrors,
-        reset: resetEdit,
-    } = useForm({
-        code: '',
-        name: '',
-    });
+    // const [openDropdown, setOpenDropdown] = useState(false);
+    const [openDropdowns, setOpenDropdowns] = useState<{ [key: number]: boolean }>({});
+    const [search, setSearch] = useState(filters.search ?? '');
+    const [createData, setCreateData] = useState({ code: '', name: '' });
+    const [createErrors, setCreateErrors] = useState({ code: '', name: '' });
+    const [createProcessing, setCreateProcessing] = useState(false);
+    const [editData, setEditData] = useState({ code: '', name: '' });
+    const [editErrors, setEditErrors] = useState({ code: '', name: '' });
+    const [editProcessing, setEditProcessing] = useState(false);
 
     const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         router.get('/province', { search });
     };
 
-    // Handle Create
-    const handleCreate = (e: React.FormEvent) => {
+    const handleCreate = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post('/province', {
-            onSuccess: () => {
-                setOpenCreate(false);
-                resetCreate();
-            },
-        });
+        setCreateProcessing(true);
+        // Simulate API call
+        setTimeout(() => {
+            setCreateProcessing(false);
+            setOpenCreate(false);
+            // Reset form data
+            setCreateData({ code: '', name: '' });
+            setCreateErrors({ code: '', name: '' });
+            // Add new province to list
+            provinces.data.push(createData as Province);
+        }, 2000);
     };
 
-    // Handle Edit - Open Modal
     const handleEditClick = (province: Province) => {
         setOpenDropdowns((prev) => ({ ...prev, [province.id]: false }));
         setSelectedProvince(province);
@@ -102,40 +90,42 @@ export default function Index({ provinces, filters }: Props) {
             code: province.code,
             name: province.name,
         });
+        // setOpenDropdown(false);
         setOpenEdit(true);
     };
 
-    // Handle Edit - Submit
-    const handleEditSubmit = (e: React.FormEvent) => {
+    const handleEditSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (selectedProvince) {
-            put(`/province/${selectedProvince.id}`, {
-                onSuccess: () => {
-                    setOpenEdit(false);
-                    resetEdit();
-                    setSelectedProvince(null);
-                },
-            });
-        }
+        setEditProcessing(true);
+        // Simulate API call
+        setTimeout(() => {
+            setEditProcessing(false);
+            setOpenEdit(false);
+            // Update province in list
+            const index = provinces.data.findIndex((p) => p.id === selectedProvince?.id);
+            if (index !== -1) {
+                provinces.data[index] = editData as Province;
+            }
+        }, 2000);
     };
 
-    // Handle Delete - Open Modal
     const handleDeleteClick = (province: Province) => {
         setOpenDropdowns((prev) => ({ ...prev, [province.id]: false }));
         setSelectedProvince(province);
+        // setOpenDropdown(false);
         setOpenDelete(true);
     };
 
-    // Handle Delete - Confirm
     const handleDeleteConfirm = () => {
-        if (selectedProvince) {
-            router.delete(`/province/${selectedProvince.id}`, {
-                onSuccess: () => {
-                    setOpenDelete(false);
-                    setSelectedProvince(null);
-                },
-            });
-        }
+        // Simulate API call
+        setTimeout(() => {
+            setOpenDelete(false);
+            // Remove province from list
+            const index = provinces.data.findIndex((p) => p.id === selectedProvince?.id);
+            if (index !== -1) {
+                provinces.data.splice(index, 1);
+            }
+        }, 2000);
     };
 
     const handlePageChange = (url: string | null) => {
@@ -148,7 +138,7 @@ export default function Index({ provinces, filters }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Province" />
             <div className="flex h-full max-w-3xl flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                {/* Button Tambah */}
+                {/* Search & Tambah */}
                 <div className="flex items-center justify-between">
                     <form onSubmit={handleSearch} className="flex gap-2">
                         <Input placeholder="Cari provinsi..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-64" />
@@ -173,7 +163,7 @@ export default function Index({ provinces, filters }: Props) {
                                         <Input
                                             id="create_province_code"
                                             value={createData.code}
-                                            onChange={(e) => setCreateData('code', e.target.value)}
+                                            onChange={(e) => setCreateData({ ...createData, code: e.target.value })}
                                             placeholder="Masukkan kode provinsi"
                                         />
                                         {createErrors.code && <p className="text-sm text-red-500">{createErrors.code}</p>}
@@ -183,7 +173,7 @@ export default function Index({ provinces, filters }: Props) {
                                         <Input
                                             id="create_province_name"
                                             value={createData.name}
-                                            onChange={(e) => setCreateData('name', e.target.value)}
+                                            onChange={(e) => setCreateData({ ...createData, name: e.target.value })}
                                             placeholder="Masukkan nama provinsi"
                                         />
                                         {createErrors.name && <p className="text-sm text-red-500">{createErrors.name}</p>}
@@ -202,14 +192,13 @@ export default function Index({ provinces, filters }: Props) {
                     </Dialog>
                 </div>
 
-                {/* <div className="max-w-3xl"> */}
+                {/* Table */}
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            {/* <TableHead className="w-[100px]">ID</TableHead> */}
-                            <TableHead>Kode Provinsi</TableHead>
+                            <TableHead>Kode</TableHead>
                             <TableHead>Nama Provinsi</TableHead>
-                            <TableHead className="w-[60px]"></TableHead>
+                            <TableHead className="w-[150px] text-center">Aksi</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -219,7 +208,7 @@ export default function Index({ provinces, filters }: Props) {
                                     <TableCell className="py-0.5">{province.code}</TableCell>
                                     <TableCell className="py-0.5">{province.name}</TableCell>
                                     <TableCell className="py-0.5">
-                                        <div className="mt-0 flex justify-end">
+                                        <div className="mt-0 flex justify-center">
                                             <DropdownMenu
                                                 open={openDropdowns[province.id] || false}
                                                 onOpenChange={(open) => setOpenDropdowns((prev) => ({ ...prev, [province.id]: open }))}
@@ -242,11 +231,10 @@ export default function Index({ provinces, filters }: Props) {
                                                     </DropdownMenuItem>
                                                     <DropdownMenuSeparator />
                                                     <DropdownMenuItem
-                                                        onClick={() => handleDeleteClick(province)}
-                                                        // onSelect={(event) => {
-                                                        //     event.preventDefault();
-                                                        //     handleDeleteClick(province);
-                                                        // }}
+                                                        onSelect={(event) => {
+                                                            event.preventDefault();
+                                                            handleDeleteClick(province);
+                                                        }}
                                                     >
                                                         <Trash2 className="mr-2 h-4 w-4 text-destructive" />
                                                         <div className="text-destructive">Hapus</div>
@@ -259,15 +247,13 @@ export default function Index({ provinces, filters }: Props) {
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={4} className="text-center text-muted-foreground">
-                                    Tidak ada data provinsi
+                                <TableCell colSpan={3} className="text-center text-muted-foreground">
+                                    Tidak ada data
                                 </TableCell>
                             </TableRow>
                         )}
                     </TableBody>
                 </Table>
-                {/* </div> */}
-                {/* Table */}
 
                 {/* Pagination */}
                 {provinces.total > 10 && (
@@ -303,7 +289,7 @@ export default function Index({ provinces, filters }: Props) {
                                     <Input
                                         id="edit_province_code"
                                         value={editData.code}
-                                        onChange={(e) => setEditData('code', e.target.value)}
+                                        onChange={(e) => setEditData({ ...editData, code: e.target.value })}
                                         placeholder="Masukkan kode provinsi"
                                     />
                                     {editErrors.code && <p className="text-sm text-red-500">{editErrors.code}</p>}
@@ -313,7 +299,7 @@ export default function Index({ provinces, filters }: Props) {
                                     <Input
                                         id="edit_province_name"
                                         value={editData.name}
-                                        onChange={(e) => setEditData('name', e.target.value)}
+                                        onChange={(e) => setEditData({ ...editData, name: e.target.value })}
                                         placeholder="Masukkan nama provinsi"
                                     />
                                     {editErrors.name && <p className="text-sm text-red-500">{editErrors.name}</p>}
