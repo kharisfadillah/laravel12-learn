@@ -45,16 +45,16 @@ class DatabaseSeeder extends Seeder
             'name' => 'SOFTWARE ENGINEER',
         ]);
 
-        $province = Province::create([
-            'code' => 'KALSEL',
-            'name' => 'KALIMANTAN SELATAN',
-        ]);
+        // $province = Province::create([
+        //     'code' => 'KALSEL',
+        //     'name' => 'KALIMANTAN SELATAN',
+        // ]);
 
-        Regency::create([
-            'province_id' => $province->id,
-            'code' => 'TANBU',
-            'name' => 'TANAH BUMBU',
-        ]);
+        // Regency::create([
+        //     'province_id' => $province->id,
+        //     'code' => 'TANBU',
+        //     'name' => 'TANAH BUMBU',
+        // ]);
 
         Participant::create([
             'company_id' => $company->id,

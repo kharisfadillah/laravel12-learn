@@ -1,9 +1,12 @@
+import { DatePicker } from '@/components/date-picker';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { format } from 'date-fns';
 
 interface Company {
     id: string;
@@ -50,28 +53,28 @@ export default function Create({ companies, departments }: Props) {
                 <h2 className="text-xl font-semibold">Tambah Kandidat</h2>
                 <p className="mt-1 text-sm text-gray-500">Masukkan data kandidat baru. Klik simpan untuk menyimpan data.</p>
 
-                {/* <form onSubmit={handleSubmit} className="mt-3 space-y-4"> */}
                 <form onSubmit={handleSubmit} className="mt-3">
                     <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div>
                             <Label htmlFor="company_id">Unit Usaha</Label>
-                            <select
-                                id="company_id"
+                            <Select
                                 value={data.company_id}
-                                // onChange={(e) => console.log(e.target.value)}
-                                onChange={(e) => {
-                                    setData('company_id', e.target.value);
+                                onValueChange={(value) => {
+                                    setData('company_id', value);
                                     setData('department_id', '');
                                 }}
-                                className="w-full rounded-md border p-2"
                             >
-                                <option value="">Pilih Unit Usaha</option>
-                                {companies.map((company) => (
-                                    <option key={company.id} value={company.id}>
-                                        {company.name}
-                                    </option>
-                                ))}
-                            </select>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Pilih Unit Usaha" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {companies.map((company) => (
+                                            <SelectItem value={company.id}>{company.name}</SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
                             {errors.company_id && <p className="text-sm text-red-500">{errors.company_id}</p>}
                         </div>
 
@@ -99,61 +102,57 @@ export default function Create({ companies, departments }: Props) {
 
                         <div>
                             <Label htmlFor="department_id">Departemen</Label>
-                            <select
-                                id="department_id"
-                                value={data.department_id}
-                                onChange={(e) => setData('department_id', e.target.value)}
-                                className="w-full rounded-md border p-2"
-                                disabled={data.company_id == '0'} // nonaktif kalau belum pilih unit usaha
-                            >
-                                <option value="">Pilih Departemen</option>
-                                {departments
-                                    .filter((d) => d.company_id === data.company_id)
-                                    .map((department) => (
-                                        <option key={department.id} value={department.id}>
-                                            {department.name}
-                                        </option>
-                                    ))}
-                            </select>
+                            <Select value={data.department_id} onValueChange={(value) => setData('department_id', value)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Pilih Departemen" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {departments
+                                            .filter((d) => d.company_id === data.company_id)
+                                            .map((department) => (
+                                                <SelectItem value={department.id}>{department.name}</SelectItem>
+                                            ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
                             {errors.department_id && <p className="text-sm text-red-500">{errors.department_id}</p>}
                         </div>
 
                         <div>
                             <Label htmlFor="birth_date">Tanggal Lahir</Label>
-                            <input
-                                type="date"
-                                id="birth_date"
-                                value={data.birth_date}
-                                onChange={(e) => setData('birth_date', e.target.value)}
-                                className="w-full rounded-md border p-2"
+                            <DatePicker
+                                value={data.birth_date ? new Date(data.birth_date) : undefined}
+                                onChange={(date) => setData('birth_date', date ? format(date, 'yyyy-MM-dd') : '')}
                             />
                             {errors.birth_date && <p className="text-sm text-red-500">{errors.birth_date}</p>}
                         </div>
 
                         <div>
                             <Label htmlFor="gender">Jenis Kelamin</Label>
-                            <select
-                                id="gender"
-                                value={data.gender}
-                                onChange={(e) => setData('gender', e.target.value)}
-                                className="w-full rounded-md border p-2"
-                            >
-                                <option value="">Pilih Jenis Kelamin</option>
-                                <option value="Laki-laki">Laki-laki</option>
-                                <option value="Perempuan">Perempuan</option>
-                            </select>
+                            <Select onValueChange={(value) => setData('gender', value)}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Pilih Jenis Kelamin" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {/* <SelectLabel>Jenis Kelamin</SelectLabel> */}
+                                        <SelectItem value="Laki-laki">Laki-laki</SelectItem>
+                                        <SelectItem value="Perempuan">Perempuan</SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
                             {errors.gender && <p className="text-sm text-red-500">{errors.gender}</p>}
                         </div>
 
                         <div>
                             <Label htmlFor="phone">Nomor Telepon</Label>
-                            <input
+                            <Input
                                 type="tel"
                                 id="phone"
                                 value={data.phone}
                                 onChange={(e) => setData('phone', e.target.value)}
                                 placeholder="Masukkan nomor telepon"
-                                className="w-full rounded-md border p-2"
                             />
                             {errors.phone && <p className="text-sm text-red-500">{errors.phone}</p>}
                         </div>

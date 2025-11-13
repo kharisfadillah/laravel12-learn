@@ -43,11 +43,11 @@ class ParticipantController extends Controller
         $validated = $request->validate([
             'company_id' => 'required',
             'name' => 'required|string|max:150',
-            'position' => 'string|max:200',
+            'position' => 'nullable|string|max:200',
             'department_id' => 'nullable',
             'birth_date' => 'nullable',
             'gender' => 'required|string',
-            'phone' => 'required|string',
+            'phone' => 'nullable|string|20',
         ]);
 
         Participant::create($validated);

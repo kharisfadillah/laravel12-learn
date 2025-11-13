@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Regency extends Model
 {
     use HasUlids;
-    protected $fillable = ['province_id', 'regency_code', 'regency_name'];
+    protected $fillable = ['province_id', 'code', 'name'];
 
     public function province()
     {

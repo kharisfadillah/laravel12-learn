@@ -136,7 +136,7 @@ export default function Index({ provinces, regencies }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Kabupaten" />
-            <div className="flex h-full max-w-3xl flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+            <div className="flex h-full max-w-5xl flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 {/* Button Tambah */}
                 <div className="flex justify-end">
                     <Dialog open={openCreate} onOpenChange={setOpenCreate}>

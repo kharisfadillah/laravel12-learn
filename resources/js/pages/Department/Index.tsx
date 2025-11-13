@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
@@ -153,7 +154,19 @@ export default function Index({ companies, departments }: Props) {
                                     {/* Combobox Unit Usaha */}
                                     <div className="grid gap-2">
                                         <Label htmlFor="create_company_id">Unit Usaha</Label>
-                                        <select
+                                        <Select value={createData.company_id} onValueChange={(value) => setCreateData('company_id', value)}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Pilih Unit Usaha" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    {companies.map((company) => (
+                                                        <SelectItem value={company.id}>{company.name}</SelectItem>
+                                                    ))}
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                        {/* <select
                                             id="create_company_id"
                                             value={createData.company_id}
                                             onChange={(e) => setCreateData('company_id', e.target.value)}
@@ -165,7 +178,7 @@ export default function Index({ companies, departments }: Props) {
                                                     {company.name}
                                                 </option>
                                             ))}
-                                        </select>
+                                        </select> */}
                                         {createErrors.company_id && <p className="text-sm text-red-500">{createErrors.company_id}</p>}
                                     </div>
 
