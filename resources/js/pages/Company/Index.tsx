@@ -26,8 +26,6 @@ interface Company {
     name: string;
 }
 
-
-
 interface Props {
     companies: Company[];
     auth: Auth;
@@ -46,7 +44,7 @@ export default function Index({ companies }: Props) {
     const [openDelete, setOpenDelete] = useState(false);
     const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
 
-    const xx = useCan("HAHA");
+    const can = useCan();
 
     // Form untuk Create
     const {
@@ -135,8 +133,9 @@ export default function Index({ companies }: Props) {
                 <div className="flex justify-end">
                     <Dialog open={openCreate} onOpenChange={setOpenCreate}>
                         <DialogTrigger asChild>
-                            <Button>{xx ? "Yaaa" : "Yuuu"}</Button>
-                            {/* <Button>{auth.permissions.at(0)}</Button> */}
+                            {can('Tambah Unit Usaha') && <Button>Tambah Unit Usaha</Button>}
+
+                            {/* <Button>{can('HAHA') ? 'Yaya' : 'Yiyi'}</Button> */}
                             {/* <Button>Tambah Unit Usaha</Button> */}
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[425px]">

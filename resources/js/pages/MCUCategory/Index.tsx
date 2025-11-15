@@ -147,7 +147,7 @@ export default function Index({ mcucategories, filters }: Props) {
                 {/* Button Tambah */}
                 <div className="flex items-center justify-between">
                     <form onSubmit={handleSearch} className="flex gap-2">
-                        <Input placeholder="Cari provinsi..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-64" />
+                        <Input placeholder="Cari kategori..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-64" />
                         <Button type="submit" variant="outline">
                             <Search className="mr-2 h-4 w-4" /> Cari
                         </Button>

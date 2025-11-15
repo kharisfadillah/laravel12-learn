@@ -28,12 +28,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // ...
     })->middleware('permission:some-specific-permission');
 
+    // Route::resource('company', CompanyController::class)->only([
+    //     'index',
+    //     'store',
+    //     'update',
+    //     'destroy'
+    // ]);
+
     Route::resource('company', CompanyController::class)->only([
         'index',
         'store',
         'update',
         'destroy'
+    ])->middleware([
+        'index'   => 'permission:company.index',
+        'store'   => 'permission:company.store',
+        'update'  => 'permission:company.update',
+        'destroy' => 'permission:company.destroy',
     ]);
+
 
     Route::resource('department', DepartmentController::class)->only([
         'index',

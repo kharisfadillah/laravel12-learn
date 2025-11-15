@@ -9,15 +9,29 @@ interface AuthProps extends PageProps {
     };
 }
 
-export function useCan(permission: string) {
+// export function useCan(permission: string | string[]) {
+//     const { auth } = usePage<AuthProps>().props;
+
+//     if (Array.isArray(permission)) {
+//         return permission.some((p) => auth.permissions.includes(p));
+//     }
+
+//     return auth.permissions.includes(permission);
+// }
+
+export function useCan() {
     const { auth } = usePage<AuthProps>().props;
 
-    // return auth;
+    const can = (permission: string | string[]): boolean => {
+        if (auth.user.is_sa) {
+            return true;
+        }
+        if (Array.isArray(permission)) {
+            return permission.some((p) => auth.permissions.includes(p));
+        }
 
-    // if (Array.isArray(permission)) {
-    //     return permission.some((p) => permissions.includes(p));
-    // }
+        return auth.permissions.includes(permission);
+    };
 
-    return auth.permissions.includes(permission);
-    // return auth;
+    return can;
 }
