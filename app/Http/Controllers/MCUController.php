@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MCUFHeader;
+use App\Models\MCUIHeader;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -23,13 +23,12 @@ class MCUController extends Controller
 
         $search = $request->input('search');
 
-        $mcus = MCUFHeader::query()
+        $mcus = MCUIHeader::query()
+            ->with('company:id,name')
             ->when($search, function ($query, $search) {
-                $query->where('code', 'like', "%{$search}%")
-                    ->orWhere('name', 'like', "%{$search}%");
+                $query->where('name', 'like', "%{$search}%");
             })
             ->latest()
-            // ->orderByDesc('id')
             ->paginate(10)
             ->withQueryString();
 

@@ -52,7 +52,7 @@ class ProvinceController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'code' => 'required|string|max:10|unique:provinces,code',
+            'code' => 'required|string|max:100|unique:provinces,code',
             'name' => 'required|string|max:100',
         ]);
 
@@ -66,7 +66,7 @@ class ProvinceController extends Controller
         $province = Province::findOrFail($id);
 
         $validated = $request->validate([
-            'code' => 'required|string|max:10|unique:provinces,code,' . $id,
+            'code' => 'required|string|max:100|unique:provinces,code,' . $id,
             'name' => 'required|string|max:100',
         ]);
 

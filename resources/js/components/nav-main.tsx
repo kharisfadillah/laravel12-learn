@@ -19,7 +19,7 @@ export function NavMain({ masterItems = [], userManagementItems = [] }: { master
             </SidebarMenu>
             <SidebarMenu>
                 <SidebarMenuItem key="Medical Check Up">
-                    <SidebarMenuButton asChild isActive={page.url.startsWith('/mcu')} tooltip={{ children: 'Medical Check Up' }}>
+                    <SidebarMenuButton asChild isActive={page.url === '/mcu'} tooltip={{ children: 'Medical Check Up' }}>
                         <Link href="/mcu" prefetch>
                             <Stethoscope />
                             <span>Medical Check Up</span>

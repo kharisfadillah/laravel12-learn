@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\MCUCategoryController;
+use App\Http\Controllers\MCUParameterController;
 use App\Http\Controllers\ParticipantController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProvinceController;
@@ -70,6 +72,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('regency', RegencyController::class)->only([
         'index',
+        'store',
+        'update',
+        'destroy'
+    ]);
+
+    Route::resource('mcu-category', MCUCategoryController::class)->only([
+        'index',
+        'create',
+        'store',
+        'update',
+        'destroy'
+    ]);
+
+    Route::resource('mcu-parameter', MCUParameterController::class)->only([
+        'index',
+        'create',
         'store',
         'update',
         'destroy'
