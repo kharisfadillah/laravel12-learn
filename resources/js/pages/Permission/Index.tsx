@@ -20,7 +20,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface Permission {
-    id: number;
+    id: string;
     name: string;
     notes: string;
 }

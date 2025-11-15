@@ -20,17 +20,17 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface Province {
-    id: number;
+    id: string;
     code: string;
     name: string;
 }
 
 interface Regency {
-    id: number;
-    province_id: number;
+    id: string;
+    province_id: string;
     code: string;
     name: string;
-    province?: Province; // optional to avoid undefined errors
+    province?: Province;
 }
 
 interface Props {
@@ -60,7 +60,7 @@ export default function Index({ provinces, regencies }: Props) {
         errors: createErrors,
         reset: resetCreate,
     } = useForm({
-        province_id: 0,
+        province_id: '',
         code: '',
         name: '',
     });
@@ -74,7 +74,7 @@ export default function Index({ provinces, regencies }: Props) {
         errors: editErrors,
         reset: resetEdit,
     } = useForm({
-        province_id: 0,
+        province_id: '',
         code: '',
         name: '',
     });
@@ -156,7 +156,7 @@ export default function Index({ provinces, regencies }: Props) {
                                         <select
                                             id="create_province_id"
                                             value={createData.province_id}
-                                            onChange={(e) => setCreateData('province_id', Number(e.target.value))}
+                                            onChange={(e) => setCreateData('province_id', e.target.value)}
                                             className="rounded-md border p-2"
                                         >
                                             <option value={0}>Pilih Provinsi</option>
@@ -260,7 +260,7 @@ export default function Index({ provinces, regencies }: Props) {
                                     <select
                                         id="edit_province_id"
                                         value={editData.province_id}
-                                        onChange={(e) => setEditData('province_id', Number(e.target.value))}
+                                        onChange={(e) => setEditData('province_id', e.target.value)}
                                         className="rounded-md border p-2"
                                     >
                                         <option value={0}>Pilih Provinsi</option>

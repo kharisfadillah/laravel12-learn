@@ -24,6 +24,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 
+    Route::get('/secure-page', function () {
+        // ...
+    })->middleware('permission:some-specific-permission');
+
     Route::resource('company', CompanyController::class)->only([
         'index',
         'store',

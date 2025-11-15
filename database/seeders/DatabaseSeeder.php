@@ -22,10 +22,11 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::create([
-            'username' => 'test_user',
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'username' => 'superadmin',
+            'name' => 'Super Mimin',
+            'email' => 'super.mimin@example.com',
             'password' => Hash::make('password'),
+            'is_sa' => true,
         ]);
 
         $company = Company::create([
@@ -65,6 +66,5 @@ class DatabaseSeeder extends Seeder
             'gender' => 'Laki-laki',
             'phone' => '081234567899',
         ]);
-
     }
 }

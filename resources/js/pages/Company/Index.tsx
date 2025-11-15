@@ -13,8 +13,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useCan } from '@/hooks/use-can';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import { Auth, type BreadcrumbItem } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
@@ -25,8 +26,11 @@ interface Company {
     name: string;
 }
 
+
+
 interface Props {
     companies: Company[];
+    auth: Auth;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -41,6 +45,8 @@ export default function Index({ companies }: Props) {
     const [openEdit, setOpenEdit] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
     const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
+
+    const xx = useCan("HAHA");
 
     // Form untuk Create
     const {
@@ -129,7 +135,9 @@ export default function Index({ companies }: Props) {
                 <div className="flex justify-end">
                     <Dialog open={openCreate} onOpenChange={setOpenCreate}>
                         <DialogTrigger asChild>
-                            <Button>Tambah Unit Usaha</Button>
+                            <Button>{xx ? "Yaaa" : "Yuuu"}</Button>
+                            {/* <Button>{auth.permissions.at(0)}</Button> */}
+                            {/* <Button>Tambah Unit Usaha</Button> */}
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[425px]">
                             <form onSubmit={handleCreate}>
