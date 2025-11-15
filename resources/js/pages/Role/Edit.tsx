@@ -6,15 +6,15 @@ import type { BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 interface Permission {
-    id: number;
+    id: string;
     name: string;
 }
 
 interface Role {
-    id: number;
+    id: string;
     name: string;
     notes: string | null;
-    permissions: number[];
+    permissions: string[];
 }
 
 interface Props {
@@ -34,7 +34,7 @@ export default function Edit({ role, permissions }: Props) {
         permissions: role.permissions || [],
     });
 
-    const handleCheckboxChange = (id: number, checked: boolean) => {
+    const handleCheckboxChange = (id: string, checked: boolean) => {
         if (checked) {
             setData('permissions', [...data.permissions, id]);
         } else {

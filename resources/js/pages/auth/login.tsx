@@ -3,15 +3,16 @@ import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 import InputError from '@/components/input-error';
-import TextLink from '@/components/text-link';
+// import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+// import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
 
 type LoginForm = {
-    email: string;
+    username: string;
+    // email: string;
     password: string;
     remember: boolean;
 };
@@ -23,7 +24,8 @@ interface LoginProps {
 
 export default function Login({ status, canResetPassword }: LoginProps) {
     const { data, setData, post, processing, errors, reset } = useForm<Required<LoginForm>>({
-        email: '',
+        username: '',
+        // email: '',
         password: '',
         remember: false,
     });
@@ -41,7 +43,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
-                    <div className="grid gap-2">
+                    {/* <div className="grid gap-2">
                         <Label htmlFor="email">Email address</Label>
                         <Input
                             id="email"
@@ -55,17 +57,33 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             placeholder="email@example.com"
                         />
                         <InputError message={errors.email} />
+                    </div> */}
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="username">Username</Label>
+                        <Input
+                            id="username"
+                            type="text"
+                            required
+                            autoFocus
+                            tabIndex={1}
+                            autoComplete="username"
+                            value={data.username}
+                            onChange={(e) => setData('username', e.target.value)}
+                            placeholder="username"
+                        />
+                        <InputError message={errors.username} />
                     </div>
 
                     <div className="grid gap-2">
-                        {/* <div className="flex items-center">
+                        <div className="flex items-center">
                             <Label htmlFor="password">Password</Label>
-                            {canResetPassword && (
+                            {/* {canResetPassword && (
                                 <TextLink href={route('password.request')} className="ml-auto text-sm" tabIndex={5}>
                                     Forgot password?
                                 </TextLink>
-                            )}
-                        </div> */}
+                            )} */}
+                        </div>
                         <Input
                             id="password"
                             type="password"

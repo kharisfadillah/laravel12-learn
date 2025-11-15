@@ -8,12 +8,12 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import { Plus, Trash2 } from 'lucide-react';
 
 interface Role {
-    id: number;
+    id: string;
     name: string;
 }
 
 interface Company {
-    id: number;
+    id: string;
     name: string;
 }
 
@@ -23,7 +23,7 @@ interface RoleCompany {
 }
 
 interface User {
-    id: number;
+    id: string;
     username: string;
     name: string;
     email: string;

@@ -6,8 +6,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -49,31 +51,44 @@ class User extends Authenticatable
         ];
     }
 
-    public function roles()
+    public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(Role::class, 'user_role', 'user_id', 'role_id');
+        return $this->belongsToMany(Role::class, 'user_role_company', 'user_id', 'role_id')
+            ->withPivot('company_id');
     }
 
-    public function permissions()
+    public function getPermissions()
     {
         return $this->roles()
             ->with('permissions')
             ->get()
             ->pluck('permissions')
             ->flatten()
-            ->unique('id');
+            ->unique('id')
+            ->pluck('name')
+            ->values();
     }
 
     /**
      * Cek apakah user memiliki permission tertentu
      */
-    public function hasPermission(string $permissionSlug): bool
+    public function hasPermission(string $permission): bool
     {
         // Super Administrator bisa segalanya
         if ($this->isSuperAdmin()) {
             return true;
         }
 
-        return $this->permissions()->where('slug', $permissionSlug)->count() > 0;
+        return DB::table('user_role_company as urc')
+            ->join('role_permission as rp', 'urc.role_id', '=', 'rp.role_id')
+            ->join('permissions as p', 'rp.permission_id', '=', 'p.id')
+            ->where('urc.user_id', $this->id)
+            ->where('p.name', $permission)
+            ->exists();
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->is_sa == true;
     }
 }

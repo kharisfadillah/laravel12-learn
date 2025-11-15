@@ -6,7 +6,7 @@ import type { BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 interface Permission {
-    id: number;
+    id: string;
     name: string;
 }
 
@@ -23,10 +23,10 @@ export default function Create({ permissions }: Props) {
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         notes: '',
-        permissions: [] as number[],
+        permissions: [] as string[],
     });
 
-    const handleCheckboxChange = (id: number, checked: boolean) => {
+    const handleCheckboxChange = (id: string, checked: boolean) => {
         if (checked) {
             setData('permissions', [...data.permissions, id]);
         } else {

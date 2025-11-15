@@ -17,7 +17,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface User {
-    id: number;
+    id: string;
     username: string;
     name: string;
     email: string;

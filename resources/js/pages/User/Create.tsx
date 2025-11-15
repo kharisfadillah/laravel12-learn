@@ -8,12 +8,12 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import { Plus, Trash2 } from 'lucide-react';
 
 interface Role {
-    id: number;
+    id: string;
     name: string;
 }
 
 interface Company {
-    id: number;
+    id: string;
     name: string;
 }
 
@@ -50,28 +50,6 @@ export default function Create({ roles, companies }: Props) {
         updated[index][field] = value;
         setData('role_company', updated);
     };
-
-    // const handleChange = (index: number, field: 'role_id' | 'company_id', value: string) => {
-    //     const updated = [...data.role_company];
-    //     updated[index][field] = value;
-
-    //     // Cek duplikat kombinasi
-    //     const duplicates = updated.filter(
-    //         (rc, i) =>
-    //             i !== index &&
-    //             rc.role_id === updated[index].role_id &&
-    //             rc.company_id === updated[index].company_id &&
-    //             rc.role_id !== '' &&
-    //             rc.company_id !== '',
-    //     );
-
-    //     if (duplicates.length > 0) {
-    //         alert('Kombinasi Role dan Unit usaha sudah ada!');
-    //         return; // Batalkan perubahan
-    //     }
-
-    //     setData('role_company', updated);
-    // };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

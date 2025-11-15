@@ -21,7 +21,7 @@ import { Ellipsis, Pencil, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface Province {
-    id: number;
+    id: string;
     code: string;
     name: string;
 }
@@ -45,7 +45,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Index({ provinces, filters }: Props) {
-    const [openDropdowns, setOpenDropdowns] = useState<{ [key: number]: boolean }>({});
+    const [openDropdowns, setOpenDropdowns] = useState<{ [key: string]: boolean }>({});
     const [search, setSearch] = useState(filters.search ?? '');
     const [openCreate, setOpenCreate] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);

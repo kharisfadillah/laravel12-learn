@@ -17,7 +17,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface Role {
-    id: number;
+    id: string;
     name: string;
     notes: string;
 }
