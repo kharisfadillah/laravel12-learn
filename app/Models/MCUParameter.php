@@ -16,5 +16,23 @@ class MCUParameter extends Model
      */
     protected $table = 'mcu_parameters';
 
-    protected $fillable = ['name'];
+    protected $fillable = [
+        'category_id',
+        'name',
+        'input_type',
+        'unit',
+        'ranges',
+        'options',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'ranges' => 'array',
+        'options' => 'array',
+    ];
+
+    public function category()
+    {
+        return $this->belongsTo(MCUCategory::class, 'category_id', 'id');
+    }
 }

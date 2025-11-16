@@ -81,4 +81,14 @@ class ParticipantController extends Controller
 
         return redirect()->route('participant.index')->with('success', 'Kandidat berhasil dihapus.');
     }
+
+    public function search(Request $request)
+    {
+        $q = $request->get('q', '');
+
+        return Participant::query()
+            ->where('name', 'like', "%$q%")
+            ->limit(10)
+            ->get(['id', 'name', 'position']);
+    }
 }

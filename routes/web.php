@@ -3,6 +3,7 @@
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\MCUCategoryController;
+use App\Http\Controllers\MCUController;
 use App\Http\Controllers\MCUParameterController;
 use App\Http\Controllers\ParticipantController;
 use App\Http\Controllers\PermissionController;
@@ -94,9 +95,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         'destroy'
     ]);
 
-    Route::resource('mcu-category', MCUCategoryController::class)->only([
+    Route::resource('mcu', MCUController::class)->only([
         'index',
         'create',
+        'store',
+        'update',
+        'destroy'
+    ]);
+
+    Route::resource('mcu-category', MCUCategoryController::class)->only([
+        'index',
         'store',
         'update',
         'destroy'
@@ -117,6 +125,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         'update',
         'destroy'
     ]);
+
+    Route::get('/participant/search', [ParticipantController::class, 'search'])
+        ->name('participant.search');
 });
 
 require __DIR__ . '/settings.php';

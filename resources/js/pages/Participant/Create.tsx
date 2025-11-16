@@ -159,7 +159,7 @@ export default function Create({ companies, departments }: Props) {
                     </div>
 
                     <div className="mt-6 flex justify-end gap-2 border-t pt-6">
-                        <Link href="/role">
+                        <Link href="/participant">
                             <Button type="button" variant="outline">
                                 Batal
                             </Button>

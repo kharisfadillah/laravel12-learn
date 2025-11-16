@@ -18,27 +18,50 @@ import { Head, Link, router } from '@inertiajs/react';
 import { Ellipsis, Mars, Pencil, Search, Trash2, Venus } from 'lucide-react';
 import { JSX, useState } from 'react';
 
-interface MCUCategory {
+interface Company {
     id: string;
     name: string;
 }
 
-interface MCUParameter {
+interface Provider {
     id: string;
-    category_id: string;
     name: string;
-    input_type: string;
-    ranges: {
-        male: { min: string; max: string };
-        female: { min: string; max: string };
-    } | null; // kalau bukan Angka
-    options: string[] | null; // kalau bukan Pilihan
-    category?: MCUCategory;
 }
+
+interface MCUIHeader {
+    id: string;
+    company_id: string;
+    mcu_date: string;
+    participant_id: string;
+    name: string;
+    position: string;
+    department_name: string;
+    gender: string;
+    conclusion: string;
+    created_at: string;
+    company?: Company;
+    provider?: Provider;
+}
+
+// interface Participant {
+//     id: number;
+//     name: string;
+//     position: string;
+//     birth_date: string;
+//     gender: string;
+//     phone: string;
+//     company?: Company;
+//     department?: Department;
+// }
+
+// interface Department {
+//     id: number;
+//     name: string;
+// }
 
 interface Props {
-    mcuparameters: {
-        data: MCUParameter[];
+    mcus: {
+        data: MCUIHeader[];
         current_page: number;
         last_page: number;
         total: number;
@@ -47,41 +70,31 @@ interface Props {
     filters: { search?: string };
 }
 
-const genderLabels: Record<"male" | "female", string> = {
-    male: "Laki-laki",
-    female: "Perempuan",
-};
+const breadcrumbs: BreadcrumbItem[] = [{ title: 'Medical Check Up', href: '/mcu' }];
 
-const genderIcons: Record<"male" | "female", JSX.Element> = {
-    male: <Venus className="inline w-4 h-4 text-blue-600" />,
-    female: <Mars className="inline w-4 h-4 text-pink-600" />,
-};
-
-const breadcrumbs: BreadcrumbItem[] = [{ title: 'Parameter MCU', href: '/mcu-parameter' }];
-
-export default function Index({ mcuparameters, filters }: Props) {
+export default function Index({ mcus, filters }: Props) {
     const [openDropdowns, setOpenDropdowns] = useState<{ [key: string]: boolean }>({});
     const [search, setSearch] = useState(filters.search ?? '');
     const [openDelete, setOpenDelete] = useState(false);
-    const [selectedParameter, setSelectedParameter] = useState<MCUParameter | null>(null);
+    const [selectedMCU, setSelectedMCU] = useState<MCUIHeader | null>(null);
 
     const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         router.get('/mcu-parameter', { search });
     };
 
-    const handleDeleteClick = (param: MCUParameter) => {
+    const handleDeleteClick = (param: MCUIHeader) => {
         setOpenDropdowns((prev) => ({ ...prev, [param.id]: false }));
-        setSelectedParameter(param);
+        setSelectedMCU(param);
         setOpenDelete(true);
     };
 
     const handleDeleteConfirm = () => {
-        if (selectedParameter) {
-            router.delete(`/mcu-parameter/${selectedParameter.id}`, {
+        if (selectedMCU) {
+            router.delete(`/mcu/${selectedMCU.id}`, {
                 onSuccess: () => {
                     setOpenDelete(false);
-                    setSelectedParameter(null);
+                    setSelectedMCU(null);
                 },
             });
         }
@@ -95,12 +108,12 @@ export default function Index({ mcuparameters, filters }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Parameter MCU" />
+            <Head title="Medical Check Up" />
 
-            <div className="flex h-full max-w-3xl flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+            <div className="flex h-full w-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="flex items-center justify-between">
                     <form onSubmit={handleSearch} className="flex gap-2">
-                        <Input placeholder="Cari parameter..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-64" />
+                        <Input placeholder="Cari mcu..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-64" />
                         <Button type="submit" variant="outline">
                             <Search className="mr-2 h-4 w-4" /> Cari
                         </Button>
@@ -108,8 +121,8 @@ export default function Index({ mcuparameters, filters }: Props) {
 
                     {/* Header */}
                     <div className="flex justify-end">
-                        <Link href="/mcu-parameter/create">
-                            <Button>Tambah Parameter MCU</Button>
+                        <Link href="/mcu/create">
+                            <Button>Tambah MCU</Button>
                         </Link>
                     </div>
                 </div>
@@ -118,45 +131,38 @@ export default function Index({ mcuparameters, filters }: Props) {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Kategori</TableHead>
+                            <TableHead>Unit Usaha</TableHead>
+                            <TableHead>Tanggal MCU</TableHead>
+                            <TableHead>Waktu Input</TableHead>
                             <TableHead>Nama</TableHead>
-                            <TableHead>Tipe Input</TableHead>
-                            <TableHead>Nilai Normal</TableHead>
-                            <TableHead>Pilihan</TableHead>
+                            <TableHead>Jabatan</TableHead>
+                            <TableHead>Departemen</TableHead>
+                            <TableHead>Jenis Kelamin</TableHead>
+                            <TableHead>Provider MCU</TableHead>
+                            <TableHead>Kesimpulan Awal</TableHead>
                             <TableHead className="w-[60px]" />
                         </TableRow>
                     </TableHeader>
 
                     <TableBody>
-                        {mcuparameters.data.length > 0 ? (
-                            mcuparameters.data.map((parameter) => (
-                                <TableRow key={parameter.id}>
-                                    <TableCell className="py-0.5">{parameter.category?.name}</TableCell>
-                                    <TableCell className="py-0.5">{parameter.name}</TableCell>
-                                    <TableCell className="py-0.5">{parameter.input_type}</TableCell>
-                                    {/* <TableCell>
-                                        {Object.entries(parameter.ranges ?? {}).map(([gender, value]) => (
-                                            <div key={gender}>
-                                                {genderLabels[gender as "male" | "female"]} : {value.min} – {value.max}
-                                            </div>
-                                        ))}
-                                    </TableCell> */}
-                                    <TableCell className="py-0.5">
-                                        {Object.entries(parameter.ranges ?? {}).map(([gender, value]) => (
-                                            <div key={gender} className="flex items-center gap-2">
-                                                {genderIcons[gender as "male" | "female"]}
-                                                <span>{value.min} – {value.max}</span>
-                                            </div>
-                                        ))}
-                                    </TableCell>
+                        {mcus.data.length > 0 ? (
+                            mcus.data.map((mcu) => (
+                                <TableRow key={mcu.id}>
+                                    <TableCell className="py-0.5">{mcu.company?.name}</TableCell>
+                                    <TableCell className="py-0.5">{mcu.mcu_date}</TableCell>
+                                    <TableCell className="py-0.5">{mcu.created_at}</TableCell>
+                                    <TableCell className="py-0.5">{mcu.name}</TableCell>
+                                    <TableCell className="py-0.5">{mcu.position}</TableCell>
+                                    <TableCell className="py-0.5">{mcu.department_name}</TableCell>
+                                    <TableCell className="py-0.5">{mcu.gender}</TableCell>
+                                    <TableCell className="py-0.5">{mcu.provider?.name}</TableCell>
+                                    <TableCell className="py-0.5">{mcu.conclusion}</TableCell>
 
-
-                                    <TableCell className="py-0.5">{(parameter.options ?? []).join(", ")}</TableCell>
                                     <TableCell className="py-0.5">
                                         <div className="mt-0 flex justify-end">
                                             <DropdownMenu
-                                                open={openDropdowns[parameter.id] || false}
-                                                onOpenChange={(open) => setOpenDropdowns((prev) => ({ ...prev, [parameter.id]: open }))}
+                                                open={openDropdowns[mcu.id] || false}
+                                                onOpenChange={(open) => setOpenDropdowns((prev) => ({ ...prev, [mcu.id]: open }))}
                                             >
                                                 <DropdownMenuTrigger asChild>
                                                     <Button size="sm" variant="ghost">
@@ -166,7 +172,7 @@ export default function Index({ mcuparameters, filters }: Props) {
                                                 <DropdownMenuContent className="w-56" align="start">
                                                     <DropdownMenuItem>
                                                         <Link
-                                                            href={`/mcu-parameter/${parameter.id}/edit`}
+                                                            href={`/mcu/${mcu.id}/edit`}
                                                             className="flex items-center gap-2"
                                                         >
                                                             <Pencil className="mr-2 w-4 h-4" />
@@ -176,7 +182,7 @@ export default function Index({ mcuparameters, filters }: Props) {
                                                     </DropdownMenuItem>
                                                     <DropdownMenuSeparator />
                                                     <DropdownMenuItem
-                                                        onClick={() => handleDeleteClick(parameter)}
+                                                        onClick={() => handleDeleteClick(mcu)}
                                                     // onSelect={(event) => {
                                                     //     event.preventDefault();
                                                     //     handleDeleteClick(province);
@@ -205,8 +211,8 @@ export default function Index({ mcuparameters, filters }: Props) {
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={5} className="text-center text-muted-foreground">
-                                    Tidak ada data parameter MCU.
+                                <TableCell colSpan={9} className="text-center text-muted-foreground">
+                                    Tidak ada data MCU.
                                 </TableCell>
                             </TableRow>
                         )}
@@ -214,9 +220,9 @@ export default function Index({ mcuparameters, filters }: Props) {
                 </Table>
 
                 {/* Pagination */}
-                {mcuparameters.total > 10 && (
+                {mcus.total > 10 && (
                     <div className="flex justify-end gap-2">
-                        {mcuparameters.links.map((link, i) =>
+                        {mcus.links.map((link, i) =>
                             link.url ? (
                                 <Button
                                     key={i}
@@ -237,9 +243,9 @@ export default function Index({ mcuparameters, filters }: Props) {
                 <AlertDialog open={openDelete} onOpenChange={setOpenDelete}>
                     <AlertDialogContent>
                         <AlertDialogHeader>
-                            <AlertDialogTitle>Hapus Parameter MCU</AlertDialogTitle>
+                            <AlertDialogTitle>Hapus MCU</AlertDialogTitle>
                             <AlertDialogDescription>
-                                Apakah Anda yakin ingin menghapus parameter <strong>{selectedParameter?.name}</strong>? Tindakan ini tidak dapat
+                                Apakah Anda yakin ingin menghapus mcu <strong>{selectedMCU?.name}</strong>? Tindakan ini tidak dapat
                                 dibatalkan.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
