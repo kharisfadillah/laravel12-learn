@@ -128,6 +128,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/participant/search', [ParticipantController::class, 'search'])
         ->name('participant.search');
+
+    Route::get('/mcu-parameter/search', [MCUParameterController::class, 'search'])
+        ->name('mcu-parameter.search');
 });
 
 require __DIR__ . '/settings.php';

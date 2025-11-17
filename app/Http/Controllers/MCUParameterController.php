@@ -153,4 +153,11 @@ class MCUParameterController extends Controller
 
         return redirect()->route('mcu-parameter.index')->with('success', 'Parameter MCU berhasil dihapus.');
     }
+
+    public function search()
+    {
+        return MCUParameter::query()
+            ->with('category')
+            ->get();
+    }
 }

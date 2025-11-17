@@ -70,4 +70,20 @@ export interface Participant {
     department?: Department;
 }
 
+export interface MCUCategory {
+    id: string;
+    name: string;
+}
+
+export interface MCUParameter {
+    id: string;
+    category_id: string;
+    name: string;
+    input_type: string;
+    unit?: string;
+    ranges?: string;
+    options?: string;
+    category?: MCUCategory;
+}
+
 

@@ -41,7 +41,7 @@ return new class extends Migration
 
         Schema::create('companies', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            // $table->string('code', 10);
+            $table->string('code', 10);
             $table->string('name', 50);
             $table->foreignUlid('created_id')
                 ->nullable()
