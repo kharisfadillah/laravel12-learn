@@ -15,20 +15,13 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useCan } from '@/hooks/use-can';
 import AppLayout from '@/layouts/app-layout';
-import { Auth, type BreadcrumbItem } from '@/types';
+import { Company, type BreadcrumbItem } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-interface Company {
-    id: number;
-    code: string;
-    name: string;
-}
-
 interface Props {
     companies: Company[];
-    auth: Auth;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [

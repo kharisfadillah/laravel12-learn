@@ -1,13 +1,16 @@
 import { DatePicker } from '@/components/date-picker';
 import ParticipantLookup from '@/components/participant-lookup';
+import { RecordItem } from '@/components/record-item';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types';
+import type { BreadcrumbItem, Participant } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { format } from 'date-fns';
+import { Search, UserPlus } from 'lucide-react';
+import { useState } from 'react';
 
 interface Company {
     id: string;
@@ -20,6 +23,8 @@ interface Department {
     company_id: string;
 }
 
+// interface Participant
+
 interface Props {
     companies: Company[];
     departments: Department[];
@@ -31,6 +36,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Create({ companies, departments }: Props) {
+    const [participant, setParticipant] = useState<Participant | null>(null);
+    const [openLookup, setOpenLookup] = useState(false);
     const { data, setData, post, processing, errors } = useForm({
         company_id: '',
         mcu_type: '',
@@ -87,17 +94,14 @@ export default function Create({ companies, departments }: Props) {
 
                         <div>
                             <Label htmlFor="mcu_type">Tipe MCU</Label>
-                            <Select
-                                value={data.mcu_type}
-                                onValueChange={(value) => setData('mcu_type', value)}
-                            >
+                            <Select value={data.mcu_type} onValueChange={(value) => setData('mcu_type', value)}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Pilih Tipe MCU" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
-                                        <SelectItem value='prakerja'>Prakerja</SelectItem>
-                                        <SelectItem value='berkala'>Berkala</SelectItem>
+                                        <SelectItem value="prakerja">Prakerja</SelectItem>
+                                        <SelectItem value="berkala">Berkala</SelectItem>
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
@@ -112,15 +116,59 @@ export default function Create({ companies, departments }: Props) {
                             />
                             {errors.mcu_date && <p className="text-sm text-red-500">{errors.mcu_date}</p>}
                         </div>
+                    </div>
 
+                    {/* <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div>
                             <Label>Kandidat</Label>
                             <ParticipantLookup
                                 value={null}
-                                onSelect={(participant) => setData("participant_id", participant.id)}
+                                onSelect={(participant) => {
+                                    setData('participant_id', participant.id);
+                                    setParticipant(participant);
+                                }}
                             />
                         </div>
-                    </div>
+                    </div> */}
+
+                    <Card className="mt-4 gap-3 py-3">
+                        <CardHeader className="px-3">
+                            <CardTitle>Kandidat</CardTitle>
+                            {/* <CardDescription>Card Description</CardDescription> */}
+                        </CardHeader>
+                        <CardContent className="grid grid-flow-col grid-rows-2 gap-2 px-3 py-0">
+                            {/* <RecordItem label="Unit Usaha" value={participant?.company?.name ?? ''} /> */}
+                            <RecordItem label="Nama" value={participant?.name ?? '-'} />
+                            <RecordItem label="Jabatan" value={participant?.position ?? '-'} />
+                            <RecordItem label="Departemen" value={participant?.department?.name ?? '-'} />
+                            <RecordItem label="Tanggal Lahir" value={participant?.birth_date ?? '-'} />
+                            <RecordItem label="Jenis Kelamin" value={participant?.gender ?? '-'} />
+                        </CardContent>
+                        <CardFooter className="flex justify-end gap-2 px-3">
+                            {/* <p>Card Footer</p> */}
+                            <Button variant="outline" onClick={() => setOpenLookup(true)}>
+                                <Search className="mr-2 h-4 w-4" />
+                                Cari Kandidat
+                            </Button>
+
+                            <Button>
+                                <UserPlus className="mr-2 h-4 w-4" />
+                                Kandidat Baru
+                            </Button>
+                        </CardFooter>
+                    </Card>
+
+                    <Card className="mt-4 gap-3 py-3">
+                        <CardHeader className="flex justify-between px-3">
+                            <CardTitle>Hasil MCU</CardTitle>
+
+                            <Button variant="outline" onClick={() => setOpenLookup(true)}>
+                                <Search className="mr-2 h-4 w-4" />
+                                Cari Kandidat
+                            </Button>
+                        </CardHeader>
+                        <CardContent className="grid grid-flow-col grid-rows-2 gap-2 px-3 py-0"></CardContent>
+                    </Card>
 
                     <div className="mt-6 flex justify-end gap-2 border-t pt-6">
                         <Link href="/participant">
@@ -133,6 +181,20 @@ export default function Create({ companies, departments }: Props) {
                         </Button>
                     </div>
                 </form>
+                {openLookup && (
+                    <ParticipantLookup
+                        open={openLookup}
+                        onOpenChange={setOpenLookup}
+                        value={participant}
+                        // companyId={data.company_id} // opsional jika mau filter berdasarkan unit usaha
+                        onSelect={(p: Participant) => {
+                            setParticipant(p);
+                            setData('participant_id', p.id);
+                            setData('company_id', p.company_id);
+                            setOpenLookup(false);
+                        }}
+                    />
+                )}
             </div>
         </AppLayout>
     );

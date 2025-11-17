@@ -45,3 +45,29 @@ export interface User {
     is_sa: boolean;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export interface Company {
+    id: string;
+    code: string;
+    name: string;
+}
+
+export interface Department {
+    id: string;
+    name: string;
+}
+
+export interface Participant {
+    id: string;
+    company_id: string;
+    name: string;
+    position?: string;
+    department_id: string;
+    birth_date?: string;
+    gender: string;
+    phone?: string;
+    company?: Company;
+    department?: Department;
+}
+
+

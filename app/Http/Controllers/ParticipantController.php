@@ -86,9 +86,28 @@ class ParticipantController extends Controller
     {
         $q = $request->get('q', '');
 
+        // return Participant::query()
+        //     ->where('name', 'like', "%$q%")
+        //     ->limit(10)
+        //     ->get(['id', 'name', 'position']);
+
         return Participant::query()
+            ->with(['company', 'department'])
             ->where('name', 'like', "%$q%")
             ->limit(10)
-            ->get(['id', 'name', 'position']);
+            ->get();
+
+
+
+        // id: string;
+        // company_id: string;
+        // name: string;
+        // position?: string;
+        // department_id: string;
+        // birth_date?: string;
+        // gender: string;
+        // phone?: string;
+        // company?: Company;
+        // department?: Department;
     }
 }
