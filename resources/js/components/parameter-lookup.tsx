@@ -1,9 +1,10 @@
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { MCUParameter } from '@/types';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { Checkbox } from './ui/checkbox';
+import { Label } from './ui/label';
 
 type GroupedParameters = Record<string, MCUParameter[]>;
 
@@ -28,24 +29,27 @@ export default function ParameterLookup({ open, onOpenChange, onSelect }: Props)
                 .get('/mcu-parameter/search')
                 .then((res) => {
                     console.log(res.data);
-                    const groupedParameters: GroupedParameters = res.data.reduce((acc: { [x: string]: any[]; }, item: { category: { name: string; }; }) => {
-                        const cat = item.category?.name ?? "Tanpa Kategori";
+                    const groupedParameters: GroupedParameters = res.data.reduce(
+                        (acc: { [x: string]: unknown[] }, item: { category: { name: string } }) => {
+                            const cat = item.category?.name ?? 'Tanpa Kategori';
 
-                        if (!acc[cat]) acc[cat] = [];
-                        acc[cat].push(item);
+                            if (!acc[cat]) acc[cat] = [];
+                            acc[cat].push(item);
 
-                        return acc;
-                    }, {});
+                            return acc;
+                        },
+                        {},
+                    );
 
                     const categories = Array.from(
                         new Set<string>(
                             res.data
-                                .map((item: { category: { name: string; }; }) => item.category?.name) // ambil category name
-                                .filter(Boolean)                  // buang null/undefined
-                        )
+                                .map((item: { category: { name: string } }) => item.category?.name) // ambil category name
+                                .filter(Boolean), // buang null/undefined
+                        ),
                     );
                     setCategories(categories);
-                    setParameters(res.data);
+                    setGroupedParameters(groupedParameters);
                 })
                 .finally(() => setLoading(false));
         } else {
@@ -78,17 +82,39 @@ export default function ParameterLookup({ open, onOpenChange, onSelect }: Props)
                 <div className="mt-2 max-h-80 space-y-3 overflow-y-auto">
                     {loading && <div className="py-4 text-center text-muted-foreground">Memuat parameter...</div>}
 
-                    {!loading && categories.map((cat) => {
-                        return (
-                            <div className="grid">
-                                <p className="text-sm font-bold">{cat}</p>
-                                <div className="grid grid-flow-col grid-rows-2 gap-2 px-3 py-0">
+                    {!loading &&
+                        categories.map((cat) => {
+                            const params = groupedParameters === null ? [] : groupedParameters[cat];
 
+                            return (
+                                <div className="grid">
+                                    <p className="text-sm font-bold">{cat}</p>
+                                    <div className="grid auto-rows-auto grid-cols-4 gap-2 px-3">
+                                        {params.map((param) => {
+                                            const checked = selected.some((p) => p.id === param.id);
+                                            return (
+                                                <Label key={param.id} className="flex items-center gap-2">
+                                                    <Checkbox checked={checked} onCheckedChange={() => toggleSelect(param)} />
+                                                    {/* <Input
+                                                        type="checkbox"
+                                                        value={param.id}
+                                                        // checked={selectedIds.includes(param.id)}
+                                                        onChange={(e) => {
+                                                            // if (e.target.checked) {
+                                                            //     setSelectedIds([...selectedIds, param.id]);
+                                                            // } else {
+                                                            //     setSelectedIds(selectedIds.filter((id) => id !== param.id));
+                                                            // }
+                                                        }}
+                                                    /> */}
+                                                    <span className="text-sm">{param.name}</span>
+                                                </Label>
+                                            );
+                                        })}
+                                    </div>
                                 </div>
-                            </div>
-
-                        );
-                    })}
+                            );
+                        })}
 
                     {/* {!loading &&
                         parameters.map((param) => {

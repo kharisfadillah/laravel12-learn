@@ -17,7 +17,8 @@ import { useState } from 'react';
 
 type MCUResult = {
     id: string;
-    category_id: string;
+    // category_id: string;
+    category: string;
     name: string;
     input_type: string;
     unit: string;
@@ -220,7 +221,7 @@ export default function Create({ companies }: Props) {
                                     {data.results.length > 1 ? (
                                         data.results.map((result, index) => (
                                             <TableRow key={index}>
-                                                <TableCell className="py-0.5">{result.name}</TableCell>
+                                                <TableCell className="py-0.5">{result.category}</TableCell>
                                                 <TableCell className="py-0.5">{result.name}</TableCell>
                                                 <TableCell className="py-0.5"></TableCell>
                                                 <TableCell className="py-0.5">
@@ -284,7 +285,7 @@ export default function Create({ companies }: Props) {
                             // console.log(p);
                             const converted: MCUResult[] = p.map((item) => ({
                                 id: item.id,
-                                category_id: item.category_id ?? '', // sesuaikan
+                                category: item.category?.name ?? '', // sesuaikan
                                 name: item.name,
                                 input_type: item.input_type ?? 'text', // default jika tidak ada
                                 unit: item.unit ?? '',
