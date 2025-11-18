@@ -262,14 +262,72 @@ export default function Create({ companies }: Props) {
                                                     data.mcu_param_results.map((r, i) => (i === index ? { ...r, result: value } : r)),
                                                 );
                                             };
-                                            const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-                                                
-                                                if (e.key === 'Enter') {
-                                                    setData(
-                                                        'mcu_param_results',
-                                                        data.mcu_param_results.map((r, i) => (i === index ? { ...r, notes: param_result.result } : r)),
-                                                    );
+                                            const computeNote = () => {
+                                                // 1. Ambil Nilai Batas (Min/Max) berdasarkan Jenis Kelamin
+                                                const minValueStr = param_result.ranges?.[participant?.gender === 'female' ? 'female' : 'male']?.min;
+                                                const maxValueStr = param_result.ranges?.[participant?.gender === 'female' ? 'female' : 'male']?.max;
+
+                                                // Ambil hasil yang baru saja dimasukkan (sudah ada di state 'result' karena onChange sudah berjalan)
+                                                const currentResultStr = param_result.result;
+
+                                                // 2. Konversi ke Angka
+                                                const resultValue = parseFloat(currentResultStr);
+                                                const minValue = parseFloat(minValueStr ?? '0');
+                                                const maxValue = parseFloat(maxValueStr ?? '0');
+
+                                                let note = 'Normal'; // Default Notes
+
+                                                // 3. Logika Penentuan Catatan
+                                                if (!isNaN(resultValue) && minValueStr && maxValueStr) {
+                                                    // Pastikan nilainya angka dan batasnya tersedia
+                                                    if (resultValue < minValue) {
+                                                        note = 'Tidak Normal (Rendah)';
+                                                    } else if (resultValue > maxValue) {
+                                                        note = 'Tidak Normal (Tinggi)';
+                                                    } else {
+                                                        note = 'Normal';
+                                                    }
+                                                } else if (!currentResultStr) {
+                                                    // Jika hasil input kosong, reset note
+                                                    note = '';
+                                                } else {
+                                                    // Jika ranges tidak valid, gunakan catatan default atau kosong
+                                                    note = 'Rentang tidak tersedia';
                                                 }
+
+                                                // 4. Update State (result dan notes)
+                                                setData(
+                                                    'mcu_param_results',
+                                                    data.mcu_param_results.map((r, i) =>
+                                                        i === index
+                                                            ? {
+                                                                  ...r,
+                                                                  // result sudah di-update oleh onChange, tetapi kita masukkan lagi
+                                                                  // untuk memastikan konsistensi jika ini adalah handler utama.
+                                                                  result: currentResultStr,
+                                                                  notes: note, // 🚀 Catatan yang sudah ditentukan
+                                                              }
+                                                            : r,
+                                                    ),
+                                                );
+                                                // let result_note = '';
+                                                // let minValue = param_result.ranges?.male.min;
+                                                // let maxValue = param_result.ranges?.male.max;
+                                                // if (participant?.gender === 'female') {
+                                                //     minValue = param_result.ranges?.female.min;
+                                                //     maxValue = param_result.ranges?.female.max;
+                                                // }
+                                                // if (minValue !== null) {
+
+                                                // }
+                                                // if (e.key === 'Enter') {
+                                                //     setData(
+                                                //         'mcu_param_results',
+                                                //         data.mcu_param_results.map((r, i) =>
+                                                //             i === index ? { ...r, notes: param_result.result } : r,
+                                                //         ),
+                                                //     );
+                                                // }
                                             };
                                             return (
                                                 <TableRow key={index}>
@@ -292,9 +350,15 @@ export default function Create({ companies }: Props) {
                                                         {param_result.input_type === 'Angka' && (
                                                             <Input
                                                                 type="number"
+                                                                step="0.1"
                                                                 value={param_result.result || ''}
                                                                 onChange={(e) => handleChange(e.target.value)}
-                                                                onKeyDown={(e) => handleKeyDown(e)}
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === 'Enter') {
+                                                                        computeNote();
+                                                                    }
+                                                                }}
+                                                                onBlur={() => computeNote()}
                                                             />
                                                         )}
                                                         {param_result.input_type === 'Teks Bebas' && (
