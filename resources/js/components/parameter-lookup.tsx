@@ -83,13 +83,13 @@ export default function ParameterLookup({ open, onOpenChange, onSelect }: Props)
                     {loading && <div className="py-4 text-center text-muted-foreground">Memuat parameter...</div>}
 
                     {!loading &&
-                        categories.map((cat) => {
+                        categories.map((cat, index) => {
                             const params = groupedParameters === null ? [] : groupedParameters[cat];
 
                             return (
-                                <div className="grid">
+                                <div key={index} className="grid">
                                     <p className="text-sm font-bold">{cat}</p>
-                                    <div className="grid auto-rows-auto grid-cols-4 gap-2 px-3">
+                                    <div className="grid auto-rows-auto grid-cols-5 gap-2 px-3">
                                         {params.map((param) => {
                                             const checked = selected.some((p) => p.id === param.id);
                                             return (

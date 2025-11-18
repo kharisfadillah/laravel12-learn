@@ -75,14 +75,28 @@ export interface MCUCategory {
     name: string;
 }
 
+// export interface MCUParameter {
+//     id: string;
+//     category_id: string;
+//     name: string;
+//     input_type: string;
+//     unit?: string;
+//     ranges?: string;
+//     options?: string[];
+//     category?: MCUCategory;
+// }
+
 export interface MCUParameter {
     id: string;
     category_id: string;
     name: string;
     input_type: string;
     unit?: string;
-    ranges?: string;
-    options?: string;
+    ranges?: {
+        male: { min: string; max: string };
+        female: { min: string; max: string };
+    } | null;
+    options: string[] | null;
     category?: MCUCategory;
 }
 

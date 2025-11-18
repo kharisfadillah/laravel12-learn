@@ -1,3 +1,4 @@
+import { RangeDisplay } from '@/components/range-display';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -13,28 +14,24 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types';
+import { formatRange } from '@/lib/utils';
+import type { BreadcrumbItem, MCUParameter } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
 import { Ellipsis, Mars, Pencil, Search, Trash2, Venus } from 'lucide-react';
 import { JSX, useState } from 'react';
 
-interface MCUCategory {
-    id: string;
-    name: string;
-}
-
-interface MCUParameter {
-    id: string;
-    category_id: string;
-    name: string;
-    input_type: string;
-    ranges: {
-        male: { min: string; max: string };
-        female: { min: string; max: string };
-    } | null; // kalau bukan Angka
-    options: string[] | null; // kalau bukan Pilihan
-    category?: MCUCategory;
-}
+// interface MCUParameter {
+//     id: string;
+//     category_id: string;
+//     name: string;
+//     input_type: string;
+//     ranges: {
+//         male: { min: string; max: string };
+//         female: { min: string; max: string };
+//     } | null; // kalau bukan Angka
+//     options: string[] | null; // kalau bukan Pilihan
+//     category?: MCUCategory;
+// }
 
 interface Props {
     mcuparameters: {
@@ -97,7 +94,7 @@ export default function Index({ mcuparameters, filters }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Parameter MCU" />
 
-            <div className="flex h-full max-w-3xl flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+            <div className="flex h-full max-w-6xl flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="flex items-center justify-between">
                     <form onSubmit={handleSearch} className="flex gap-2">
                         <Input placeholder="Cari parameter..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-64" />
@@ -115,103 +112,82 @@ export default function Index({ mcuparameters, filters }: Props) {
                 </div>
 
                 {/* Table */}
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Kategori</TableHead>
-                            <TableHead>Nama</TableHead>
-                            <TableHead>Tipe Input</TableHead>
-                            <TableHead>Nilai Normal</TableHead>
-                            <TableHead>Pilihan</TableHead>
-                            <TableHead className="w-[60px]" />
-                        </TableRow>
-                    </TableHeader>
+                <div className="overflow-hidden rounded-lg border">
+                    <Table>
+                        <TableHeader className='bg-gray-100'>
+                            <TableRow>
+                                <TableHead>Kategori</TableHead>
+                                <TableHead>Nama</TableHead>
+                                <TableHead>Tipe Input</TableHead>
+                                <TableHead>Satuan</TableHead>
+                                <TableHead>Nilai Rujukan</TableHead>
+                                <TableHead>Pilihan</TableHead>
+                                <TableHead className="w-[60px]" />
+                            </TableRow>
+                        </TableHeader>
 
-                    <TableBody>
-                        {mcuparameters.data.length > 0 ? (
-                            mcuparameters.data.map((parameter) => (
-                                <TableRow key={parameter.id}>
-                                    <TableCell className="py-0.5">{parameter.category?.name}</TableCell>
-                                    <TableCell className="py-0.5">{parameter.name}</TableCell>
-                                    <TableCell className="py-0.5">{parameter.input_type}</TableCell>
-                                    {/* <TableCell>
-                                        {Object.entries(parameter.ranges ?? {}).map(([gender, value]) => (
-                                            <div key={gender}>
-                                                {genderLabels[gender as "male" | "female"]} : {value.min} – {value.max}
-                                            </div>
-                                        ))}
-                                    </TableCell> */}
-                                    <TableCell className="py-0.5">
-                                        {Object.entries(parameter.ranges ?? {}).map(([gender, value]) => (
-                                            <div key={gender} className="flex items-center gap-2">
-                                                {genderIcons[gender as "male" | "female"]}
-                                                <span>{value.min} – {value.max}</span>
-                                            </div>
-                                        ))}
-                                    </TableCell>
-
-
-                                    <TableCell className="py-0.5">{(parameter.options ?? []).join(", ")}</TableCell>
-                                    <TableCell className="py-0.5">
-                                        <div className="mt-0 flex justify-end">
-                                            <DropdownMenu
-                                                open={openDropdowns[parameter.id] || false}
-                                                onOpenChange={(open) => setOpenDropdowns((prev) => ({ ...prev, [parameter.id]: open }))}
-                                            >
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button size="sm" variant="ghost">
-                                                        <Ellipsis size={16} />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent className="w-56" align="start">
-                                                    <DropdownMenuItem>
-                                                        <Link
-                                                            href={`/mcu-parameter/${parameter.id}/edit`}
-                                                            className="flex items-center gap-2"
+                        <TableBody>
+                            {mcuparameters.data.length > 0 ? (
+                                mcuparameters.data.map((parameter) => (
+                                    <TableRow key={parameter.id}>
+                                        <TableCell className="py-0.5">{parameter.category?.name}</TableCell>
+                                        <TableCell className="py-0.5">{parameter.name}</TableCell>
+                                        <TableCell className="py-0.5">{parameter.input_type}</TableCell>
+                                        <TableCell className="py-0.5">{parameter.unit ?? '-'}</TableCell>
+                                        <TableCell className="py-0.5">
+                                            <RangeDisplay ranges={parameter.ranges} genderIcons={genderIcons} />
+                                        </TableCell>
+                                        <TableCell className="py-0.5">{(parameter.options ?? []).join(", ")}</TableCell>
+                                        <TableCell className="py-0.5">
+                                            <div className="mt-0 flex justify-end">
+                                                <DropdownMenu
+                                                    open={openDropdowns[parameter.id] || false}
+                                                    onOpenChange={(open) => setOpenDropdowns((prev) => ({ ...prev, [parameter.id]: open }))}
+                                                >
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button size="sm" variant="ghost">
+                                                            <Ellipsis size={16} />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent className="w-56" align="start">
+                                                        <DropdownMenuItem>
+                                                            <Link
+                                                                href={`/mcu-parameter/${parameter.id}/edit`}
+                                                                className="flex items-center gap-2"
+                                                            >
+                                                                <Pencil className="mr-2 w-4 h-4" />
+                                                                <span>Edit</span>
+                                                            </Link>
+                                                            {/* Edit */}
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuSeparator />
+                                                        <DropdownMenuItem
+                                                            onClick={() => handleDeleteClick(parameter)}
+                                                        // onSelect={(event) => {
+                                                        //     event.preventDefault();
+                                                        //     handleDeleteClick(province);
+                                                        // }}
                                                         >
-                                                            <Pencil className="mr-2 w-4 h-4" />
-                                                            <span>Edit</span>
-                                                        </Link>
-                                                        {/* Edit */}
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuSeparator />
-                                                    <DropdownMenuItem
-                                                        onClick={() => handleDeleteClick(parameter)}
-                                                    // onSelect={(event) => {
-                                                    //     event.preventDefault();
-                                                    //     handleDeleteClick(province);
-                                                    // }}
-                                                    >
-                                                        <Trash2 className="mr-2 h-4 w-4 text-destructive" />
-                                                        <div className="text-destructive">Hapus</div>
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </div>
-                                        {/* <div className="flex justify-end gap-2">
-                                            <Link href={`/mcu-parameter/${parameter.id}/edit`}>
-                                                <Button size="sm" variant="outline">
-                                                    <Pencil className="h-4 w-4" />
-                                                </Button>
-                                            </Link>
+                                                            <Trash2 className="mr-2 h-4 w-4 text-destructive" />
+                                                            <div className="text-destructive">Hapus</div>
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </div>
 
-                                            <Button size="sm" variant="destructive" onClick={() => handleDeleteClick(parameter)}>
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div> */}
-
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={5} className="text-center text-muted-foreground">
+                                        Tidak ada data parameter MCU.
                                     </TableCell>
                                 </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={5} className="text-center text-muted-foreground">
-                                    Tidak ada data parameter MCU.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
 
                 {/* Pagination */}
                 {mcuparameters.total > 10 && (
