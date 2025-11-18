@@ -5,6 +5,8 @@ import { MCUParameter } from '@/types';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
+type GroupedParameters = Record<string, MCUParameter[]>;
+
 interface Props {
     open: boolean;
     onOpenChange: (open: boolean) => void;
@@ -12,7 +14,9 @@ interface Props {
 }
 
 export default function ParameterLookup({ open, onOpenChange, onSelect }: Props) {
-    const [parameters, setParameters] = useState<MCUParameter[]>([]);
+    const [categories, setCategories] = useState<string[]>([]);
+    // const [parameters, setParameters] = useState<MCUParameter[]>([]);
+    const [groupedParameters, setGroupedParameters] = useState<GroupedParameters | null>(null);
     const [selected, setSelected] = useState<MCUParameter[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -23,6 +27,24 @@ export default function ParameterLookup({ open, onOpenChange, onSelect }: Props)
             axios
                 .get('/mcu-parameter/search')
                 .then((res) => {
+                    console.log(res.data);
+                    const groupedParameters: GroupedParameters = res.data.reduce((acc: { [x: string]: any[]; }, item: { category: { name: string; }; }) => {
+                        const cat = item.category?.name ?? "Tanpa Kategori";
+
+                        if (!acc[cat]) acc[cat] = [];
+                        acc[cat].push(item);
+
+                        return acc;
+                    }, {});
+
+                    const categories = Array.from(
+                        new Set<string>(
+                            res.data
+                                .map((item: { category: { name: string; }; }) => item.category?.name) // ambil category name
+                                .filter(Boolean)                  // buang null/undefined
+                        )
+                    );
+                    setCategories(categories);
                     setParameters(res.data);
                 })
                 .finally(() => setLoading(false));
@@ -48,7 +70,7 @@ export default function ParameterLookup({ open, onOpenChange, onSelect }: Props)
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-lg">
+            <DialogContent className="sm:max-w-[1000px]">
                 <DialogHeader>
                     <DialogTitle>Pilih Parameter MCU</DialogTitle>
                 </DialogHeader>
@@ -56,7 +78,19 @@ export default function ParameterLookup({ open, onOpenChange, onSelect }: Props)
                 <div className="mt-2 max-h-80 space-y-3 overflow-y-auto">
                     {loading && <div className="py-4 text-center text-muted-foreground">Memuat parameter...</div>}
 
-                    {!loading &&
+                    {!loading && categories.map((cat) => {
+                        return (
+                            <div className="grid">
+                                <p className="text-sm font-bold">{cat}</p>
+                                <div className="grid grid-flow-col grid-rows-2 gap-2 px-3 py-0">
+
+                                </div>
+                            </div>
+
+                        );
+                    })}
+
+                    {/* {!loading &&
                         parameters.map((param) => {
                             const checked = selected.some((p) => p.id === param.id);
 
@@ -70,7 +104,7 @@ export default function ParameterLookup({ open, onOpenChange, onSelect }: Props)
                                     </div>
                                 </div>
                             );
-                        })}
+                        })} */}
                 </div>
 
                 <DialogFooter>

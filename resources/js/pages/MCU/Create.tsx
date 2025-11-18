@@ -281,7 +281,7 @@ export default function Create({ companies }: Props) {
                         open={openParamLookup}
                         onOpenChange={setOpenParamLookup}
                         onSelect={(p) => {
-                            console.log(p);
+                            // console.log(p);
                             const converted: MCUResult[] = p.map((item) => ({
                                 id: item.id,
                                 category_id: item.category_id ?? '', // sesuaikan
@@ -294,13 +294,27 @@ export default function Create({ companies }: Props) {
                                 notes: '',
                             }));
 
-                            setData((data) => ({
-                                ...data,
-                                results: [...data.results, ...converted],
-                            }));
+                            // console.log(converted);
 
-                            // setOpenParamLookup(false);
-                            console.log(data.results);
+                            const existingIds = data.results.map(r => r.id);
+
+                            const filtered = converted.filter(item => !existingIds.includes(item.id));
+
+                            setData({
+                                ...data,
+                                results: [...data.results, ...filtered],
+                            });
+
+                            // setData((datax) => ({
+                            //     ...data,
+                            //     results: [...data.results, ...converted],
+                            // }));
+
+                            // p.forEach(element => {
+                            //     if (data.results.)
+                            // });
+
+                            // setData('results', converted);
                         }}
                     />
                 )}
