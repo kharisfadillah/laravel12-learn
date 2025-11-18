@@ -91,13 +91,29 @@ export interface MCUParameter {
     category_id: string;
     name: string;
     input_type: string;
-    unit?: string;
+    unit?: string | null;
     ranges?: {
         male: { min: string; max: string };
         female: { min: string; max: string };
     } | null;
-    options: string[] | null;
+    options?: string[] | null;
     category?: MCUCategory;
 }
+
+export type MCUParamResult = {
+    id: string;
+    category_id: string;
+    category: string;
+    name: string;
+    input_type: string;
+    unit?: string | null;
+    ranges?: {
+        male: { min: string; max: string };
+        female: { min: string; max: string };
+    } | null;
+    options?: string[];
+    result: string;
+    notes: string;
+};
 
 

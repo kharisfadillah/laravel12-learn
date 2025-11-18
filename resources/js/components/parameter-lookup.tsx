@@ -12,18 +12,19 @@ interface Props {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     onSelect: (selected: MCUParameter[]) => void;
+    initialSelection: MCUParameter[];
 }
 
-export default function ParameterLookup({ open, onOpenChange, onSelect }: Props) {
+export default function ParameterLookup({ open, onOpenChange, onSelect, initialSelection }: Props) {
     const [categories, setCategories] = useState<string[]>([]);
-    // const [parameters, setParameters] = useState<MCUParameter[]>([]);
     const [groupedParameters, setGroupedParameters] = useState<GroupedParameters | null>(null);
-    const [selected, setSelected] = useState<MCUParameter[]>([]);
+    const [selected, setSelected] = useState<MCUParameter[]>(initialSelection);
     const [loading, setLoading] = useState(false);
 
     // FETCH SAAT MODAL DIBUKA
     useEffect(() => {
         if (open) {
+            // setSelected(initialSelection);
             setLoading(true);
             axios
                 .get('/mcu-parameter/search')
@@ -69,12 +70,12 @@ export default function ParameterLookup({ open, onOpenChange, onSelect }: Props)
 
     const applySelection = () => {
         onSelect(selected);
-        onOpenChange(false); // TUTUP MODAL
+        onOpenChange(false);
     };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[1000px]">
+            <DialogContent className="sm:max-w-[1200px] sm:max-h-[1200px] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Pilih Parameter MCU</DialogTitle>
                 </DialogHeader>

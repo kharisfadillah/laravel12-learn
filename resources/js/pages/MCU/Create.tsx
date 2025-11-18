@@ -3,7 +3,16 @@ import ParameterLookup from '@/components/parameter-lookup';
 import ParticipantLookup from '@/components/participant-lookup';
 import { RangeDisplay } from '@/components/range-display';
 import { RecordItem } from '@/components/record-item';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,29 +20,29 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { formatRange } from '@/lib/utils';
-import type { BreadcrumbItem, Participant } from '@/types';
+import { parseToMCUParameters, parseToMCUParamResults } from '@/lib/utils';
+import type { BreadcrumbItem, MCUParamResult, Participant } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { Mars, Search, Settings, Trash2, UserPlus, Venus } from 'lucide-react';
 import { JSX, useState } from 'react';
 
-type MCUParamResult = {
-    id: string;
-    // category_id: string;
-    category: string;
-    name: string;
-    input_type: string;
-    unit?: string | null;
-    // ranges: string;
-    ranges?: {
-        male: { min: string; max: string };
-        female: { min: string; max: string };
-    } | null;
-    options?: string[];
-    result: string;
-    notes: string;
-};
+// type MCUParamResult = {
+//     id: string;
+//     // category_id: string;
+//     category: string;
+//     name: string;
+//     input_type: string;
+//     unit?: string | null;
+//     // ranges: string;
+//     ranges?: {
+//         male: { min: string; max: string };
+//         female: { min: string; max: string };
+//     } | null;
+//     options?: string[];
+//     result: string;
+//     notes: string;
+// };
 
 type FormValues = {
     company_id: string;
@@ -70,9 +79,9 @@ interface Props {
     departments: Department[];
 }
 
-const genderIcons: Record<"male" | "female", JSX.Element> = {
-    male: <Venus className="inline w-4 h-4 text-blue-600" />,
-    female: <Mars className="inline w-4 h-4 text-pink-600" />,
+const genderIcons: Record<'male' | 'female', JSX.Element> = {
+    male: <Venus className="inline h-4 w-4 text-blue-600" />,
+    female: <Mars className="inline h-4 w-4 text-pink-600" />,
 };
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -109,9 +118,16 @@ export default function Create({ companies }: Props) {
         post('/mcu');
     };
 
-    const deleteParamClick = (param: MCUParamResult) => {
-        const filtered = data.mcu_param_results.filter(r => r.id !== param.id);
-        setData("mcu_param_results", filtered);
+    const handleDeleteParamClick = (param: MCUParamResult) => {
+        setSelectedParam(param);
+        setOpenDeleteParam(true);
+    };
+
+    const handleDeleteParamConfirm = () => {
+        if (selectedParam) {
+            const filtered = data.mcu_param_results.filter((r) => r.id !== selectedParam.id);
+            setData('mcu_param_results', filtered);
+        }
     };
 
     return (
@@ -224,11 +240,11 @@ export default function Create({ companies }: Props) {
                                 Set Parameter
                             </Button>
                         </CardHeader>
-                        <CardContent className="grid grid-flow-col grid-rows-2 gap-2 px-3 py-0">
+                        <CardContent className="gap-2 px-0 py-0">
                             <Table>
-                                <TableHeader>
+                                <TableHeader className="bg-gray-100">
                                     <TableRow key="rowh">
-                                        <TableHead>Kategori</TableHead>
+                                        <TableHead className="px-3">Kategori</TableHead>
                                         <TableHead>Parameter</TableHead>
                                         <TableHead>Satuan</TableHead>
                                         <TableHead>Nilai Rujukan</TableHead>
@@ -242,15 +258,13 @@ export default function Create({ companies }: Props) {
                                         data.mcu_param_results.map((param_result, index) => {
                                             const handleChange = (value: string) => {
                                                 setData(
-                                                    "mcu_param_results",
-                                                    data.mcu_param_results.map((r, i) =>
-                                                        i === index ? { ...r, result: value } : r
-                                                    )
+                                                    'mcu_param_results',
+                                                    data.mcu_param_results.map((r, i) => (i === index ? { ...r, result: value } : r)),
                                                 );
                                             };
                                             return (
                                                 <TableRow key={index}>
-                                                    <TableCell className="py-0.5">{param_result.category}</TableCell>
+                                                    <TableCell className="px-3 py-0.5">{param_result.category}</TableCell>
                                                     <TableCell className="py-0.5">{param_result.name}</TableCell>
                                                     <TableCell className="py-0.5">{param_result.unit ?? '-'}</TableCell>
                                                     <TableCell className="py-0.5">
@@ -266,28 +280,28 @@ export default function Create({ companies }: Props) {
                                                         ))}
                                                     </TableCell> */}
                                                     <TableCell className="py-0.5">
-                                                        {param_result.input_type === "Angka" && (
+                                                        {param_result.input_type === 'Angka' && (
                                                             <Input
                                                                 type="number"
-                                                                value={param_result.result || ""}
+                                                                value={param_result.result || ''}
                                                                 onChange={(e) => handleChange(e.target.value)}
                                                             />
                                                         )}
-                                                        {param_result.input_type === "Teks Bebas" && (
+                                                        {param_result.input_type === 'Teks Bebas' && (
                                                             <Input
                                                                 type="text"
-                                                                value={param_result.result || ""}
+                                                                value={param_result.result || ''}
                                                                 onChange={(e) => handleChange(e.target.value)}
                                                             />
                                                         )}
-                                                        {param_result.input_type === "Pilihan" && Array.isArray(param_result.options) && (
-                                                            <Select value={param_result.result || ""} onValueChange={(value) => handleChange(value)}>
+                                                        {param_result.input_type === 'Pilihan' && Array.isArray(param_result.options) && (
+                                                            <Select value={param_result.result || ''} onValueChange={(value) => handleChange(value)}>
                                                                 <SelectTrigger>
                                                                     <SelectValue placeholder="Pilih Hasil" />
                                                                 </SelectTrigger>
                                                                 <SelectContent>
                                                                     <SelectGroup>
-                                                                        {param_result.options.map((opt, idx) => (
+                                                                        {param_result.options.map((opt) => (
                                                                             <SelectItem value={opt}>{opt}</SelectItem>
                                                                         ))}
                                                                     </SelectGroup>
@@ -297,7 +311,7 @@ export default function Create({ companies }: Props) {
                                                     </TableCell>
                                                     <TableCell className="py-0.5"></TableCell>
                                                     <TableCell className="py-0.5">
-                                                        <Button size="sm" variant="destructive" onClick={() => deleteParamClick(param_result)}>
+                                                        <Button size="sm" variant="destructive" onClick={() => handleDeleteParamClick(param_result)}>
                                                             <Trash2 className="h-4 w-4" />
                                                         </Button>
                                                     </TableCell>
@@ -345,41 +359,29 @@ export default function Create({ companies }: Props) {
                     <ParameterLookup
                         open={openParamLookup}
                         onOpenChange={setOpenParamLookup}
+                        initialSelection={parseToMCUParameters(data.mcu_param_results)}
                         onSelect={(p) => {
-                            console.log(p);
-                            const converted: MCUParamResult[] = p.map((item) => ({
-                                id: item.id,
-                                category: item.category?.name ?? '', // sesuaikan
-                                name: item.name,
-                                input_type: item.input_type ?? 'text', // default jika tidak ada
-                                unit: item.unit,
-                                ranges: item.ranges,
-                                options: item.options ?? [],
-                                result: '', // always empty until user inputs
-                                notes: '',
-                            }));
-
-                            // console.log(converted);
-
-                            const existingIds = data.mcu_param_results.map(r => r.id);
-
-                            const filtered = converted.filter(item => !existingIds.includes(item.id));
-
+                            const newSelectedIds = p.map((item) => item.id);
+                            const keptOldResults = data.mcu_param_results.filter((r) => newSelectedIds.includes(r.id));
+                            const keptOldIds = keptOldResults.map((r) => r.id); // [2, 3]
+                            const trulyNewParameters = p.filter((param) => !keptOldIds.includes(param.id));
+                            const convertedNewResults = parseToMCUParamResults(trulyNewParameters);
+                            const finalResults = [...keptOldResults, ...convertedNewResults];
                             setData({
                                 ...data,
-                                mcu_param_results: [...data.mcu_param_results, ...filtered],
+                                mcu_param_results: finalResults,
                             });
 
-                            // setData((datax) => ({
+                            // const converted = parseToMCUParamResults(p);
+
+                            // const existingIds = data.mcu_param_results.map((r) => r.id);
+
+                            // const filtered = converted.filter((item) => !existingIds.includes(item.id));
+
+                            // setData({
                             //     ...data,
-                            //     results: [...data.results, ...converted],
-                            // }));
-
-                            // p.forEach(element => {
-                            //     if (data.results.)
+                            //     mcu_param_results: [...data.mcu_param_results, ...filtered],
                             // });
-
-                            // setData('results', converted);
                         }}
                     />
                 )}
@@ -389,14 +391,15 @@ export default function Create({ companies }: Props) {
                         <AlertDialogHeader>
                             <AlertDialogTitle>Hapus Parameter</AlertDialogTitle>
                             <AlertDialogDescription>
-                                Apakah Anda yakin ingin menghapus parameter <strong>{selectedUser?.name}</strong>? Tindakan ini tidak dapat dibatalkan.
+                                Apakah Anda yakin ingin menghapus parameter <strong>{selectedParam?.name}</strong>? Tindakan ini tidak dapat
+                                dibatalkan.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                             <AlertDialogCancel>Batal</AlertDialogCancel>
                             <AlertDialogAction
-                                onClick={delete}
-                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                onClick={handleDeleteParamConfirm}
+                                className="text-destructive-foreground bg-destructive hover:bg-destructive/90"
                             >
                                 Hapus
                             </AlertDialogAction>

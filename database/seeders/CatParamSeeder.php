@@ -2,102 +2,18 @@
 
 namespace Database\Seeders;
 
-use App\Models\Company;
-use App\Models\Department;
 use App\Models\MCUCategory;
 use App\Models\MCUParameter;
-use App\Models\Participant;
-use App\Models\Province;
-use App\Models\Regency;
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
-class DatabaseSeeder extends Seeder
+class CatParamSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Run the database seeds.
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::create([
-            'username' => 'superadmin',
-            'name' => 'Super Mimin',
-            'email' => 'super.mimin@example.com',
-            'password' => Hash::make('password'),
-            'is_sa' => true,
-        ]);
-
-        $company = Company::create([
-            'code' => 'JG',
-            'name' => 'PT. JHONLIN GROUP'
-        ]);
-
-        $department = Department::create([
-            'company_id' => $company->id,
-            'code' => 'HR',
-            'name' => 'HUMAN RESOURCE',
-        ]);
-
-        Department::create([
-            'company_id' => $company->id,
-            'code' => 'SE',
-            'name' => 'SOFTWARE ENGINEER',
-        ]);
-
-        Participant::create([
-            'company_id' => $company->id,
-            'name' => 'MUHAMMAD HUSNI',
-            'position' => 'STAF HR',
-            'department_id' => $department->id,
-            'birth_date' => '1990-07-12',
-            'gender' => 'Laki-laki',
-            'phone' => '081234567899',
-        ]);
-
-        $company = Company::create([
-            'code' => 'DSP',
-            'name' => 'PT. DUA SAMUDERA PERKASA'
-        ]);
-
-        Department::create([
-            'company_id' => $company->id,
-            'code' => 'LOG',
-            'name' => 'LOGISTIK',
-        ]);
-
-        $department = Department::create([
-            'company_id' => $company->id,
-            'code' => 'GA',
-            'name' => 'GENERAL AFFAIR',
-        ]);
-
-        // $province = Province::create([
-        //     'code' => 'KALSEL',
-        //     'name' => 'KALIMANTAN SELATAN',
-        // ]);
-
-        // Regency::create([
-        //     'province_id' => $province->id,
-        //     'code' => 'TANBU',
-        //     'name' => 'TANAH BUMBU',
-        // ]);
-
-
-
-        Participant::create([
-            'company_id' => $company->id,
-            'name' => 'SITI RAHMAH',
-            'position' => 'STAF GA',
-            'department_id' => $department->id,
-            'birth_date' => '1994-02-23',
-            'gender' => 'Perempuan',
-            'phone' => '082121675563',
-        ]);
-
         $categories = [
             'Pemeriksaan Fisik',
             'Hematologi',
@@ -290,27 +206,6 @@ class DatabaseSeeder extends Seeder
                     ]);
                 }
             }
-
-            // if ($category == 'Fungsi Ginjal') {
-            //     $ranges = [
-            //         'male' => [
-            //             'min' => 0.6,
-            //             'max' => 1.2,
-            //         ],
-            //         'female' => [
-            //             'min' => 0.5,
-            //             'max' => 1.1,
-            //         ],
-            //     ];
-
-            //     MCUParameter::create([
-            //         'category_id' => $categoryx->id,
-            //         'name' => 'Kreatinin',
-            //         'input_type' => 'Angka',
-            //         'unit' => 'mg/dL',
-            //         'ranges' => $ranges,
-            //     ]);
-            // }
         }
     }
 }
