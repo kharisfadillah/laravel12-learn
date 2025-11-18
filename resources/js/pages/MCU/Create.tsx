@@ -219,7 +219,7 @@ export default function Create({ companies }: Props) {
                         </CardContent>
                         <CardFooter className="flex justify-end gap-2 px-3">
                             {/* <p>Card Footer</p> */}
-                            <Button variant="outline" onClick={() => setOpenPartiLookup(true)}>
+                            <Button variant="outline" type="button" onClick={() => setOpenPartiLookup(true)}>
                                 <Search className="mr-2 h-4 w-4" />
                                 Cari Kandidat
                             </Button>
@@ -262,6 +262,15 @@ export default function Create({ companies }: Props) {
                                                     data.mcu_param_results.map((r, i) => (i === index ? { ...r, result: value } : r)),
                                                 );
                                             };
+                                            const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+                                                
+                                                if (e.key === 'Enter') {
+                                                    setData(
+                                                        'mcu_param_results',
+                                                        data.mcu_param_results.map((r, i) => (i === index ? { ...r, notes: param_result.result } : r)),
+                                                    );
+                                                }
+                                            };
                                             return (
                                                 <TableRow key={index}>
                                                     <TableCell className="px-3 py-0.5">{param_result.category}</TableCell>
@@ -285,6 +294,7 @@ export default function Create({ companies }: Props) {
                                                                 type="number"
                                                                 value={param_result.result || ''}
                                                                 onChange={(e) => handleChange(e.target.value)}
+                                                                onKeyDown={(e) => handleKeyDown(e)}
                                                             />
                                                         )}
                                                         {param_result.input_type === 'Teks Bebas' && (
@@ -309,7 +319,7 @@ export default function Create({ companies }: Props) {
                                                             </Select>
                                                         )}
                                                     </TableCell>
-                                                    <TableCell className="py-0.5"></TableCell>
+                                                    <TableCell className="py-0.5">{param_result.notes}</TableCell>
                                                     <TableCell className="py-0.5">
                                                         <Button size="sm" variant="destructive" onClick={() => handleDeleteParamClick(param_result)}>
                                                             <Trash2 className="h-4 w-4" />

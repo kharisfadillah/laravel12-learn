@@ -88,7 +88,7 @@ return new class extends Migration
                 ->constrained('departments', 'id')
                 ->restrictOnDelete();
             $table->date('birth_date')->nullable();
-            $table->enum('gender', ['Laki-laki', 'Perempuan']);
+            $table->enum('gender', ['male', 'female']);
             $table->string('phone')->nullable();
             $table->foreignUlid('created_id')
                 ->nullable()
@@ -198,7 +198,7 @@ return new class extends Migration
             $table->string('department_code')->nullable();
             $table->string('department_name')->nullable();
             $table->date('birth_date')->nullable();
-            $table->enum('gender', ['Laki-laki', 'Perempuan']);
+            $table->enum('gender', ['male', 'female']);
             $table->string('phone')->nullable();
             $table->foreignUlid('provider_id')
                 ->nullable()
