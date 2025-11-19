@@ -136,7 +136,7 @@ export default function Index({ provinces, regencies }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Kabupaten" />
-            <div className="flex h-full max-w-5xl flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+            <div className="flex h-full max-w-2xl flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 {/* Button Tambah */}
                 <div className="flex justify-end">
                     <Dialog open={openCreate} onOpenChange={setOpenCreate}>
@@ -211,7 +211,6 @@ export default function Index({ provinces, regencies }: Props) {
                     <TableHeader>
                         <TableRow>
                             <TableHead>Provinsi</TableHead>
-                            <TableHead>Kode Kabupaten</TableHead>
                             <TableHead>Nama Kabupaten</TableHead>
                             <TableHead className="w-[150px]" />
                         </TableRow>
@@ -221,7 +220,6 @@ export default function Index({ provinces, regencies }: Props) {
                             regencies.map((regency) => (
                                 <TableRow key={regency.id}>
                                     <TableCell>{regency.province?.name ?? '-'}</TableCell>
-                                    <TableCell>{regency.code}</TableCell>
                                     <TableCell>{regency.name}</TableCell>
                                     <TableCell>
                                         <div className="flex gap-2">

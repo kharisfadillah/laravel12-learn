@@ -87,16 +87,12 @@ class ImportRegions extends Command
 
             // Define code: by default use slug uppercase, and store api id separately if needed
             // You can change this mapping to fit your expected 'code' format.
-            $provCode = Str::upper(Str::slug($provName, '_')); // example: KALIMANTAN_SELATAN
+            // $provCode = Str::upper(Str::slug($provName, '_')); // example: KALIMANTAN_SELATAN
             // if you prefer to use api id as code: $provCode = $provApiId;
 
             // firstOrCreate to avoid duplicates
             $province = Province::firstOrCreate(
-                ['code' => $provCode],
-                [
-                    'code' => $provCode,
-                    'name' => $provName,
-                ]
+                ['name' => $provName]
             );
 
             // Fetch regencies for this province
@@ -113,12 +109,12 @@ class ImportRegions extends Command
 
                         if (!$regApiId || !$regName) continue;
 
-                        $regCode = Str::upper(Str::slug($regName, '_'));
+                        // $regCode = Str::upper(Str::slug($regName, '_'));
 
                         Regency::create(
                             [
                                 'province_id' => $province->id,
-                                'code' => $regCode,
+                                // 'code' => $regCode,
                                 'name' => $regName,
                             ]
                         );

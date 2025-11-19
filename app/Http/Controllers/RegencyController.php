@@ -14,12 +14,12 @@ class RegencyController extends Controller
     {
         return Inertia::render('Regency/Index', [
             // Ambil data provinsi (misalnya untuk combobox)
-            'provinces' => Province::select('id', 'code', 'name')
+            'provinces' => Province::select('id', 'name')
                 ->orderBy('id')
                 ->get(),
 
             // Ambil daftar kabupaten/kota
-            'regencies' => Regency::select('id', 'province_id', 'code', 'name')
+            'regencies' => Regency::select('id', 'province_id', 'name')
                 ->with('province:id,name') // jika ada relasi
                 ->latest()
                 ->get(),

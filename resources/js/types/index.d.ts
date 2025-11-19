@@ -46,6 +46,16 @@ export interface User {
     [key: string]: unknown; // This allows for additional properties...
 }
 
+export interface Province {
+    id: string;
+    name: string;
+}
+
+export interface Regency {
+    id: string;
+    name: string;
+}
+
 export interface Company {
     id: string;
     code: string;
@@ -70,21 +80,20 @@ export interface Participant {
     department?: Department;
 }
 
+export interface Provider {
+    id: string;
+    name: string;
+    province_id?: string;
+    regency_id?: string;
+    address: string;
+    phone?: string;
+    // province?: 
+}
+
 export interface MCUCategory {
     id: string;
     name: string;
 }
-
-// export interface MCUParameter {
-//     id: string;
-//     category_id: string;
-//     name: string;
-//     input_type: string;
-//     unit?: string;
-//     ranges?: string;
-//     options?: string[];
-//     category?: MCUCategory;
-// }
 
 export interface MCUParameter {
     id: string;

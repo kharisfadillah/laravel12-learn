@@ -44,3 +44,14 @@ export function parseToMCUParamResults(params: MCUParameter[]): MCUParamResult[]
         notes: '',
     }));
 }
+
+export function formatDecimal(value: string) {
+    if (value === '' || isNaN(Number(value))) return '';
+    return Number(value).toFixed(2);
+}
+
+export function parseGender(gender: string) {
+    if (gender === 'male') return "Laki-laki";
+    if (gender === 'female') return "Perempuan";
+    return "Gender not defined";
+}

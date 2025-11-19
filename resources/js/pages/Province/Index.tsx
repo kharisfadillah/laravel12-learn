@@ -207,7 +207,7 @@ export default function Index({ provinces, filters }: Props) {
                     <TableHeader>
                         <TableRow>
                             {/* <TableHead className="w-[100px]">ID</TableHead> */}
-                            <TableHead>Kode Provinsi</TableHead>
+                            {/* <TableHead>Kode Provinsi</TableHead> */}
                             <TableHead>Nama Provinsi</TableHead>
                             <TableHead className="w-[60px]"></TableHead>
                         </TableRow>
@@ -216,7 +216,7 @@ export default function Index({ provinces, filters }: Props) {
                         {provinces.data.length > 0 ? (
                             provinces.data.map((province) => (
                                 <TableRow key={province.id}>
-                                    <TableCell className="py-0.5">{province.code}</TableCell>
+                                    {/* <TableCell className="py-0.5">{province.code}</TableCell> */}
                                     <TableCell className="py-0.5">{province.name}</TableCell>
                                     <TableCell className="py-0.5">
                                         <div className="mt-0 flex justify-end">

@@ -20,63 +20,32 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { parseToMCUParameters, parseToMCUParamResults } from '@/lib/utils';
-import type { BreadcrumbItem, MCUParamResult, Participant } from '@/types';
+import { formatDecimal, parseGender, parseToMCUParameters, parseToMCUParamResults } from '@/lib/utils';
+import type { BreadcrumbItem, MCUParamResult, Participant, Provider } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { Mars, Search, Settings, Trash2, UserPlus, Venus } from 'lucide-react';
 import { JSX, useState } from 'react';
-
-// type MCUParamResult = {
-//     id: string;
-//     // category_id: string;
-//     category: string;
-//     name: string;
-//     input_type: string;
-//     unit?: string | null;
-//     // ranges: string;
-//     ranges?: {
-//         male: { min: string; max: string };
-//         female: { min: string; max: string };
-//     } | null;
-//     options?: string[];
-//     result: string;
-//     notes: string;
-// };
 
 type FormValues = {
     company_id: string;
     mcu_type: string;
     mcu_date: string;
     participant_id: string;
-    name: string;
-    position: string;
-    department_id: string;
-    department_code: string;
-    department_name: string;
-    birth_date: string;
-    gender: string;
-    phone: string;
+    // name: string;
+    // position: string;
+    // department_id: string;
+    // department_code: string;
+    // department_name: string;
+    // birth_date: string;
+    // gender: string;
+    // phone: string;
     provider_id: string;
     mcu_param_results: MCUParamResult[];
 };
 
-interface Company {
-    id: string;
-    name: string;
-}
-
-interface Department {
-    id: string;
-    name: string;
-    company_id: string;
-}
-
-// interface Participant
-
 interface Props {
-    companies: Company[];
-    departments: Department[];
+    providers: Provider[];
 }
 
 const genderIcons: Record<'male' | 'female', JSX.Element> = {
@@ -89,26 +58,25 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Tambah', href: '/mcu/create' },
 ];
 
-export default function Create({ companies }: Props) {
+export default function Create({ providers }: Props) {
     const [participant, setParticipant] = useState<Participant | null>(null);
     const [selectedParam, setSelectedParam] = useState<MCUParamResult | null>(null);
     const [openPartiLookup, setOpenPartiLookup] = useState(false);
     const [openParamLookup, setOpenParamLookup] = useState(false);
     const [openDeleteParam, setOpenDeleteParam] = useState(false);
     const { data, setData, post, processing, errors } = useForm<FormValues>({
-        // const form = useForm<FormValues>({
         company_id: '',
         mcu_type: '',
         mcu_date: '',
         participant_id: '',
-        name: '',
-        position: '',
-        department_id: '',
-        department_code: '',
-        department_name: '',
-        birth_date: '',
-        gender: '',
-        phone: '',
+        // name: '',
+        // position: '',
+        // department_id: '',
+        // department_code: '',
+        // department_name: '',
+        // birth_date: '',
+        // gender: '',
+        // phone: '',
         provider_id: '',
         mcu_param_results: [],
     });
@@ -139,30 +107,15 @@ export default function Create({ companies }: Props) {
                 <p className="mt-1 text-sm text-gray-500">Masukkan data mcu baru. Klik simpan untuk menyimpan data.</p>
 
                 <form onSubmit={handleSubmit} className="mt-3">
-                    <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-3">
+
                         <div>
-                            <Label htmlFor="company_id">Unit Usaha</Label>
-                            <Select
-                                value={data.company_id}
-                                onValueChange={(value) => {
-                                    setData('company_id', value);
-                                    setData('participant_id', '');
-                                }}
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Pilih Unit Usaha" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        {companies.map((company) => (
-                                            <SelectItem key={company.id} value={company.id}>
-                                                {company.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                            {errors.company_id && <p className="text-sm text-red-500">{errors.company_id}</p>}
+                            <Label htmlFor="mcu_date">Tanggal MCU</Label>
+                            <DatePicker
+                                value={data.mcu_date ? new Date(data.mcu_date) : undefined}
+                                onChange={(date) => setData('mcu_date', date ? format(date, 'yyyy-MM-dd') : '')}
+                            />
+                            {errors.mcu_date && <p className="text-sm text-red-500">{errors.mcu_date}</p>}
                         </div>
 
                         <div>
@@ -182,27 +135,29 @@ export default function Create({ companies }: Props) {
                         </div>
 
                         <div>
-                            <Label htmlFor="mcu_date">Tanggal MCU</Label>
-                            <DatePicker
-                                value={data.mcu_date ? new Date(data.mcu_date) : undefined}
-                                onChange={(date) => setData('mcu_date', date ? format(date, 'yyyy-MM-dd') : '')}
-                            />
-                            {errors.mcu_date && <p className="text-sm text-red-500">{errors.mcu_date}</p>}
+                            <Label>Provider MCU</Label>
+                            <Select
+                                value={data.provider_id}
+                                onValueChange={(value) => {
+                                    setData('provider_id', value);
+                                }}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Pilih Provider" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {providers.map((provider) => (
+                                            <SelectItem key={provider.id} value={provider.id}>
+                                                {provider.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                            {errors.provider_id && <p className="text-sm text-red-500">{errors.provider_id}</p>}
                         </div>
                     </div>
-
-                    {/* <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <div>
-                            <Label>Kandidat</Label>
-                            <ParticipantLookup
-                                value={null}
-                                onSelect={(participant) => {
-                                    setData('participant_id', participant.id);
-                                    setParticipant(participant);
-                                }}
-                            />
-                        </div>
-                    </div> */}
 
                     <Card className="mt-4 gap-3 py-3">
                         <CardHeader className="px-3">
@@ -210,12 +165,11 @@ export default function Create({ companies }: Props) {
                             {/* <CardDescription>Card Description</CardDescription> */}
                         </CardHeader>
                         <CardContent className="grid grid-flow-col grid-rows-2 gap-2 px-3 py-0">
-                            {/* <RecordItem label="Unit Usaha" value={participant?.company?.name ?? ''} /> */}
                             <RecordItem label="Nama" value={participant?.name ?? '-'} />
                             <RecordItem label="Jabatan" value={participant?.position ?? '-'} />
                             <RecordItem label="Departemen" value={participant?.department?.name ?? '-'} />
                             <RecordItem label="Tanggal Lahir" value={participant?.birth_date ?? '-'} />
-                            <RecordItem label="Jenis Kelamin" value={participant?.gender ?? '-'} />
+                            <RecordItem label="Jenis Kelamin" value={participant === null ? '-' : parseGender(participant?.gender)} />
                         </CardContent>
                         <CardFooter className="flex justify-end gap-2 px-3">
                             {/* <p>Card Footer</p> */}
@@ -224,7 +178,7 @@ export default function Create({ companies }: Props) {
                                 Cari Kandidat
                             </Button>
 
-                            <Button>
+                            <Button type="button">
                                 <UserPlus className="mr-2 h-4 w-4" />
                                 Kandidat Baru
                             </Button>
@@ -235,7 +189,7 @@ export default function Create({ companies }: Props) {
                         <CardHeader className="flex flex-row justify-between px-3">
                             <CardTitle>Parameter MCU</CardTitle>
 
-                            <Button onClick={() => setOpenParamLookup(true)}>
+                            <Button type="button" onClick={() => setOpenParamLookup(true)} disabled={participant == null} >
                                 <Settings className="mr-2 h-4 w-4" />
                                 Set Parameter
                             </Button>
@@ -268,7 +222,7 @@ export default function Create({ companies }: Props) {
                                                 const maxValueStr = param_result.ranges?.[participant?.gender === 'female' ? 'female' : 'male']?.max;
 
                                                 // Ambil hasil yang baru saja dimasukkan (sudah ada di state 'result' karena onChange sudah berjalan)
-                                                const currentResultStr = param_result.result;
+                                                let currentResultStr = param_result.result;
 
                                                 // 2. Konversi ke Angka
                                                 const resultValue = parseFloat(currentResultStr);
@@ -287,6 +241,18 @@ export default function Create({ companies }: Props) {
                                                     } else {
                                                         note = 'Normal';
                                                     }
+                                                } else if (!isNaN(resultValue) && minValueStr && !maxValueStr) {
+                                                    if (resultValue < minValue) {
+                                                        note = 'Tidak Normal (Rendah)';
+                                                    } else {
+                                                        note = 'Normal';
+                                                    }
+                                                } else if (!isNaN(resultValue) && !minValueStr && maxValueStr) {
+                                                    if (resultValue > maxValue) {
+                                                        note = 'Tidak Normal (Tinggi)';
+                                                    } else {
+                                                        note = 'Normal';
+                                                    }
                                                 } else if (!currentResultStr) {
                                                     // Jika hasil input kosong, reset note
                                                     note = '';
@@ -295,39 +261,21 @@ export default function Create({ companies }: Props) {
                                                     note = 'Rentang tidak tersedia';
                                                 }
 
+                                                currentResultStr = formatDecimal(currentResultStr);
+
                                                 // 4. Update State (result dan notes)
                                                 setData(
                                                     'mcu_param_results',
                                                     data.mcu_param_results.map((r, i) =>
                                                         i === index
                                                             ? {
-                                                                  ...r,
-                                                                  // result sudah di-update oleh onChange, tetapi kita masukkan lagi
-                                                                  // untuk memastikan konsistensi jika ini adalah handler utama.
-                                                                  result: currentResultStr,
-                                                                  notes: note, // 🚀 Catatan yang sudah ditentukan
-                                                              }
+                                                                ...r,
+                                                                result: currentResultStr,
+                                                                notes: note,
+                                                            }
                                                             : r,
                                                     ),
                                                 );
-                                                // let result_note = '';
-                                                // let minValue = param_result.ranges?.male.min;
-                                                // let maxValue = param_result.ranges?.male.max;
-                                                // if (participant?.gender === 'female') {
-                                                //     minValue = param_result.ranges?.female.min;
-                                                //     maxValue = param_result.ranges?.female.max;
-                                                // }
-                                                // if (minValue !== null) {
-
-                                                // }
-                                                // if (e.key === 'Enter') {
-                                                //     setData(
-                                                //         'mcu_param_results',
-                                                //         data.mcu_param_results.map((r, i) =>
-                                                //             i === index ? { ...r, notes: param_result.result } : r,
-                                                //         ),
-                                                //     );
-                                                // }
                                             };
                                             return (
                                                 <TableRow key={index}>
@@ -337,26 +285,21 @@ export default function Create({ companies }: Props) {
                                                     <TableCell className="py-0.5">
                                                         <RangeDisplay ranges={param_result.ranges} genderIcons={genderIcons} />
                                                     </TableCell>
-
-                                                    {/* <TableCell className="py-0.5">
-                                                        {Object.entries(param_result.ranges ?? {}).map(([gender, value]) => (
-                                                            <div key={gender} className="flex items-center gap-2">
-                                                                {genderIcons[gender as "male" | "female"]}
-                                                                <span>{value.min} – {value.max}</span>
-                                                            </div>
-                                                        ))}
-                                                    </TableCell> */}
                                                     <TableCell className="py-0.5">
                                                         {param_result.input_type === 'Angka' && (
                                                             <Input
                                                                 type="number"
+                                                                className='text-right'
                                                                 step="0.1"
                                                                 value={param_result.result || ''}
                                                                 onChange={(e) => handleChange(e.target.value)}
                                                                 onKeyDown={(e) => {
+
                                                                     if (e.key === 'Enter') {
+                                                                        e.preventDefault();
                                                                         computeNote();
                                                                     }
+
                                                                 }}
                                                                 onBlur={() => computeNote()}
                                                             />
@@ -385,7 +328,7 @@ export default function Create({ companies }: Props) {
                                                     </TableCell>
                                                     <TableCell className="py-0.5">{param_result.notes}</TableCell>
                                                     <TableCell className="py-0.5">
-                                                        <Button size="sm" variant="destructive" onClick={() => handleDeleteParamClick(param_result)}>
+                                                        <Button type="button" size="sm" variant="destructive" onClick={() => handleDeleteParamClick(param_result)}>
                                                             <Trash2 className="h-4 w-4" />
                                                         </Button>
                                                     </TableCell>
@@ -420,8 +363,11 @@ export default function Create({ companies }: Props) {
                         open={openPartiLookup}
                         onOpenChange={setOpenPartiLookup}
                         value={participant}
-                        // companyId={data.company_id} // opsional jika mau filter berdasarkan unit usaha
                         onSelect={(p: Participant) => {
+                            setData({
+                                ...data,
+                                mcu_param_results: [],
+                            });
                             setParticipant(p);
                             setData('participant_id', p.id);
                             setData('company_id', p.company_id);

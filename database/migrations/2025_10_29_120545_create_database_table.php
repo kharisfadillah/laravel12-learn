@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('provinces', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->string('code')->nullable();
             $table->string('name');
             $table->foreignUlid('created_id')
                 ->nullable()
@@ -36,7 +35,6 @@ return new class extends Migration
             $table->foreignUlid('province_id')
                 ->constrained('provinces', 'id')
                 ->restrictOnDelete();
-            $table->string('code')->nullable();
             $table->string('name');
             $table->foreignUlid('created_id')
                 ->nullable()
@@ -59,7 +57,6 @@ return new class extends Migration
             $table->foreignUlid('company_id')
                 ->constrained('companies', 'id')
                 ->restrictOnDelete();
-            $table->string('code');
             $table->string('name');
             $table->foreignUlid('created_id')
                 ->nullable()
@@ -110,13 +107,15 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->string('name');
             $table->foreignUlid('province_id')
+                ->nullable()
                 ->constrained('provinces', 'id')
                 ->restrictOnDelete();
             $table->foreignUlid('regency_id')
+                ->nullable()
                 ->constrained('regencies', 'id')
                 ->restrictOnDelete();
-            $table->longText('address');
-            $table->string('phone', 15);
+            $table->longText('address')->nullable();
+            $table->string('phone', 15)->nullable();
             $table->foreignUlid('created_id')
                 ->nullable()
                 ->constrained('users', 'id')

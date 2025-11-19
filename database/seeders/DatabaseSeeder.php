@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\MCUCategory;
 use App\Models\MCUParameter;
 use App\Models\Participant;
+use App\Models\Provider;
 use App\Models\Province;
 use App\Models\Regency;
 use App\Models\User;
@@ -38,13 +39,11 @@ class DatabaseSeeder extends Seeder
 
         $department = Department::create([
             'company_id' => $company->id,
-            'code' => 'HR',
             'name' => 'HUMAN RESOURCE',
         ]);
 
         Department::create([
             'company_id' => $company->id,
-            'code' => 'SE',
             'name' => 'SOFTWARE ENGINEER',
         ]);
 
@@ -54,7 +53,7 @@ class DatabaseSeeder extends Seeder
             'position' => 'STAF HR',
             'department_id' => $department->id,
             'birth_date' => '1990-07-12',
-            'gender' => 'Laki-laki',
+            'gender' => 'male',
             'phone' => '081234567899',
         ]);
 
@@ -65,28 +64,13 @@ class DatabaseSeeder extends Seeder
 
         Department::create([
             'company_id' => $company->id,
-            'code' => 'LOG',
             'name' => 'LOGISTIK',
         ]);
 
         $department = Department::create([
             'company_id' => $company->id,
-            'code' => 'GA',
             'name' => 'GENERAL AFFAIR',
         ]);
-
-        // $province = Province::create([
-        //     'code' => 'KALSEL',
-        //     'name' => 'KALIMANTAN SELATAN',
-        // ]);
-
-        // Regency::create([
-        //     'province_id' => $province->id,
-        //     'code' => 'TANBU',
-        //     'name' => 'TANAH BUMBU',
-        // ]);
-
-
 
         Participant::create([
             'company_id' => $company->id,
@@ -94,7 +78,7 @@ class DatabaseSeeder extends Seeder
             'position' => 'STAF GA',
             'department_id' => $department->id,
             'birth_date' => '1994-02-23',
-            'gender' => 'Perempuan',
+            'gender' => 'female',
             'phone' => '082121675563',
         ]);
 
@@ -311,6 +295,33 @@ class DatabaseSeeder extends Seeder
             //         'ranges' => $ranges,
             //     ]);
             // }
+        }
+
+        $path = database_path('seeders/data/prov_kab.csv');
+        $rows = array_map('str_getcsv', file($path));
+
+        foreach ($rows as $row) {
+            [$provinceName, $regencyName] = $row;
+
+            $province = Province::firstOrCreate(['name' => $provinceName]);
+
+            $regency = Regency::firstOrCreate([
+                'province_id' => $province->id,
+                'name' => $regencyName,
+            ]);
+            if ($provinceName === 'Kalimantan Selatan' && $regencyName === 'Tanah Bumbu') {
+                Provider::create([
+                    'name' => 'RS Marina Permata',
+                    'province_id' => $province->id,
+                    'regency_id' => $regency->id,
+                ]);
+
+                Provider::create([
+                    'name' => 'RS Husada',
+                    'province_id' => $province->id,
+                    'regency_id' => $regency->id,
+                ]);
+            }
         }
     }
 }

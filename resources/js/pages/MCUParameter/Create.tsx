@@ -4,6 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
+import { formatDecimal } from '@/lib/utils';
 import type { BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { Trash2 } from 'lucide-react';
@@ -61,11 +62,6 @@ export default function Create({ mcucategories, inputtypes }: Props) {
             opts.splice(index, 1);
             return { ...prev, options: opts };
         });
-
-    const formatDecimal = (value: string) => {
-        if (value === '' || isNaN(Number(value))) return '';
-        return Number(value).toFixed(2);
-    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

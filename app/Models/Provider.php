@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 
-class Province extends Model
+class Provider extends Model
 {
     use HasUlids;
     protected $fillable = ['name'];

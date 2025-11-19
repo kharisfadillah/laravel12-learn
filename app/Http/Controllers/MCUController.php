@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Models\MCUIHeader;
+use App\Models\Provider;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -47,17 +48,18 @@ class MCUController extends Controller
 
     public function create()
     {
-        $companies = Company::select('id', 'name')->get();
+        $providers = Provider::get();
         // $departments = Department::select('id', 'name', 'company_id')->get();
 
         return Inertia::render('MCU/Create', [
-            'companies' => $companies,
+            'providers' => $providers,
             // 'departments' => $departments,
         ]);
     }
 
     public function store(Request $request)
     {
+        dd($request->all());
         $validated = $request->validate([
             'code' => 'required|string|max:10|unique:provinces,code',
             'name' => 'required|string|max:100',
