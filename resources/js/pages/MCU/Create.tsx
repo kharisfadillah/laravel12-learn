@@ -108,7 +108,6 @@ export default function Create({ providers }: Props) {
 
                 <form onSubmit={handleSubmit} className="mt-3">
                     <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-3">
-
                         <div>
                             <Label htmlFor="mcu_date">Tanggal MCU</Label>
                             <DatePicker
@@ -131,8 +130,7 @@ export default function Create({ providers }: Props) {
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
-                            {errors && <p className="text-sm text-red-500">{errors.mcu_param_results}</p>}
-                            {/* {errors.mcu_type && <p className="text-sm text-red-500">{errors.mcu_type}</p>} */}
+                            {errors.mcu_type && <p className="text-sm text-red-500">{errors.mcu_type}</p>}
                         </div>
 
                         <div>
@@ -190,7 +188,7 @@ export default function Create({ providers }: Props) {
                         <CardHeader className="flex flex-row justify-between px-3">
                             <CardTitle>Parameter MCU</CardTitle>
 
-                            <Button type="button" onClick={() => setOpenParamLookup(true)} disabled={participant == null} >
+                            <Button type="button" onClick={() => setOpenParamLookup(true)} disabled={participant == null}>
                                 <Settings className="mr-2 h-4 w-4" />
                                 Set Parameter
                             </Button>
@@ -211,6 +209,7 @@ export default function Create({ providers }: Props) {
                                 <TableBody>
                                     {data.mcu_param_results.length > 0 ? (
                                         data.mcu_param_results.map((param_result, index) => {
+                                            const errs = errors as Record<string, string>;
                                             const handleChange = (value: string) => {
                                                 setData(
                                                     'mcu_param_results',
@@ -270,10 +269,10 @@ export default function Create({ providers }: Props) {
                                                     data.mcu_param_results.map((r, i) =>
                                                         i === index
                                                             ? {
-                                                                ...r,
-                                                                result: currentResultStr,
-                                                                notes: note,
-                                                            }
+                                                                  ...r,
+                                                                  result: currentResultStr,
+                                                                  notes: note,
+                                                              }
                                                             : r,
                                                     ),
                                                 );
@@ -290,17 +289,15 @@ export default function Create({ providers }: Props) {
                                                         {param_result.input_type === 'Angka' && (
                                                             <Input
                                                                 type="number"
-                                                                className='text-right'
+                                                                className="text-right"
                                                                 step="0.1"
                                                                 value={param_result.result || ''}
                                                                 onChange={(e) => handleChange(e.target.value)}
                                                                 onKeyDown={(e) => {
-
                                                                     if (e.key === 'Enter') {
                                                                         e.preventDefault();
                                                                         computeNote();
                                                                     }
-
                                                                 }}
                                                                 onBlur={() => computeNote()}
                                                             />
@@ -320,16 +317,29 @@ export default function Create({ providers }: Props) {
                                                                 <SelectContent>
                                                                     <SelectGroup>
                                                                         {param_result.options.map((opt) => (
-                                                                            <SelectItem value={opt}>{opt}</SelectItem>
+                                                                            <SelectItem key={opt} value={opt}>
+                                                                                {opt}
+                                                                            </SelectItem>
                                                                         ))}
                                                                     </SelectGroup>
                                                                 </SelectContent>
                                                             </Select>
                                                         )}
+                                                        {errs[`mcu_param_results.${index}.result`] && (
+                                                            <p className="text-sm text-red-500">{errs[`mcu_param_results.${index}.result`]}</p>
+                                                        )}
+                                                        {/* {errors[`mcu_param_results.${index}.result`] && (
+                                                            <p className="text-sm text-red-500">{errors[`mcu_param_results.${index}.result`]}</p>
+                                                        )} */}
                                                     </TableCell>
                                                     <TableCell className="py-0.5">{param_result.notes}</TableCell>
                                                     <TableCell className="py-0.5">
-                                                        <Button type="button" size="sm" variant="destructive" onClick={() => handleDeleteParamClick(param_result)}>
+                                                        <Button
+                                                            type="button"
+                                                            size="sm"
+                                                            variant="destructive"
+                                                            onClick={() => handleDeleteParamClick(param_result)}
+                                                        >
                                                             <Trash2 className="h-4 w-4" />
                                                         </Button>
                                                     </TableCell>
@@ -346,6 +356,7 @@ export default function Create({ providers }: Props) {
                                 </TableBody>
                             </Table>
                         </CardContent>
+                        <CardFooter>{errors.mcu_param_results && <p className="text-sm text-red-500">{errors.mcu_param_results}</p>}</CardFooter>
                     </Card>
 
                     <div className="mt-6 flex justify-end gap-2 border-t pt-6">

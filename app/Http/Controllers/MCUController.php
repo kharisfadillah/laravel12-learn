@@ -99,6 +99,8 @@ class MCUController extends Controller
             'mcu_param_results.*.id' => 'required|string',
             'mcu_param_results.*.result' => 'required|string',
             'mcu_param_results.*.notes' => 'nullable|string',
+        ], [
+            'mcu_param_results.*.result.required' => 'Hasil harus diisi',
         ]);
 
         // dd($validated);
