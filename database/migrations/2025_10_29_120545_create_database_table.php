@@ -236,13 +236,10 @@ return new class extends Migration
             $table->string('name');
             $table->enum('input_type', ['Angka', 'Teks Bebas', 'Pilihan']);
             $table->string('unit')->nullable();
-            $table->decimal('l_min_value')->nullable();
-            $table->decimal('p_min_value')->nullable();
-            $table->decimal('l_max_value')->nullable();
-            $table->decimal('p_max_value')->nullable();
-            $table->decimal('result_number')->nullable();
-            $table->string('result_text')->nullable();
-            $table->string('result_description')->nullable();
+            $table->json('ranges')->nullable();
+            $table->json('options')->nullable();
+            $table->string('result');
+            $table->string('notes')->nullable();
             $table->foreignUlid('created_id')
                 ->nullable()
                 ->constrained('users', 'id')

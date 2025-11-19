@@ -168,7 +168,7 @@ export default function Index({ provinces, filters }: Props) {
                                     <DialogDescription>Masukkan data provinsi baru. Klik simpan untuk menyimpan data.</DialogDescription>
                                 </DialogHeader>
                                 <div className="grid gap-4 py-4">
-                                    <div className="grid gap-2">
+                                    {/* <div className="grid gap-2">
                                         <Label htmlFor="create_province_code">Kode Provinsi</Label>
                                         <Input
                                             id="create_province_code"
@@ -177,7 +177,7 @@ export default function Index({ provinces, filters }: Props) {
                                             placeholder="Masukkan kode provinsi"
                                         />
                                         {createErrors.code && <p className="text-sm text-red-500">{createErrors.code}</p>}
-                                    </div>
+                                    </div> */}
                                     <div className="grid gap-2">
                                         <Label htmlFor="create_province_name">Nama Provinsi</Label>
                                         <Input
@@ -298,7 +298,7 @@ export default function Index({ provinces, filters }: Props) {
                                 <DialogDescription>Ubah data provinsi. Klik simpan untuk menyimpan perubahan.</DialogDescription>
                             </DialogHeader>
                             <div className="grid gap-4 py-4">
-                                <div className="grid gap-2">
+                                {/* <div className="grid gap-2">
                                     <Label htmlFor="edit_province_code">Kode Provinsi</Label>
                                     <Input
                                         id="edit_province_code"
@@ -307,7 +307,7 @@ export default function Index({ provinces, filters }: Props) {
                                         placeholder="Masukkan kode provinsi"
                                     />
                                     {editErrors.code && <p className="text-sm text-red-500">{editErrors.code}</p>}
-                                </div>
+                                </div> */}
                                 <div className="grid gap-2">
                                     <Label htmlFor="edit_province_name">Nama Provinsi</Label>
                                     <Input

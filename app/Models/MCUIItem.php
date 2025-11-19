@@ -16,6 +16,7 @@ class MCUIItem extends Model
      * @var string
      */
     protected $table = 'mcu_i_items';
+    protected $guarded = ['id'];
 
     public function headers(): BelongsTo
     {

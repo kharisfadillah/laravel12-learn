@@ -18,10 +18,16 @@ class MCUIHeader extends Model
      * @var string
      */
     protected $table = 'mcu_i_headers';
+    protected $guarded = ['id'];
 
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function provider(): BelongsTo
+    {
+        return $this->belongsTo(Provider::class);
     }
 
     public function participant(): BelongsTo

@@ -183,7 +183,7 @@ export default function Index({ companies, departments }: Props) {
                                     </div>
 
                                     {/* Kode Departemen */}
-                                    <div className="grid gap-2">
+                                    {/* <div className="grid gap-2">
                                         <Label htmlFor="create_department_code">Kode Departemen</Label>
                                         <Input
                                             id="create_department_code"
@@ -192,7 +192,7 @@ export default function Index({ companies, departments }: Props) {
                                             placeholder="Masukkan kode departemen"
                                         />
                                         {createErrors.code && <p className="text-sm text-red-500">{createErrors.code}</p>}
-                                    </div>
+                                    </div> */}
 
                                     {/* Nama Departemen */}
                                     <div className="grid gap-2">
@@ -224,7 +224,7 @@ export default function Index({ companies, departments }: Props) {
                     <TableHeader>
                         <TableRow>
                             <TableHead>Unit Usaha</TableHead>
-                            <TableHead>Kode Departemen</TableHead>
+                            {/* <TableHead>Kode Departemen</TableHead> */}
                             <TableHead>Nama Departemen</TableHead>
                             <TableHead className="w-[150px]" />
                         </TableRow>
@@ -234,7 +234,7 @@ export default function Index({ companies, departments }: Props) {
                             departments.map((department) => (
                                 <TableRow key={department.id}>
                                     <TableCell>{department.company?.name ?? '-'}</TableCell>
-                                    <TableCell>{department.code}</TableCell>
+                                    {/* <TableCell>{department.code}</TableCell> */}
                                     <TableCell>{department.name}</TableCell>
                                     <TableCell>
                                         <div className="flex gap-2">
@@ -287,7 +287,7 @@ export default function Index({ companies, departments }: Props) {
                                 </div>
 
                                 {/* Kode Departemen */}
-                                <div className="grid gap-2">
+                                {/* <div className="grid gap-2">
                                     <Label htmlFor="edit_department_code">Kode Departemen</Label>
                                     <Input
                                         id="edit_department_code"
@@ -296,7 +296,7 @@ export default function Index({ companies, departments }: Props) {
                                         placeholder="Masukkan kode departemen"
                                     />
                                     {editErrors.code && <p className="text-sm text-red-500">{editErrors.code}</p>}
-                                </div>
+                                </div> */}
 
                                 {/* Nama Departemen */}
                                 <div className="grid gap-2">

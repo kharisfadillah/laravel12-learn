@@ -17,7 +17,7 @@ class DepartmentController extends Controller
                 ->orderBy('id')
                 ->get(),
 
-            'departments' => Department::select('id', 'company_id', 'code', 'name')
+            'departments' => Department::select('id', 'company_id', 'name')
                 ->with('company:id,name')
                 ->latest()
                 ->get(),

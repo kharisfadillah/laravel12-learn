@@ -131,7 +131,8 @@ export default function Create({ providers }: Props) {
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
-                            {errors.mcu_type && <p className="text-sm text-red-500">{errors.mcu_type}</p>}
+                            {errors && <p className="text-sm text-red-500">{errors.mcu_param_results}</p>}
+                            {/* {errors.mcu_type && <p className="text-sm text-red-500">{errors.mcu_type}</p>} */}
                         </div>
 
                         <div>

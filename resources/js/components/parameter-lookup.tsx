@@ -75,7 +75,7 @@ export default function ParameterLookup({ open, onOpenChange, onSelect, initialS
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[1200px] sm:max-h-[1200px] overflow-y-auto">
+            <DialogContent className="sm:max-w-[1200px] sm:max-h-[1200px] overflow-y-auto" aria-description='Pilih Parameter MCU'>
                 <DialogHeader>
                     <DialogTitle>Pilih Parameter MCU</DialogTitle>
                 </DialogHeader>

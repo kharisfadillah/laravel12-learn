@@ -15,8 +15,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
-import { Ellipsis, Mars, Pencil, Search, Trash2, Venus } from 'lucide-react';
-import { JSX, useState } from 'react';
+import { Ellipsis, Pencil, Search, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 
 interface Company {
     id: string;
@@ -150,11 +150,13 @@ export default function Index({ mcus, filters }: Props) {
                                 <TableRow key={mcu.id}>
                                     <TableCell className="py-0.5">{mcu.company?.name}</TableCell>
                                     <TableCell className="py-0.5">{mcu.mcu_date}</TableCell>
-                                    <TableCell className="py-0.5">{mcu.created_at}</TableCell>
+                                    <TableCell className="py-0.5">
+                                        {new Date(mcu.created_at).toLocaleString('en-CA', { hour12: false }).replace(',', '')}
+                                    </TableCell>
                                     <TableCell className="py-0.5">{mcu.name}</TableCell>
                                     <TableCell className="py-0.5">{mcu.position}</TableCell>
                                     <TableCell className="py-0.5">{mcu.department_name}</TableCell>
-                                    <TableCell className="py-0.5">{mcu.gender}</TableCell>
+                                    <TableCell className="py-0.5">{mcu.gender == 'male' ? 'Laki-laki' : 'Perempuan'}</TableCell>
                                     <TableCell className="py-0.5">{mcu.provider?.name}</TableCell>
                                     <TableCell className="py-0.5">{mcu.conclusion}</TableCell>
 
@@ -171,11 +173,8 @@ export default function Index({ mcus, filters }: Props) {
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent className="w-56" align="start">
                                                     <DropdownMenuItem>
-                                                        <Link
-                                                            href={`/mcu/${mcu.id}/edit`}
-                                                            className="flex items-center gap-2"
-                                                        >
-                                                            <Pencil className="mr-2 w-4 h-4" />
+                                                        <Link href={`/mcu/${mcu.id}/edit`} className="flex items-center gap-2">
+                                                            <Pencil className="mr-2 h-4 w-4" />
                                                             <span>Edit</span>
                                                         </Link>
                                                         {/* Edit */}
@@ -183,10 +182,10 @@ export default function Index({ mcus, filters }: Props) {
                                                     <DropdownMenuSeparator />
                                                     <DropdownMenuItem
                                                         onClick={() => handleDeleteClick(mcu)}
-                                                    // onSelect={(event) => {
-                                                    //     event.preventDefault();
-                                                    //     handleDeleteClick(province);
-                                                    // }}
+                                                        // onSelect={(event) => {
+                                                        //     event.preventDefault();
+                                                        //     handleDeleteClick(province);
+                                                        // }}
                                                     >
                                                         <Trash2 className="mr-2 h-4 w-4 text-destructive" />
                                                         <div className="text-destructive">Hapus</div>
@@ -205,7 +204,6 @@ export default function Index({ mcus, filters }: Props) {
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
                                         </div> */}
-
                                     </TableCell>
                                 </TableRow>
                             ))
@@ -245,8 +243,7 @@ export default function Index({ mcus, filters }: Props) {
                         <AlertDialogHeader>
                             <AlertDialogTitle>Hapus MCU</AlertDialogTitle>
                             <AlertDialogDescription>
-                                Apakah Anda yakin ingin menghapus mcu <strong>{selectedMCU?.name}</strong>? Tindakan ini tidak dapat
-                                dibatalkan.
+                                Apakah Anda yakin ingin menghapus mcu <strong>{selectedMCU?.name}</strong>? Tindakan ini tidak dapat dibatalkan.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
 

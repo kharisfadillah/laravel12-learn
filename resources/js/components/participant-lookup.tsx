@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
 import { Input } from './ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import { parseGender } from '@/lib/utils';
 
 interface Props {
     value: Participant | null;
@@ -87,7 +88,7 @@ export default function ParticipantLookup({ value, onSelect, open, onOpenChange 
                                             <TableCell>{item.position}</TableCell>
                                             <TableCell>{item.department?.name}</TableCell>
                                             <TableCell>{item.birth_date}</TableCell>
-                                            <TableCell>{item.gender}</TableCell>
+                                            <TableCell>{parseGender(item.gender)}</TableCell>
                                         </TableRow>
                                     ))
                                 ) : (
