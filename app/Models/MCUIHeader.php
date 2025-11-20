@@ -44,4 +44,11 @@ class MCUIHeader extends Model
     {
         return $this->hasOne(MCUFHeader::class, 'initial_id', 'id');
     }
+
+    public function attachments()
+{
+    return $this->morphMany(Media::class, 'model')
+                ->where('collection', 'attachments');
+}
+
 }

@@ -1,6 +1,7 @@
 import { DatePicker } from '@/components/date-picker';
 import ParameterLookup from '@/components/parameter-lookup';
 import ParticipantLookup from '@/components/participant-lookup';
+import FileUpload from '@/components/file-upload';
 import { RangeDisplay } from '@/components/range-display';
 import { RecordItem } from '@/components/record-item';
 import {
@@ -41,6 +42,7 @@ type FormValues = {
     // gender: string;
     // phone: string;
     provider_id: string;
+    files: string[];
     mcu_param_results: MCUParamResult[];
 };
 
@@ -78,8 +80,34 @@ export default function Create({ providers }: Props) {
         // gender: '',
         // phone: '',
         provider_id: '',
+        files: [],
         mcu_param_results: [],
     });
+
+    // const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    //     onDrop,
+    //     multiple: true,
+    //     accept: {
+    //         "application/pdf": [],
+    //         "image/*": []
+    //     }
+    // });
+
+    // isFocused: boolean;
+    //   isDragActive: boolean;
+    //   isDragAccept: boolean;
+    //   isDragReject: boolean;
+    //   isFileDialogActive: boolean;
+    //   acceptedFiles: readonly FileWithPath[];
+    //   fileRejections: readonly FileRejection[];
+    //   rootRef: React.RefObject<HTMLElement>;
+    //   inputRef: React.RefObject<HTMLInputElement>;
+    //   getRootProps: <T extends DropzoneRootProps>(props?: T) => T;
+    //   getInputProps: <T extends DropzoneInputProps>(props?: T) => T;
+
+    // const onDrop = (acceptedFiles) => {
+    //     setData("files", [...data.files, ...acceptedFiles]);
+    // };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -183,6 +211,23 @@ export default function Create({ providers }: Props) {
                             </Button>
                         </CardFooter>
                     </Card>
+
+                    <div className='mt-3'>
+                            <Label>Upload Dokumen MCU</Label>
+                            <FileUpload
+    value={data.files}
+    onChange={(files) => setData("files", files)}
+    maxFiles={5}
+    maxSize={2 * 1024 * 1024}
+    error={errors.files}
+    accept={{
+        "application/pdf": [],
+        "image/*": []
+    }}
+/>
+                        </div>
+
+                    
 
                     <Card className="mt-4 gap-3 py-3">
                         <CardHeader className="flex flex-row justify-between px-3">
@@ -328,9 +373,6 @@ export default function Create({ providers }: Props) {
                                                         {errs[`mcu_param_results.${index}.result`] && (
                                                             <p className="text-sm text-red-500">{errs[`mcu_param_results.${index}.result`]}</p>
                                                         )}
-                                                        {/* {errors[`mcu_param_results.${index}.result`] && (
-                                                            <p className="text-sm text-red-500">{errors[`mcu_param_results.${index}.result`]}</p>
-                                                        )} */}
                                                     </TableCell>
                                                     <TableCell className="py-0.5">{param_result.notes}</TableCell>
                                                     <TableCell className="py-0.5">

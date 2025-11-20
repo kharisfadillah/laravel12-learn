@@ -321,6 +321,28 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        Schema::create('media', function (Blueprint $table) {
+            $table->ulid('id')->primary();
+            
+            $table->string('model_type'); // contoh: App\Models\Post
+            $table->unsignedBigInteger('model_id'); // id dari record
+            
+            $table->string('collection'); // misal: attachments, photos, dll
+
+            $table->string('name');
+            $table->string('file_name');
+            $table->string('mime_type')->nullable();
+
+            $table->string('disk', 50)->default('public');
+            $table->unsignedBigInteger('size')->nullable();
+            $table->text('url')->nullable();
+
+            $table->timestamps();
+
+            $table->index(['model_type', 'model_id']);
+            $table->index('collection');
+        });
     }
 
     /**
@@ -328,6 +350,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('media');
         Schema::dropIfExists('mcu_f_items');
         Schema::dropIfExists('mcu_f_headers');
         Schema::dropIfExists('mcu_i_items');
