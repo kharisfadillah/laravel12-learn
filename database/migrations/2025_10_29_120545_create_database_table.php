@@ -184,6 +184,7 @@ return new class extends Migration
             $table->foreignUlid('company_id')
                 ->constrained('companies', 'id')
                 ->restrictOnDelete();
+            $table->string('mcu_type');
             $table->date('mcu_date');
             $table->foreignUlid('participant_id')
                 ->constrained('participants', 'id')
@@ -324,20 +325,15 @@ return new class extends Migration
 
         Schema::create('media', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            
-            $table->string('model_type'); // contoh: App\Models\Post
-            $table->unsignedBigInteger('model_id'); // id dari record
-            
-            $table->string('collection'); // misal: attachments, photos, dll
-
+            $table->string('model_type');
+            $table->ulid('model_id');
+            $table->string('collection');
             $table->string('name');
             $table->string('file_name');
             $table->string('mime_type')->nullable();
-
             $table->string('disk', 50)->default('public');
             $table->unsignedBigInteger('size')->nullable();
             $table->text('url')->nullable();
-
             $table->timestamps();
 
             $table->index(['model_type', 'model_id']);

@@ -13,52 +13,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types';
+import type { BreadcrumbItem, MCUIHeader } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
-import { Ellipsis, Pencil, Search, Trash2 } from 'lucide-react';
+import { Ellipsis, Pencil, ScanSearch, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-
-interface Company {
-    id: string;
-    name: string;
-}
-
-interface Provider {
-    id: string;
-    name: string;
-}
-
-interface MCUIHeader {
-    id: string;
-    company_id: string;
-    mcu_date: string;
-    participant_id: string;
-    name: string;
-    position: string;
-    department_name: string;
-    gender: string;
-    conclusion: string;
-    created_at: string;
-    company?: Company;
-    provider?: Provider;
-}
-
-// interface Participant {
-//     id: number;
-//     name: string;
-//     position: string;
-//     birth_date: string;
-//     gender: string;
-//     phone: string;
-//     company?: Company;
-//     department?: Department;
-// }
-
-// interface Department {
-//     id: number;
-//     name: string;
-// }
-
 interface Props {
     mcus: {
         data: MCUIHeader[];
@@ -176,6 +134,14 @@ export default function Index({ mcus, filters }: Props) {
                                                         <Link href={`/mcu/${mcu.id}/edit`} className="flex items-center gap-2">
                                                             <Pencil className="mr-2 h-4 w-4" />
                                                             <span>Edit</span>
+                                                        </Link>
+                                                        {/* Edit */}
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem>
+                                                        <Link href={`/mcu/${mcu.id}/review`} className="flex items-center gap-2">
+                                                            <ScanSearch className="mr-2 h-4 w-4" />
+                                                            <span>Review</span>
                                                         </Link>
                                                         {/* Edit */}
                                                     </DropdownMenuItem>

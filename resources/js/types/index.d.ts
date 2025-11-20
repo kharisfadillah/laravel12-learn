@@ -109,6 +109,42 @@ export interface MCUParameter {
     category?: MCUCategory;
 }
 
+export interface MCUIHeader {
+    id: string;
+    company_id: string;
+    mcu_type: string;
+    mcu_date: string;
+    participant_id: string;
+    name: string;
+    position: string;
+    department_name: string;
+    gender: string;
+    conclusion: string;
+    created_at: string;
+    company?: Company;
+    provider?: Provider;
+    participant?: Participant;
+    items: MCUIItem[];
+}
+
+export interface MCUIItem {
+    id: string;
+    header_id: string;
+    category_id: string;
+    parameter_id: string;
+    name: string;
+    input_type: string;
+    unit?: string | null;
+    ranges?: {
+        male: { min: string; max: string };
+        female: { min: string; max: string };
+    } | null;
+    options?: string[] | null;
+    result: string;
+    notes?: string | null;
+    category?: MCUCategory | null;
+}
+
 export type MCUParamResult = {
     id: string;
     category_id: string;

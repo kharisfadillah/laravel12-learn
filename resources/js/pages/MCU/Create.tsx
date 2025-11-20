@@ -1,7 +1,7 @@
 import { DatePicker } from '@/components/date-picker';
+import FileUpload from '@/components/file-upload';
 import ParameterLookup from '@/components/parameter-lookup';
 import ParticipantLookup from '@/components/participant-lookup';
-import FileUpload from '@/components/file-upload';
 import { RangeDisplay } from '@/components/range-display';
 import { RecordItem } from '@/components/record-item';
 import {
@@ -33,16 +33,8 @@ type FormValues = {
     mcu_type: string;
     mcu_date: string;
     participant_id: string;
-    // name: string;
-    // position: string;
-    // department_id: string;
-    // department_code: string;
-    // department_name: string;
-    // birth_date: string;
-    // gender: string;
-    // phone: string;
     provider_id: string;
-    files: string[];
+    files: File[];
     mcu_param_results: MCUParamResult[];
 };
 
@@ -71,14 +63,6 @@ export default function Create({ providers }: Props) {
         mcu_type: '',
         mcu_date: '',
         participant_id: '',
-        // name: '',
-        // position: '',
-        // department_id: '',
-        // department_code: '',
-        // department_name: '',
-        // birth_date: '',
-        // gender: '',
-        // phone: '',
         provider_id: '',
         files: [],
         mcu_param_results: [],
@@ -212,27 +196,24 @@ export default function Create({ providers }: Props) {
                         </CardFooter>
                     </Card>
 
-                    <div className='mt-3'>
-                            <Label>Upload Dokumen MCU</Label>
-                            <FileUpload
-    value={data.files}
-    onChange={(files) => setData("files", files)}
-    maxFiles={5}
-    maxSize={2 * 1024 * 1024}
-    error={errors.files}
-    accept={{
-        "application/pdf": [],
-        "image/*": []
-    }}
-/>
-                        </div>
-
-                    
+                    <div className="mt-3">
+                        <Label>Dokumen MCU</Label>
+                        <FileUpload
+                            value={data.files}
+                            onChange={(files) => setData('files', files)}
+                            maxFiles={5}
+                            maxSize={2 * 1024 * 1024}
+                            error={errors.files}
+                            accept={{
+                                'application/pdf': [],
+                                'image/*': [],
+                            }}
+                        />
+                    </div>
 
                     <Card className="mt-4 gap-3 py-3">
                         <CardHeader className="flex flex-row justify-between px-3">
-                            <CardTitle>Parameter MCU</CardTitle>
-
+                            <CardTitle>Hasil MCU</CardTitle>
                             <Button type="button" onClick={() => setOpenParamLookup(true)} disabled={participant == null}>
                                 <Settings className="mr-2 h-4 w-4" />
                                 Set Parameter

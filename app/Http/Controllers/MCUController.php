@@ -68,42 +68,26 @@ class MCUController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
-
-
-        // try {
-        //     //code...
-
-        //     $validator = Validator::make($request->all(), [
-        //         'company_id' => 'required|string',
-        //         'mcu_type' => 'required',
-        //         'mcu_date' => 'required|date',
-        //         'participant_id' => 'required|string',
-        //         'provider_id' => 'required|string',
-        //         'mcu_param_results' => 'required',
-        //         'mcu_param_results.*.id' => 'required|string',
-        //         'mcu_param_results.*.result' => 'required|string',
-        //     ]);
-        // } catch (\Throwable $th) {
-        //     //throw $th;
-        //     dd($th);
-        // }
-
         $validated = $request->validate([
             'company_id' => 'required|string',
             'mcu_type' => 'required|string',
             'mcu_date' => 'required|date',
             'participant_id' => 'required|string',
             'provider_id' => 'required|string',
+            'files' => 'nullable|array',
+            'files.*' => 'file|mimes:pdf,jpeg,jpg,png|max:2048',
             'mcu_param_results' => 'required|array',
             'mcu_param_results.*.id' => 'required|string',
             'mcu_param_results.*.result' => 'required|string',
             'mcu_param_results.*.notes' => 'nullable|string',
         ], [
+            'company_id.required' => 'Unit usaha belum dipilih',
+            'mcu_type.required' => 'Tipe MCU harus diisi',
+            'mcu_date.required' => 'Tanggal MCU harus diisi',
+            'participant_id.required' => 'Kandidat belum dipilih',
+            'provider_id.required' => 'Provider MCU belum dipilih',
             'mcu_param_results.*.result.required' => 'Hasil harus diisi',
         ]);
-
-        // dd($validated);
 
         DB::beginTransaction();
 
@@ -136,15 +120,10 @@ class MCUController extends Controller
                     'result' => $paramResult['result'],
                     'notes' => $paramResult['notes'] ?? null,
                 ]);
+            }
 
-                // $param = MCUParameter::find($paramResult['id']);
-
-                // MCUIItem::create([
-                //     'header_id'     => $header->id,
-                //     'parameter_id'  => $paramResult['id'],
-                //     'result'        => $paramResult['result'],
-                //     'notes'         => $paramResult['notes'] ?? null,
-                // ]);
+            if ($request->hasFile('files')) {
+                $header->addMultipleMedia($request->file('files'), 'attachments');
             }
 
             DB::commit();
@@ -174,6 +153,26 @@ class MCUController extends Controller
 
         return redirect()->route('province.index')->with('success', 'Provinsi berhasil diubah.');
     }
+
+    public function review($id)
+    {
+        $mcu = MCUIHeader::with([
+            'company',
+            'provider',
+            'participant.department',
+            'items.category'
+            ])
+            ->findOrFail($id);
+
+        return Inertia::render('MCU/Review', [
+            'mcu' => $mcu,
+            'flash' => [
+                'success' => session('success'),
+                'error' => session('error')
+            ]
+        ]);
+    }
+
 
     public function destroy($id)
     {

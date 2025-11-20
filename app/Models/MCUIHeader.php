@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasMedia;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class MCUIHeader extends Model
 {
     use HasUlids;
+    use HasMedia;
     
     /**
      * The table associated with the model.
@@ -44,11 +46,5 @@ class MCUIHeader extends Model
     {
         return $this->hasOne(MCUFHeader::class, 'initial_id', 'id');
     }
-
-    public function attachments()
-{
-    return $this->morphMany(Media::class, 'model')
-                ->where('collection', 'attachments');
-}
 
 }

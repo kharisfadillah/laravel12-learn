@@ -24,6 +24,8 @@ class MCUParameterController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+            // dd($mcuparameters->toArray());
+
         return Inertia::render('MCUParameter/Index', [
             'mcuparameters' => $mcuparameters,
             'filters' => [

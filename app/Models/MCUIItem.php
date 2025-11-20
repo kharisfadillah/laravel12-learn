@@ -18,8 +18,18 @@ class MCUIItem extends Model
     protected $table = 'mcu_i_items';
     protected $guarded = ['id'];
 
-    public function headers(): BelongsTo
+    protected $casts = [
+        'ranges' => 'array',
+        'options' => 'array',
+    ];
+
+    public function header(): BelongsTo
     {
         return $this->belongsTo(MCUIHeader::class, 'header_id', 'id');
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(MCUCategory::class, 'category_id', 'id');
     }
 }

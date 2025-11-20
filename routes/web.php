@@ -126,6 +126,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         'destroy'
     ]);
 
+    Route::get('/mcu/{id}/review', [MCUController::class, 'review'])
+        ->name('mcu.review');
+
     Route::get('/participant/search', [ParticipantController::class, 'search'])
         ->name('participant.search');
 
