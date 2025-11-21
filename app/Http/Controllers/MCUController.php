@@ -115,8 +115,8 @@ class MCUController extends Controller
                     'name' => $param->name,
                     'input_type' => $param->input_type,
                     'unit' => $param->unit,
-                    'ranges' => json_encode($param->ranges),
-                    'options' => json_encode($param->options),
+                    'ranges' => $param->ranges,
+                    'options' => $param->options,
                     'result' => $paramResult['result'],
                     'notes' => $paramResult['notes'] ?? null,
                 ]);
@@ -160,9 +160,14 @@ class MCUController extends Controller
             'company',
             'provider',
             'participant.department',
-            'items.category'
-            ])
+            'items.category',
+            'attachments'
+        ])
             ->findOrFail($id);
+
+        if ($mcu->conclusion != null) {
+            abort(403, 'MCU yang sudah direview, tidak bisa direview lagi');
+        }
 
         return Inertia::render('MCU/Review', [
             'mcu' => $mcu,
@@ -173,12 +178,66 @@ class MCUController extends Controller
         ]);
     }
 
+    public function storeReview(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'conclusion' => 'required|string',
+            'recommendation' => 'nullable|string',
+            'selected_items' => 'nullable|array',
+        ], [
+            'conclusion.required' => 'Kesimpulan belum dipilih',
+        ]);
+
+        $mcu = MCUIHeader::findOrFail($id);
+
+        $mcu->update([
+            'conclusion' => $validated['conclusion'],
+            'recommendation' => $validated['recommendation'],
+        ]);
+
+        // DB::transaction(function () use ($mcu, $validated, $request) {
+        //     $mcu->update([
+        //         'conclusion' => $validated['conclusion'],
+        //         'recommendation' => $validated['recommendation'],
+        //     ]);
+
+        //     foreach ($request->role_company as $rc) {
+        //         DB::table('user_role_company')->insert([
+        //             'user_id' => $user->id,
+        //             'role_id' => $rc['role_id'],
+        //             'company_id' => $rc['company_id'],
+        //         ]);
+        //     }
+        // });
+
+        return redirect()->route('mcu.index')->with('success', 'Medical Check Up berhasil direview.');
+    }
+
+    public function followUp($id)
+    {
+        $mcu = MCUIHeader::with([
+            'company',
+            'provider',
+            'participant.department',
+            'items.category',
+            'attachments'
+        ])
+            ->findOrFail($id);
+
+        return Inertia::render('MCU/FollowUp', [
+            'mcu' => $mcu,
+            'flash' => [
+                'success' => session('success'),
+                'error' => session('error')
+            ]
+        ]);
+    }
 
     public function destroy($id)
     {
-        $province = Province::findOrFail($id);
-        $province->delete();
+        $mcu = MCUIHeader::findOrFail($id);
+        $mcu->delete();
 
-        return redirect()->route('province.index')->with('success', 'Provinsi berhasil dihapus.');
+        return redirect()->route('mcu.index')->with('success', 'Medical Check Up berhasil dihapus.');
     }
 }

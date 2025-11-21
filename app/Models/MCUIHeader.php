@@ -13,7 +13,7 @@ class MCUIHeader extends Model
 {
     use HasUlids;
     use HasMedia;
-    
+
     /**
      * The table associated with the model.
      *
@@ -47,4 +47,9 @@ class MCUIHeader extends Model
         return $this->hasOne(MCUFHeader::class, 'initial_id', 'id');
     }
 
+    public function attachments()
+    {
+        return $this->morphMany(Media::class, 'model')
+            ->where('collection', 'attachments');
+    }
 }

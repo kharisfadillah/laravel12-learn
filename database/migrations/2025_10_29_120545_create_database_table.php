@@ -195,7 +195,6 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('departments', 'id')
                 ->restrictOnDelete();
-            $table->string('department_code')->nullable();
             $table->string('department_name')->nullable();
             $table->date('birth_date')->nullable();
             $table->enum('gender', ['male', 'female']);
@@ -204,7 +203,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('providers', 'id')
                 ->restrictOnDelete();
-            $table->enum('conclusion', ['FIT TO WORK', 'FIT WITH NOTE', 'TEMPORARY UNFIT', 'UNFIT'])
+            $table->enum('conclusion', ['FIT UNTUK BEKERJA', 'FIT DENGAN CATATAN', 'TEMPORARY UNFIT', 'UNFIT'])
                 ->nullable();
             $table->longText('recommendation')->nullable();
             $table->foreignUlid('created_id')

@@ -22,6 +22,8 @@ class Media extends Model
         'url',
     ];
 
+    protected $appends = ['url_public', 'full_url'];
+
     // Polymorphic
     public function model()
     {
@@ -31,5 +33,12 @@ class Media extends Model
     public function getFullUrlAttribute()
     {
         return Storage::disk($this->disk)->url($this->file_name);
+    }
+
+    public function getUrlPublicAttribute()
+    {
+        if (!$this->file_name) return null;
+
+        return asset('storage/' . $this->file_name);
     }
 }

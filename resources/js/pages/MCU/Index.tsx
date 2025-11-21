@@ -98,6 +98,7 @@ export default function Index({ mcus, filters }: Props) {
                             <TableHead>Jenis Kelamin</TableHead>
                             <TableHead>Provider MCU</TableHead>
                             <TableHead>Kesimpulan Awal</TableHead>
+                            <TableHead>Kesimpulan Akhir</TableHead>
                             <TableHead className="w-[60px]" />
                         </TableRow>
                     </TableHeader>
@@ -117,6 +118,7 @@ export default function Index({ mcus, filters }: Props) {
                                     <TableCell className="py-0.5">{mcu.gender == 'male' ? 'Laki-laki' : 'Perempuan'}</TableCell>
                                     <TableCell className="py-0.5">{mcu.provider?.name}</TableCell>
                                     <TableCell className="py-0.5">{mcu.conclusion}</TableCell>
+                                    <TableCell className="py-0.5">-</TableCell>
 
                                     <TableCell className="py-0.5">
                                         <div className="mt-0 flex justify-end">
@@ -142,6 +144,14 @@ export default function Index({ mcus, filters }: Props) {
                                                         <Link href={`/mcu/${mcu.id}/review`} className="flex items-center gap-2">
                                                             <ScanSearch className="mr-2 h-4 w-4" />
                                                             <span>Review</span>
+                                                        </Link>
+                                                        {/* Edit */}
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem>
+                                                        <Link href={`/mcu/${mcu.id}/follow-up`} className="flex items-center gap-2">
+                                                            <ScanSearch className="mr-2 h-4 w-4" />
+                                                            <span>Tindak Lanjut</span>
                                                         </Link>
                                                         {/* Edit */}
                                                     </DropdownMenuItem>

@@ -90,6 +90,22 @@ export interface Provider {
     // province?: 
 }
 
+export interface Media {
+    id: string;
+    model_type: string;
+    model_id: string;
+    collection: string;
+    name: string;
+    file_name: string;
+    mime_type: string | null;
+    disk: string;
+    size: number | null;
+    url: string | null;
+    url_public: string;
+    full_url: string;
+}
+
+
 export interface MCUCategory {
     id: string;
     name: string;
@@ -120,11 +136,13 @@ export interface MCUIHeader {
     department_name: string;
     gender: string;
     conclusion: string;
+    recommendation: string;
     created_at: string;
     company?: Company;
     provider?: Provider;
     participant?: Participant;
     items: MCUIItem[];
+    attachments: Media[];
 }
 
 export interface MCUIItem {

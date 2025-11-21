@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Checkbox } from './ui/checkbox';
 import { Label } from './ui/label';
+import { Spinner } from './ui/spinner';
 
 type GroupedParameters = Record<string, MCUParameter[]>;
 
@@ -74,14 +75,19 @@ export default function ParameterLookup({ open, onOpenChange, onSelect, initialS
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[1200px] sm:max-h-[1200px] overflow-y-auto" aria-describedby='Pilih Parameter MCU'>
+            <DialogContent className="overflow-y-auto sm:max-h-[1200px] sm:max-w-[1200px]" aria-describedby="Pilih Parameter MCU">
                 <DialogHeader>
                     <DialogTitle>Parameter MCU</DialogTitle>
                     <DialogDescription>Pilih parameter MCU</DialogDescription>
                 </DialogHeader>
 
                 <div className="mt-2 max-h-80 space-y-3 overflow-y-auto">
-                    {loading && <div className="py-4 text-center text-muted-foreground">Memuat parameter...</div>}
+                    {loading && (
+                        <div className="py-4 text-center text-muted-foreground">
+                            <Spinner />
+                            Memuat parameter...
+                        </div>
+                    )}
 
                     {!loading &&
                         categories.map((cat, index) => {
