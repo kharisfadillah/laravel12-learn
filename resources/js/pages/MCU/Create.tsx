@@ -426,17 +426,6 @@ export default function Create({ providers }: Props) {
                                 ...data,
                                 mcu_param_results: finalResults,
                             });
-
-                            // const converted = parseToMCUParamResults(p);
-
-                            // const existingIds = data.mcu_param_results.map((r) => r.id);
-
-                            // const filtered = converted.filter((item) => !existingIds.includes(item.id));
-
-                            // setData({
-                            //     ...data,
-                            //     mcu_param_results: [...data.mcu_param_results, ...filtered],
-                            // });
                         }}
                     />
                 )}

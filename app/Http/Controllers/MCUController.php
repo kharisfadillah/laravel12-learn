@@ -233,6 +233,11 @@ class MCUController extends Controller
         ]);
     }
 
+    public function storeFollowUp(Request $request, $id)
+    {
+        dd($request->all());
+    }
+
     public function destroy($id)
     {
         $mcu = MCUIHeader::findOrFail($id);

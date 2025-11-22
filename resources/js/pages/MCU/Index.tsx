@@ -71,7 +71,7 @@ export default function Index({ mcus, filters }: Props) {
             <div className="flex h-full w-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="flex items-center justify-between">
                     <form onSubmit={handleSearch} className="flex gap-2">
-                        <Input placeholder="Cari mcu..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-64" />
+                        <Input id="query" placeholder="Cari mcu..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-64" />
                         <Button type="submit" variant="outline">
                             <Search className="mr-2 h-4 w-4" /> Cari
                         </Button>
@@ -132,7 +132,7 @@ export default function Index({ mcus, filters }: Props) {
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent className="w-56" align="start">
-                                                    <DropdownMenuItem>
+                                                    <DropdownMenuItem asChild>
                                                         <Link href={`/mcu/${mcu.id}/edit`} className="flex items-center gap-2">
                                                             <Pencil className="mr-2 h-4 w-4" />
                                                             <span>Edit</span>
@@ -140,7 +140,7 @@ export default function Index({ mcus, filters }: Props) {
                                                         {/* Edit */}
                                                     </DropdownMenuItem>
                                                     <DropdownMenuSeparator />
-                                                    <DropdownMenuItem>
+                                                    <DropdownMenuItem asChild>
                                                         <Link href={`/mcu/${mcu.id}/review`} className="flex items-center gap-2">
                                                             <ScanSearch className="mr-2 h-4 w-4" />
                                                             <span>Review</span>
@@ -148,7 +148,7 @@ export default function Index({ mcus, filters }: Props) {
                                                         {/* Edit */}
                                                     </DropdownMenuItem>
                                                     <DropdownMenuSeparator />
-                                                    <DropdownMenuItem>
+                                                    <DropdownMenuItem asChild>
                                                         <Link href={`/mcu/${mcu.id}/follow-up`} className="flex items-center gap-2">
                                                             <ScanSearch className="mr-2 h-4 w-4" />
                                                             <span>Tindak Lanjut</span>

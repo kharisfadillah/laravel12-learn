@@ -96,7 +96,7 @@ export default function Review({ mcu }: Props) {
                                     <TableHead>Nilai Rujukan</TableHead>
                                     <TableHead>Hasil</TableHead>
                                     <TableHead>Keterangan</TableHead>
-                                    <TableHead>Review</TableHead>
+                                    {/* <TableHead>Review</TableHead> */}
                                     {/* <TableHead></TableHead> */}
                                 </TableRow>
                             </TableHeader>
@@ -115,7 +115,7 @@ export default function Review({ mcu }: Props) {
                                                 </TableCell>
                                                 <TableCell className="py-1">{item.result}</TableCell>
                                                 <TableCell className="py-1">{item.notes}</TableCell>
-                                                <TableCell className="w-[40px] px-3 py-1">
+                                                {/* <TableCell className="w-[40px] px-3 py-1">
                                                     <Checkbox
                                                         checked={data.selected_items.includes(item.id)}
                                                         onCheckedChange={(checked) => {
@@ -129,7 +129,7 @@ export default function Review({ mcu }: Props) {
                                                             }
                                                         }}
                                                     />
-                                                </TableCell>
+                                                </TableCell> */}
                                                 {/* <TableCell className="py-0.5">
                                                         <Button
                                                             type="button"
@@ -145,7 +145,7 @@ export default function Review({ mcu }: Props) {
                                     })
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={5} className="text-center text-muted-foreground">
+                                        <TableCell colSpan={6} className="text-center text-muted-foreground">
                                             Tidak ada hasil MCU
                                         </TableCell>
                                     </TableRow>

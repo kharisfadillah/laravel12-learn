@@ -1,3 +1,4 @@
+import { Calendar22 } from '@/components/calendar22';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -9,6 +10,7 @@ import {
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
@@ -51,6 +53,8 @@ export default function Index({ provinces, filters }: Props) {
     const [openEdit, setOpenEdit] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
     const [selectedProvince, setSelectedProvince] = useState<Province | null>(null);
+
+    const [date, setDate] = useState<Date | undefined>(new Date());
 
     // Form untuk Create
     const {
@@ -188,6 +192,8 @@ export default function Index({ provinces, filters }: Props) {
                                         />
                                         {createErrors.name && <p className="text-sm text-red-500">{createErrors.name}</p>}
                                     </div>
+                                    <Calendar22 />
+                                    {/* <Calendar mode="single" selected={date} onSelect={setDate} captionLayout='dropdown' className="rounded-lg border w-64" /> */}
                                 </div>
                                 <DialogFooter>
                                     <Button type="button" variant="outline" onClick={() => setOpenCreate(false)}>

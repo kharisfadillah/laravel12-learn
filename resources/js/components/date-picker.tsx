@@ -71,7 +71,7 @@ export function DatePicker({ value, onChange }: { value?: Date; onChange?: (date
             mode="single"
             selected={date}
             captionLayout="dropdown"
-            // className="w-full"
+            className="w-64"
             onSelect={(date) => {
               setDate(date)
               setOpen(false)

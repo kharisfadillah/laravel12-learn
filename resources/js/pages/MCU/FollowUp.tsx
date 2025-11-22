@@ -1,24 +1,39 @@
 import { AttachmentList } from '@/components/attachment-list';
+import ParameterLookup from '@/components/parameter-lookup';
 import { RangeDisplay } from '@/components/range-display';
 import { RecordItem } from '@/components/record-item';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { parseGender } from '@/lib/utils';
-import type { BreadcrumbItem, MCUIHeader } from '@/types';
+import { formatDecimal, parseGender, parseToMCUParameters, parseToMCUParamResults } from '@/lib/utils';
+import type { BreadcrumbItem, MCUIHeader, MCUParamResult, Provider } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
-import { Mars, Venus } from 'lucide-react';
-import { JSX } from 'react';
+import { Mars, Settings, Trash2, Venus } from 'lucide-react';
+import { JSX, useState } from 'react';
 
 type FormValues = {
-    conclusion: string;
-    recommendation: string;
-    selected_items: string[];
+    mcu_date: string;
+    provider_id: string;
+    files: File[];
+    mcu_param_results: MCUParamResult[];
 };
 
 interface Props {
     mcu: MCUIHeader;
+    providers: Provider[];
 }
 
 const genderIcons: Record<'male' | 'female', JSX.Element> = {
@@ -26,21 +41,38 @@ const genderIcons: Record<'male' | 'female', JSX.Element> = {
     female: <Mars className="inline h-4 w-4 text-pink-600" />,
 };
 
-export default function FollowUp({ mcu }: Props) {
+export default function FollowUp({ mcu, providers }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Medical Check Up', href: '/mcu' },
         { title: 'Tindak Lanjut', href: `/mcu/${mcu.id}/follow-up` },
     ];
 
+    const [openParamLookup, setOpenParamLookup] = useState(false);
+    const [openDeleteParam, setOpenDeleteParam] = useState(false);
+    const [selectedParam, setSelectedParam] = useState<MCUParamResult | null>(null);
+
     const { data, setData, post, processing, errors } = useForm<FormValues>({
-        conclusion: '',
-        recommendation: '',
-        selected_items: [],
+        mcu_date: '',
+        provider_id: '',
+        files: [],
+        mcu_param_results: [],
     });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post(`/mcu/${mcu.id}/follow-up`);
+    };
+
+    const handleDeleteParamClick = (param: MCUParamResult) => {
+        setSelectedParam(param);
+        setOpenDeleteParam(true);
+    };
+
+    const handleDeleteParamConfirm = () => {
+        if (selectedParam) {
+            const filtered = data.mcu_param_results.filter((r) => r.id !== selectedParam.id);
+            setData('mcu_param_results', filtered);
+        }
     };
 
     return (
@@ -92,8 +124,6 @@ export default function FollowUp({ mcu }: Props) {
                                     <TableHead>Nilai Rujukan</TableHead>
                                     <TableHead>Hasil</TableHead>
                                     <TableHead>Keterangan</TableHead>
-                                    <TableHead>Tindak Lanjut</TableHead>
-                                    {/* <TableHead></TableHead> */}
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -111,39 +141,37 @@ export default function FollowUp({ mcu }: Props) {
                                                 </TableCell>
                                                 <TableCell className="py-1">{item.result}</TableCell>
                                                 <TableCell className="py-1">{item.notes}</TableCell>
-                                                <TableCell className="w-[40px] px-3 py-1">
-                                                    <Checkbox
-                                                        checked={data.selected_items.includes(item.id)}
-                                                        aria-readonly="true"
-                                                        className="pointer-events-none"
-                                                        // onCheckedChange={(checked) => {
-                                                        //     if (checked) {
-                                                        //         setData('selected_items', [...data.selected_items, item.id]);
-                                                        //     } else {
-                                                        //         setData(
-                                                        //             'selected_items',
-                                                        //             data.selected_items.filter((id) => id !== item.id),
-                                                        //         );
-                                                        //     }
-                                                        // }}
-                                                    />
-                                                </TableCell>
+                                                {/* <TableCell className="w-[40px] px-3 py-1">
+                                                                                <Checkbox
+                                                                                    checked={data.selected_items.includes(item.id)}
+                                                                                    onCheckedChange={(checked) => {
+                                                                                        if (checked) {
+                                                                                            setData('selected_items', [...data.selected_items, item.id]);
+                                                                                        } else {
+                                                                                            setData(
+                                                                                                'selected_items',
+                                                                                                data.selected_items.filter((id) => id !== item.id),
+                                                                                            );
+                                                                                        }
+                                                                                    }}
+                                                                                />
+                                                                            </TableCell> */}
                                                 {/* <TableCell className="py-0.5">
-                                                        <Button
-                                                            type="button"
-                                                            size="sm"
-                                                            variant="destructive"
-                                                            onClick={() => handleDeleteParamClick(param_result)}
-                                                        >
-                                                            <Trash2 className="h-4 w-4" />
-                                                        </Button>
-                                                    </TableCell> */}
+                                                                                    <Button
+                                                                                        type="button"
+                                                                                        size="sm"
+                                                                                        variant="destructive"
+                                                                                        onClick={() => handleDeleteParamClick(param_result)}
+                                                                                    >
+                                                                                        <Trash2 className="h-4 w-4" />
+                                                                                    </Button>
+                                                                                </TableCell> */}
                                             </TableRow>
                                         );
                                     })
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={5} className="text-center text-muted-foreground">
+                                        <TableCell colSpan={6} className="text-center text-muted-foreground">
                                             Tidak ada hasil MCU
                                         </TableCell>
                                     </TableRow>
@@ -163,13 +191,14 @@ export default function FollowUp({ mcu }: Props) {
                     </CardContent>
                 </Card>
 
-                <Card className="mt-4 gap-3 py-3">
+                <form onSubmit={handleSubmit} className="mt-3">
+                    <Card className="mt-4 gap-3 py-3">
                         <CardHeader className="flex flex-row justify-between px-3">
-                            <CardTitle>Hasil MCU</CardTitle>
-                            {/* <Button type="button" onClick={() => setOpenParamLookup(true)} disabled={participant == null}>
+                            <CardTitle>Hasil MCU Tindak Lanjut</CardTitle>
+                            <Button type="button" onClick={() => setOpenParamLookup(true)}>
                                 <Settings className="mr-2 h-4 w-4" />
                                 Set Parameter
-                            </Button> */}
+                            </Button>
                         </CardHeader>
                         <CardContent className="gap-2 px-0 py-0">
                             <Table>
@@ -181,7 +210,6 @@ export default function FollowUp({ mcu }: Props) {
                                         <TableHead>Nilai Rujukan</TableHead>
                                         <TableHead>Hasil</TableHead>
                                         <TableHead>Keterangan</TableHead>
-                                        <TableHead></TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -196,8 +224,10 @@ export default function FollowUp({ mcu }: Props) {
                                             };
                                             const computeNote = () => {
                                                 // 1. Ambil Nilai Batas (Min/Max) berdasarkan Jenis Kelamin
-                                                const minValueStr = param_result.ranges?.[participant?.gender === 'female' ? 'female' : 'male']?.min;
-                                                const maxValueStr = param_result.ranges?.[participant?.gender === 'female' ? 'female' : 'male']?.max;
+                                                const minValueStr =
+                                                    param_result.ranges?.[mcu.participant?.gender === 'female' ? 'female' : 'male']?.min;
+                                                const maxValueStr =
+                                                    param_result.ranges?.[mcu.participant?.gender === 'female' ? 'female' : 'male']?.max;
 
                                                 // Ambil hasil yang baru saja dimasukkan (sudah ada di state 'result' karena onChange sudah berjalan)
                                                 let currentResultStr = param_result.result;
@@ -333,6 +363,48 @@ export default function FollowUp({ mcu }: Props) {
                         </CardContent>
                         <CardFooter>{errors.mcu_param_results && <p className="text-sm text-red-500">{errors.mcu_param_results}</p>}</CardFooter>
                     </Card>
+                </form>
+
+                {openParamLookup && (
+                    <ParameterLookup
+                        open={openParamLookup}
+                        onOpenChange={setOpenParamLookup}
+                        initialSelection={parseToMCUParameters(data.mcu_param_results)}
+                        onSelect={(p) => {
+                            const newSelectedIds = p.map((item) => item.id);
+                            const keptOldResults = data.mcu_param_results.filter((r) => newSelectedIds.includes(r.id));
+                            const keptOldIds = keptOldResults.map((r) => r.id); // [2, 3]
+                            const trulyNewParameters = p.filter((param) => !keptOldIds.includes(param.id));
+                            const convertedNewResults = parseToMCUParamResults(trulyNewParameters);
+                            const finalResults = [...keptOldResults, ...convertedNewResults];
+                            setData({
+                                ...data,
+                                mcu_param_results: finalResults,
+                            });
+                        }}
+                    />
+                )}
+                {/* Modal Konfirmasi Hapus */}
+                <AlertDialog open={openDeleteParam} onOpenChange={setOpenDeleteParam}>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Hapus Parameter</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                Apakah Anda yakin ingin menghapus parameter <strong>{selectedParam?.name}</strong>? Tindakan ini tidak dapat
+                                dibatalkan.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Batal</AlertDialogCancel>
+                            <AlertDialogAction
+                                onClick={handleDeleteParamConfirm}
+                                className="text-destructive-foreground bg-destructive hover:bg-destructive/90"
+                            >
+                                Hapus
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </div>
         </AppLayout>
     );
