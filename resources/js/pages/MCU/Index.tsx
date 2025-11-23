@@ -17,7 +17,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, MCUIHeader } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
-import { Ellipsis, Pencil, ScanSearch, Search, Trash2 } from 'lucide-react';
+import { Ellipsis, Pencil, ScanSearch, Search, TimerReset, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface Stat {
@@ -102,6 +102,11 @@ export default function Index({ mcus, stats, filters }: Props) {
                         <Button type="submit" variant="outline">
                             <Search className="mr-2 h-4 w-4" /> Cari
                         </Button>
+                        <Link href="/mcu">
+                            <Button type="button">
+                                <TimerReset className="mr-2 h-4 w-4" /> Reset
+                            </Button>
+                        </Link>
                     </form>
 
                     {/* Header */}
@@ -111,7 +116,7 @@ export default function Index({ mcus, stats, filters }: Props) {
                         </Link>
                     </div>
                 </div>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-6 gap-2">
                     {stats.map((item) => {
                         return (
                             <Card key={item.stat} className={`gap-2 ${item.color}`}>

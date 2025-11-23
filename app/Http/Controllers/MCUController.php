@@ -75,6 +75,16 @@ class MCUController extends Controller
                 'total' => 0,
                 'color' => 'bg-gray-300',
             ],
+            [
+                'stat' => 'BELUM DIREVIEW',
+                'total' => 0,
+                'color' => 'bg-purple-300',
+            ],
+            [
+                'stat' => 'TOTAL',
+                'total' => 0,
+                'color' => 'bg-sky-300',
+            ],
         ];
 
         $stats_ = DB::table('mcu_i_headers as mcui')
