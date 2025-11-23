@@ -9,14 +9,22 @@ import {
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, MCUIHeader } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
 import { Ellipsis, Pencil, ScanSearch, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+
+interface Stat {
+    stat: string;
+    total: number;
+    color: string;
+}
 interface Props {
     mcus: {
         data: MCUIHeader[];
@@ -25,20 +33,25 @@ interface Props {
         total: number;
         links: { url: string | null; label: string; active: boolean }[];
     };
-    filters: { search?: string };
+    stats: Stat[];
+    filters: {
+        conclusion?: string;
+        search?: string;
+    };
 }
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Medical Check Up', href: '/mcu' }];
 
-export default function Index({ mcus, filters }: Props) {
+export default function Index({ mcus, stats, filters }: Props) {
     const [openDropdowns, setOpenDropdowns] = useState<{ [key: string]: boolean }>({});
+    const [conclusion, setConclusion] = useState(filters.conclusion ?? '');
     const [search, setSearch] = useState(filters.search ?? '');
     const [openDelete, setOpenDelete] = useState(false);
     const [selectedMCU, setSelectedMCU] = useState<MCUIHeader | null>(null);
 
     const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        router.get('/mcu-parameter', { search });
+        router.get('/mcu', { conclusion, search });
     };
 
     const handleDeleteClick = (param: MCUIHeader) => {
@@ -71,6 +84,20 @@ export default function Index({ mcus, filters }: Props) {
             <div className="flex h-full w-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="flex items-center justify-between">
                     <form onSubmit={handleSearch} className="flex gap-2">
+                        <Select name="conclusion" value={conclusion} onValueChange={(value) => setConclusion(value)}>
+                            {/* <Select name="conclusion" value={data.conclusion} onValueChange={(value) => setData('conclusion', value)}> */}
+                            <SelectTrigger>
+                                <SelectValue placeholder="Filter Kesimpulan" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem value="FIT UNTUK BEKERJA">FIT UNTUK BEKERJA</SelectItem>
+                                    <SelectItem value="FIT DENGAN CATATAN">FIT DENGAN CATATAN</SelectItem>
+                                    <SelectItem value="TEMPORARY UNFIT">TEMPORARY UNFIT</SelectItem>
+                                    <SelectItem value="UNFIT">UNFIT</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
                         <Input id="query" placeholder="Cari mcu..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-64" />
                         <Button type="submit" variant="outline">
                             <Search className="mr-2 h-4 w-4" /> Cari
@@ -83,6 +110,37 @@ export default function Index({ mcus, filters }: Props) {
                             <Button>Tambah MCU</Button>
                         </Link>
                     </div>
+                </div>
+                <div className="grid grid-cols-4 gap-2">
+                    {stats.map((item) => {
+                        return (
+                            <Card key={item.stat} className={`gap-2 ${item.color}`}>
+                                <CardHeader className="px-3">
+                                    <CardTitle>{item.stat}</CardTitle>
+                                </CardHeader>
+                                <CardContent className="px-3 py-0">{item.total}</CardContent>
+                            </Card>
+                        );
+                    })}
+
+                    {/* <Card className="gap-2 bg-yellow-400">
+                        <CardHeader className="px-3">
+                            <CardTitle>FIT DENGAN CATATAN</CardTitle>
+                        </CardHeader>
+                        <CardContent className="px-3 py-0">1.234</CardContent>
+                    </Card>
+                    <Card className="gap-2 bg-red-400">
+                        <CardHeader className="px-3">
+                            <CardTitle>TEMPORARY UNFIT</CardTitle>
+                        </CardHeader>
+                        <CardContent className="px-3 py-0">1.234</CardContent>
+                    </Card>
+                    <Card className="gap-2 bg-gray-400">
+                        <CardHeader className="px-3">
+                            <CardTitle>UNFIT</CardTitle>
+                        </CardHeader>
+                        <CardContent className="px-3 py-0">1.234</CardContent>
+                    </Card> */}
                 </div>
 
                 {/* Table */}
@@ -118,7 +176,7 @@ export default function Index({ mcus, filters }: Props) {
                                     <TableCell className="py-0.5">{mcu.gender == 'male' ? 'Laki-laki' : 'Perempuan'}</TableCell>
                                     <TableCell className="py-0.5">{mcu.provider?.name}</TableCell>
                                     <TableCell className="py-0.5">{mcu.conclusion}</TableCell>
-                                    <TableCell className="py-0.5">-</TableCell>
+                                    <TableCell className="py-0.5">{mcu.followup?.conclusion ?? '-'}</TableCell>
 
                                     <TableCell className="py-0.5">
                                         <div className="mt-0 flex justify-end">
@@ -156,13 +214,15 @@ export default function Index({ mcus, filters }: Props) {
                                                         {/* Edit */}
                                                     </DropdownMenuItem>
                                                     <DropdownMenuSeparator />
-                                                    <DropdownMenuItem
-                                                        onClick={() => handleDeleteClick(mcu)}
-                                                        // onSelect={(event) => {
-                                                        //     event.preventDefault();
-                                                        //     handleDeleteClick(province);
-                                                        // }}
-                                                    >
+                                                    <DropdownMenuItem asChild>
+                                                        <Link href={`/mcu/${mcu.id}/review-follow-up`} className="flex items-center gap-2">
+                                                            <ScanSearch className="mr-2 h-4 w-4" />
+                                                            <span>Review</span>
+                                                        </Link>
+                                                        {/* Edit */}
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem onClick={() => handleDeleteClick(mcu)}>
                                                         <Trash2 className="mr-2 h-4 w-4 text-destructive" />
                                                         <div className="text-destructive">Hapus</div>
                                                     </DropdownMenuItem>

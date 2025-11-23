@@ -143,6 +143,7 @@ export interface MCUIHeader {
     participant?: Participant;
     items: MCUIItem[];
     attachments: Media[];
+    followup?: MCUFHeader;
 }
 
 export interface MCUIItem {
@@ -178,5 +179,18 @@ export type MCUParamResult = {
     result: string;
     notes: string;
 };
+
+export interface MCUFHeader {
+    id: string;
+    mcu_date: string;
+    provider_id: string;
+    conclusion: string;
+    recommendation: string;
+    created_at: string;
+    company?: Company;
+    provider?: Provider;
+    items: MCUIItem[];
+    attachments: Media[];
+}
 
 

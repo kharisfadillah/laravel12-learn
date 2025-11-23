@@ -1,4 +1,6 @@
 import { AttachmentList } from '@/components/attachment-list';
+import { DatePicker } from '@/components/date-picker';
+import FileUpload from '@/components/file-upload';
 import ParameterLookup from '@/components/parameter-lookup';
 import { RangeDisplay } from '@/components/range-display';
 import { RecordItem } from '@/components/record-item';
@@ -15,12 +17,15 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
 import { formatDecimal, parseGender, parseToMCUParameters, parseToMCUParamResults } from '@/lib/utils';
 import type { BreadcrumbItem, MCUIHeader, MCUParamResult, Provider } from '@/types';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { format } from 'date-fns';
 import { Mars, Settings, Trash2, Venus } from 'lucide-react';
 import { JSX, useState } from 'react';
 
@@ -89,59 +94,70 @@ export default function FollowUp({ mcu, providers }: Props) {
                         {/* <CardDescription>Card Description</CardDescription> */}
                     </CardHeader>
                     <CardContent className="grid grid-flow-row grid-cols-4 gap-2 px-3 py-0">
-                        <RecordItem label="Unit Usaha" value={mcu.company?.name ?? ''} />
-                        <RecordItem label="Tanggal MCU" value={mcu.mcu_date} />
-                        <RecordItem label="Tipe MCU" value={mcu.mcu_type.toUpperCase()} />
-                        <RecordItem label="Provider MCU" value={mcu.provider?.name ?? ''} />
                         <RecordItem label="Nama" value={mcu.participant?.name ?? '-'} />
                         <RecordItem label="Jabatan" value={mcu.participant?.position ?? '-'} />
                         <RecordItem label="Departemen" value={mcu.participant?.department?.name ?? '-'} />
+                        <RecordItem label="Unit Usaha" value={mcu.company?.name ?? ''} />
                         <RecordItem label="Tanggal Lahir" value={mcu.participant?.birth_date ?? '-'} />
                         <RecordItem label="Jenis Kelamin" value={mcu.participant === null ? '-' : parseGender(mcu.participant?.gender ?? '')} />
                     </CardContent>
                 </Card>
 
-                <Card className="mt-4 gap-2 py-3">
-                    <CardHeader className="px-3">
-                        <CardTitle>Dokumen MCU Awal</CardTitle>
-                    </CardHeader>
-                    <CardContent className="px-3 py-0">
-                        <AttachmentList attachments={mcu.attachments} />
-                    </CardContent>
-                </Card>
+                <Tabs defaultValue="awal" className="mt-4 w-full">
+                    <TabsList className="w-full justify-center">
+                        <TabsTrigger value="awal">MCU Awal</TabsTrigger>
+                        <TabsTrigger value="lanjut">MCU Tindak Lanjut</TabsTrigger>
+                    </TabsList>
 
-                <Card className="mt-4 gap-3 py-3">
-                    <CardHeader className="flex flex-row justify-between px-3">
-                        <CardTitle>Hasil MCU Awal</CardTitle>
-                    </CardHeader>
-                    <CardContent className="gap-2 px-0 py-0">
-                        <Table>
-                            <TableHeader className="bg-gray-100">
-                                <TableRow key="rowh">
-                                    <TableHead className="px-3">Kategori</TableHead>
-                                    <TableHead>Parameter</TableHead>
-                                    <TableHead>Satuan</TableHead>
-                                    <TableHead>Nilai Rujukan</TableHead>
-                                    <TableHead>Hasil</TableHead>
-                                    <TableHead>Keterangan</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {mcu.items.length > 0 ? (
-                                    mcu.items.map((item, index) => {
-                                        // console.log(item.ranges);
-                                        return (
-                                            <TableRow key={index}>
-                                                <TableCell className="px-3 py-1">{item.category?.name}</TableCell>
-                                                <TableCell className="py-1">{item.name}</TableCell>
-                                                <TableCell className="py-1">{item.unit ?? '-'}</TableCell>
-                                                <TableCell className="py-1">
-                                                    {/* {item.ranges?.male?.min ?? '--'} */}
-                                                    <RangeDisplay ranges={item.ranges} genderIcons={genderIcons} />
-                                                </TableCell>
-                                                <TableCell className="py-1">{item.result}</TableCell>
-                                                <TableCell className="py-1">{item.notes}</TableCell>
-                                                {/* <TableCell className="w-[40px] px-3 py-1">
+                    <TabsContent value="awal">
+                        <Card>
+                            <CardContent className="grid grid-flow-row grid-cols-4 gap-2 px-3 py-0">
+                                <RecordItem label="Tanggal MCU" value={mcu.mcu_date} />
+                                <RecordItem label="Tipe MCU" value={mcu.mcu_type.toUpperCase()} />
+                                <RecordItem label="Provider MCU" value={mcu.provider?.name ?? ''} />
+                            </CardContent>
+                        </Card>
+                        <Card className="mt-3 gap-2 py-3">
+                            <CardHeader className="px-3">
+                                <CardTitle>Dokumen MCU Awal</CardTitle>
+                            </CardHeader>
+                            <CardContent className="px-3 py-0">
+                                <AttachmentList attachments={mcu.attachments} />
+                            </CardContent>
+                        </Card>
+
+                        <Card className="mt-4 gap-3 py-3">
+                            <CardHeader className="flex flex-row justify-between px-3">
+                                <CardTitle>Hasil MCU Awal</CardTitle>
+                            </CardHeader>
+                            <CardContent className="gap-2 px-0 py-0">
+                                <Table>
+                                    <TableHeader className="bg-gray-100">
+                                        <TableRow key="rowh">
+                                            <TableHead className="px-3">Kategori</TableHead>
+                                            <TableHead>Parameter</TableHead>
+                                            <TableHead>Satuan</TableHead>
+                                            <TableHead>Nilai Rujukan</TableHead>
+                                            <TableHead>Hasil</TableHead>
+                                            <TableHead>Keterangan</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {mcu.items.length > 0 ? (
+                                            mcu.items.map((item, index) => {
+                                                // console.log(item.ranges);
+                                                return (
+                                                    <TableRow key={index}>
+                                                        <TableCell className="px-3 py-1">{item.category?.name}</TableCell>
+                                                        <TableCell className="py-1">{item.name}</TableCell>
+                                                        <TableCell className="py-1">{item.unit ?? '-'}</TableCell>
+                                                        <TableCell className="py-1">
+                                                            {/* {item.ranges?.male?.min ?? '--'} */}
+                                                            <RangeDisplay ranges={item.ranges} genderIcons={genderIcons} />
+                                                        </TableCell>
+                                                        <TableCell className="py-1">{item.result}</TableCell>
+                                                        <TableCell className="py-1">{item.notes}</TableCell>
+                                                        {/* <TableCell className="w-[40px] px-3 py-1">
                                                                                 <Checkbox
                                                                                     checked={data.selected_items.includes(item.id)}
                                                                                     onCheckedChange={(checked) => {
@@ -156,7 +172,7 @@ export default function FollowUp({ mcu, providers }: Props) {
                                                                                     }}
                                                                                 />
                                                                             </TableCell> */}
-                                                {/* <TableCell className="py-0.5">
+                                                        {/* <TableCell className="py-0.5">
                                                                                     <Button
                                                                                         type="button"
                                                                                         size="sm"
@@ -166,204 +182,274 @@ export default function FollowUp({ mcu, providers }: Props) {
                                                                                         <Trash2 className="h-4 w-4" />
                                                                                     </Button>
                                                                                 </TableCell> */}
+                                                    </TableRow>
+                                                );
+                                            })
+                                        ) : (
+                                            <TableRow>
+                                                <TableCell colSpan={6} className="text-center text-muted-foreground">
+                                                    Tidak ada hasil MCU
+                                                </TableCell>
                                             </TableRow>
-                                        );
-                                    })
-                                ) : (
-                                    <TableRow>
-                                        <TableCell colSpan={6} className="text-center text-muted-foreground">
-                                            Tidak ada hasil MCU
-                                        </TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </CardContent>
-                </Card>
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </CardContent>
+                        </Card>
 
-                <Card className="mt-4 gap-2 py-3">
-                    <CardHeader className="px-3">
-                        <CardTitle>Hasil Review MCU Awal</CardTitle>
-                    </CardHeader>
-                    <CardContent className="grid grid-flow-row grid-cols-3 gap-2 px-3 py-0">
-                        <RecordItem label="Kesimpulan Awal" value={mcu.conclusion} />
-                        <RecordItem label="Rekomendasi Awal" value={mcu.recommendation} />
-                    </CardContent>
-                </Card>
+                        <Card className="mt-4 gap-2 py-3">
+                            <CardHeader className="px-3">
+                                <CardTitle>Hasil Review MCU Awal</CardTitle>
+                            </CardHeader>
+                            <CardContent className="grid grid-flow-row grid-cols-3 gap-2 px-3 py-0">
+                                <RecordItem label="Kesimpulan Awal" value={mcu.conclusion} />
+                                <RecordItem label="Rekomendasi Awal" value={mcu.recommendation} />
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                    <TabsContent value="lanjut">
+                        <form onSubmit={handleSubmit}>
+                            <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-3">
+                                <div>
+                                    <Label htmlFor="mcu_date">Tanggal MCU</Label>
+                                    <DatePicker
+                                        value={data.mcu_date ? new Date(data.mcu_date) : undefined}
+                                        onChange={(date) => setData('mcu_date', date ? format(date, 'yyyy-MM-dd') : '')}
+                                    />
+                                    {errors.mcu_date && <p className="text-sm text-red-500">{errors.mcu_date}</p>}
+                                </div>
+                                <div>
+                                    <Label>Provider MCU</Label>
+                                    <Select
+                                        value={data.provider_id}
+                                        onValueChange={(value) => {
+                                            setData('provider_id', value);
+                                        }}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Pilih Provider" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                {providers.map((provider) => (
+                                                    <SelectItem key={provider.id} value={provider.id}>
+                                                        {provider.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.provider_id && <p className="text-sm text-red-500">{errors.provider_id}</p>}
+                                </div>
+                            </div>
+                            <div className="mt-3">
+                                <Label>Dokumen MCU Tindak Lanjut</Label>
+                                <FileUpload
+                                    value={data.files}
+                                    onChange={(files) => setData('files', files)}
+                                    maxFiles={5}
+                                    maxSize={2 * 1024 * 1024}
+                                    error={errors.files}
+                                    accept={{
+                                        'application/pdf': [],
+                                        'image/*': [],
+                                    }}
+                                />
+                            </div>
 
-                <form onSubmit={handleSubmit} className="mt-3">
-                    <Card className="mt-4 gap-3 py-3">
-                        <CardHeader className="flex flex-row justify-between px-3">
-                            <CardTitle>Hasil MCU Tindak Lanjut</CardTitle>
-                            <Button type="button" onClick={() => setOpenParamLookup(true)}>
-                                <Settings className="mr-2 h-4 w-4" />
-                                Set Parameter
-                            </Button>
-                        </CardHeader>
-                        <CardContent className="gap-2 px-0 py-0">
-                            <Table>
-                                <TableHeader className="bg-gray-100">
-                                    <TableRow key="rowh">
-                                        <TableHead className="px-3">Kategori</TableHead>
-                                        <TableHead>Parameter</TableHead>
-                                        <TableHead>Satuan</TableHead>
-                                        <TableHead>Nilai Rujukan</TableHead>
-                                        <TableHead>Hasil</TableHead>
-                                        <TableHead>Keterangan</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {data.mcu_param_results.length > 0 ? (
-                                        data.mcu_param_results.map((param_result, index) => {
-                                            const errs = errors as Record<string, string>;
-                                            const handleChange = (value: string) => {
-                                                setData(
-                                                    'mcu_param_results',
-                                                    data.mcu_param_results.map((r, i) => (i === index ? { ...r, result: value } : r)),
-                                                );
-                                            };
-                                            const computeNote = () => {
-                                                // 1. Ambil Nilai Batas (Min/Max) berdasarkan Jenis Kelamin
-                                                const minValueStr =
-                                                    param_result.ranges?.[mcu.participant?.gender === 'female' ? 'female' : 'male']?.min;
-                                                const maxValueStr =
-                                                    param_result.ranges?.[mcu.participant?.gender === 'female' ? 'female' : 'male']?.max;
+                            <Card className="mt-4 gap-3 py-3">
+                                <CardHeader className="flex flex-row justify-between px-3">
+                                    <CardTitle>Hasil MCU Tindak Lanjut</CardTitle>
+                                    <Button type="button" onClick={() => setOpenParamLookup(true)}>
+                                        <Settings className="mr-2 h-4 w-4" />
+                                        Set Parameter
+                                    </Button>
+                                </CardHeader>
+                                <CardContent className="gap-2 px-0 py-0">
+                                    <Table>
+                                        <TableHeader className="bg-gray-100">
+                                            <TableRow key="rowh">
+                                                <TableHead className="px-3">Kategori</TableHead>
+                                                <TableHead>Parameter</TableHead>
+                                                <TableHead>Satuan</TableHead>
+                                                <TableHead>Nilai Rujukan</TableHead>
+                                                <TableHead>Hasil</TableHead>
+                                                <TableHead>Keterangan</TableHead>
+                                                <TableHead></TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {data.mcu_param_results.length > 0 ? (
+                                                data.mcu_param_results.map((param_result, index) => {
+                                                    const errs = errors as Record<string, string>;
+                                                    const handleChange = (value: string) => {
+                                                        setData(
+                                                            'mcu_param_results',
+                                                            data.mcu_param_results.map((r, i) => (i === index ? { ...r, result: value } : r)),
+                                                        );
+                                                    };
+                                                    const computeNote = () => {
+                                                        // 1. Ambil Nilai Batas (Min/Max) berdasarkan Jenis Kelamin
+                                                        const minValueStr =
+                                                            param_result.ranges?.[mcu.participant?.gender === 'female' ? 'female' : 'male']?.min;
+                                                        const maxValueStr =
+                                                            param_result.ranges?.[mcu.participant?.gender === 'female' ? 'female' : 'male']?.max;
 
-                                                // Ambil hasil yang baru saja dimasukkan (sudah ada di state 'result' karena onChange sudah berjalan)
-                                                let currentResultStr = param_result.result;
+                                                        // Ambil hasil yang baru saja dimasukkan (sudah ada di state 'result' karena onChange sudah berjalan)
+                                                        let currentResultStr = param_result.result;
 
-                                                // 2. Konversi ke Angka
-                                                const resultValue = parseFloat(currentResultStr);
-                                                const minValue = parseFloat(minValueStr ?? '0');
-                                                const maxValue = parseFloat(maxValueStr ?? '0');
+                                                        // 2. Konversi ke Angka
+                                                        const resultValue = parseFloat(currentResultStr);
+                                                        const minValue = parseFloat(minValueStr ?? '0');
+                                                        const maxValue = parseFloat(maxValueStr ?? '0');
 
-                                                let note = 'Normal'; // Default Notes
+                                                        let note = 'Normal'; // Default Notes
 
-                                                // 3. Logika Penentuan Catatan
-                                                if (!isNaN(resultValue) && minValueStr && maxValueStr) {
-                                                    // Pastikan nilainya angka dan batasnya tersedia
-                                                    if (resultValue < minValue) {
-                                                        note = 'Tidak Normal (Rendah)';
-                                                    } else if (resultValue > maxValue) {
-                                                        note = 'Tidak Normal (Tinggi)';
-                                                    } else {
-                                                        note = 'Normal';
-                                                    }
-                                                } else if (!isNaN(resultValue) && minValueStr && !maxValueStr) {
-                                                    if (resultValue < minValue) {
-                                                        note = 'Tidak Normal (Rendah)';
-                                                    } else {
-                                                        note = 'Normal';
-                                                    }
-                                                } else if (!isNaN(resultValue) && !minValueStr && maxValueStr) {
-                                                    if (resultValue > maxValue) {
-                                                        note = 'Tidak Normal (Tinggi)';
-                                                    } else {
-                                                        note = 'Normal';
-                                                    }
-                                                } else if (!currentResultStr) {
-                                                    // Jika hasil input kosong, reset note
-                                                    note = '';
-                                                } else {
-                                                    // Jika ranges tidak valid, gunakan catatan default atau kosong
-                                                    note = 'Rentang tidak tersedia';
-                                                }
+                                                        // 3. Logika Penentuan Catatan
+                                                        if (!isNaN(resultValue) && minValueStr && maxValueStr) {
+                                                            // Pastikan nilainya angka dan batasnya tersedia
+                                                            if (resultValue < minValue) {
+                                                                note = 'Tidak Normal (Rendah)';
+                                                            } else if (resultValue > maxValue) {
+                                                                note = 'Tidak Normal (Tinggi)';
+                                                            } else {
+                                                                note = 'Normal';
+                                                            }
+                                                        } else if (!isNaN(resultValue) && minValueStr && !maxValueStr) {
+                                                            if (resultValue < minValue) {
+                                                                note = 'Tidak Normal (Rendah)';
+                                                            } else {
+                                                                note = 'Normal';
+                                                            }
+                                                        } else if (!isNaN(resultValue) && !minValueStr && maxValueStr) {
+                                                            if (resultValue > maxValue) {
+                                                                note = 'Tidak Normal (Tinggi)';
+                                                            } else {
+                                                                note = 'Normal';
+                                                            }
+                                                        } else if (!currentResultStr) {
+                                                            // Jika hasil input kosong, reset note
+                                                            note = '';
+                                                        } else {
+                                                            // Jika ranges tidak valid, gunakan catatan default atau kosong
+                                                            note = 'Rentang tidak tersedia';
+                                                        }
 
-                                                currentResultStr = formatDecimal(currentResultStr);
+                                                        currentResultStr = formatDecimal(currentResultStr);
 
-                                                // 4. Update State (result dan notes)
-                                                setData(
-                                                    'mcu_param_results',
-                                                    data.mcu_param_results.map((r, i) =>
-                                                        i === index
-                                                            ? {
-                                                                  ...r,
-                                                                  result: currentResultStr,
-                                                                  notes: note,
-                                                              }
-                                                            : r,
-                                                    ),
-                                                );
-                                            };
-                                            return (
-                                                <TableRow key={index}>
-                                                    <TableCell className="px-3 py-0.5">{param_result.category}</TableCell>
-                                                    <TableCell className="py-0.5">{param_result.name}</TableCell>
-                                                    <TableCell className="py-0.5">{param_result.unit ?? '-'}</TableCell>
-                                                    <TableCell className="py-0.5">
-                                                        <RangeDisplay ranges={param_result.ranges} genderIcons={genderIcons} />
-                                                    </TableCell>
-                                                    <TableCell className="py-0.5">
-                                                        {param_result.input_type === 'Angka' && (
-                                                            <Input
-                                                                type="number"
-                                                                className="text-right"
-                                                                step="0.1"
-                                                                value={param_result.result || ''}
-                                                                onChange={(e) => handleChange(e.target.value)}
-                                                                onKeyDown={(e) => {
-                                                                    if (e.key === 'Enter') {
-                                                                        e.preventDefault();
-                                                                        computeNote();
-                                                                    }
-                                                                }}
-                                                                onBlur={() => computeNote()}
-                                                            />
-                                                        )}
-                                                        {param_result.input_type === 'Teks Bebas' && (
-                                                            <Input
-                                                                type="text"
-                                                                value={param_result.result || ''}
-                                                                onChange={(e) => handleChange(e.target.value)}
-                                                            />
-                                                        )}
-                                                        {param_result.input_type === 'Pilihan' && Array.isArray(param_result.options) && (
-                                                            <Select value={param_result.result || ''} onValueChange={(value) => handleChange(value)}>
-                                                                <SelectTrigger>
-                                                                    <SelectValue placeholder="Pilih Hasil" />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    <SelectGroup>
-                                                                        {param_result.options.map((opt) => (
-                                                                            <SelectItem key={opt} value={opt}>
-                                                                                {opt}
-                                                                            </SelectItem>
-                                                                        ))}
-                                                                    </SelectGroup>
-                                                                </SelectContent>
-                                                            </Select>
-                                                        )}
-                                                        {errs[`mcu_param_results.${index}.result`] && (
-                                                            <p className="text-sm text-red-500">{errs[`mcu_param_results.${index}.result`]}</p>
-                                                        )}
-                                                    </TableCell>
-                                                    <TableCell className="py-0.5">{param_result.notes}</TableCell>
-                                                    <TableCell className="py-0.5">
-                                                        <Button
-                                                            type="button"
-                                                            size="sm"
-                                                            variant="destructive"
-                                                            onClick={() => handleDeleteParamClick(param_result)}
-                                                        >
-                                                            <Trash2 className="h-4 w-4" />
-                                                        </Button>
+                                                        // 4. Update State (result dan notes)
+                                                        setData(
+                                                            'mcu_param_results',
+                                                            data.mcu_param_results.map((r, i) =>
+                                                                i === index
+                                                                    ? {
+                                                                          ...r,
+                                                                          result: currentResultStr,
+                                                                          notes: note,
+                                                                      }
+                                                                    : r,
+                                                            ),
+                                                        );
+                                                    };
+                                                    return (
+                                                        <TableRow key={index}>
+                                                            <TableCell className="px-3 py-0.5">{param_result.category}</TableCell>
+                                                            <TableCell className="py-0.5">{param_result.name}</TableCell>
+                                                            <TableCell className="py-0.5">{param_result.unit ?? '-'}</TableCell>
+                                                            <TableCell className="py-0.5">
+                                                                <RangeDisplay ranges={param_result.ranges} genderIcons={genderIcons} />
+                                                            </TableCell>
+                                                            <TableCell className="py-0.5">
+                                                                {param_result.input_type === 'Angka' && (
+                                                                    <Input
+                                                                        type="number"
+                                                                        className="text-right"
+                                                                        step="0.1"
+                                                                        value={param_result.result || ''}
+                                                                        onChange={(e) => handleChange(e.target.value)}
+                                                                        onKeyDown={(e) => {
+                                                                            if (e.key === 'Enter') {
+                                                                                e.preventDefault();
+                                                                                computeNote();
+                                                                            }
+                                                                        }}
+                                                                        onBlur={() => computeNote()}
+                                                                    />
+                                                                )}
+                                                                {param_result.input_type === 'Teks Bebas' && (
+                                                                    <Input
+                                                                        type="text"
+                                                                        value={param_result.result || ''}
+                                                                        onChange={(e) => handleChange(e.target.value)}
+                                                                    />
+                                                                )}
+                                                                {param_result.input_type === 'Pilihan' && Array.isArray(param_result.options) && (
+                                                                    <Select
+                                                                        value={param_result.result || ''}
+                                                                        onValueChange={(value) => handleChange(value)}
+                                                                    >
+                                                                        <SelectTrigger>
+                                                                            <SelectValue placeholder="Pilih Hasil" />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent>
+                                                                            <SelectGroup>
+                                                                                {param_result.options.map((opt) => (
+                                                                                    <SelectItem key={opt} value={opt}>
+                                                                                        {opt}
+                                                                                    </SelectItem>
+                                                                                ))}
+                                                                            </SelectGroup>
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                )}
+                                                                {errs[`mcu_param_results.${index}.result`] && (
+                                                                    <p className="text-sm text-red-500">
+                                                                        {errs[`mcu_param_results.${index}.result`]}
+                                                                    </p>
+                                                                )}
+                                                            </TableCell>
+                                                            <TableCell className="py-0.5">{param_result.notes}</TableCell>
+                                                            <TableCell className="py-0.5">
+                                                                <Button
+                                                                    type="button"
+                                                                    size="sm"
+                                                                    variant="destructive"
+                                                                    onClick={() => handleDeleteParamClick(param_result)}
+                                                                >
+                                                                    <Trash2 className="h-4 w-4" />
+                                                                </Button>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    );
+                                                })
+                                            ) : (
+                                                <TableRow>
+                                                    <TableCell colSpan={6} className="text-center text-muted-foreground">
+                                                        Silahkan set parameter
                                                     </TableCell>
                                                 </TableRow>
-                                            );
-                                        })
-                                    ) : (
-                                        <TableRow>
-                                            <TableCell colSpan={6} className="text-center text-muted-foreground">
-                                                Silahkan set parameter
-                                            </TableCell>
-                                        </TableRow>
-                                    )}
-                                </TableBody>
-                            </Table>
-                        </CardContent>
-                        <CardFooter>{errors.mcu_param_results && <p className="text-sm text-red-500">{errors.mcu_param_results}</p>}</CardFooter>
-                    </Card>
-                </form>
+                                            )}
+                                        </TableBody>
+                                    </Table>
+                                </CardContent>
+                                <CardFooter>
+                                    {errors.mcu_param_results && <p className="text-sm text-red-500">{errors.mcu_param_results}</p>}
+                                </CardFooter>
+                            </Card>
+
+                            <div className="mt-6 flex justify-end gap-2 border-t pt-6">
+                                <Link href="/mcu">
+                                    <Button type="button" variant="outline">
+                                        Batal
+                                    </Button>
+                                </Link>
+                                <Button type="submit" disabled={processing}>
+                                    Simpan
+                                </Button>
+                            </div>
+                        </form>
+                    </TabsContent>
+                </Tabs>
 
                 {openParamLookup && (
                     <ParameterLookup

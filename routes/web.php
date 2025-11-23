@@ -134,6 +134,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('mcu.follow-up');
     Route::post('/mcu/{id}/follow-up', [MCUController::class, 'storeFollowUp'])
         ->name('mcu.store.follow-up');
+    Route::get('/mcu/{id}/review-follow-up', [MCUController::class, 'reviewFollowUp'])
+        ->name('mcu.review.follow-up');
+    Route::post('/mcu/{id}/review-follow-up', [MCUController::class, 'storeReviewFU'])
+        ->name('mcu.store.review.follow-up');
 
     Route::get('/participant/search', [ParticipantController::class, 'search'])
         ->name('participant.search');

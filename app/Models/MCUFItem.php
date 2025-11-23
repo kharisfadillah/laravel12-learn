@@ -16,9 +16,20 @@ class MCUFItem extends Model
      * @var string
      */
     protected $table = 'mcu_f_items';
+    protected $guarded = ['id'];
+
+    protected $casts = [
+        'ranges' => 'array',
+        'options' => 'array',
+    ];
 
     public function headers(): BelongsTo
     {
         return $this->belongsTo(MCUFHeader::class, 'header_id', 'id');
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(MCUCategory::class, 'category_id', 'id');
     }
 }
