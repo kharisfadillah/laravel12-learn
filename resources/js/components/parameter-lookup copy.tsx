@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MCUParameter } from '@/types';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -23,8 +22,10 @@ export default function ParameterLookup({ open, onOpenChange, onSelect, initialS
     const [selected, setSelected] = useState<MCUParameter[]>(initialSelection);
     const [loading, setLoading] = useState(false);
 
+    // FETCH SAAT MODAL DIBUKA
     useEffect(() => {
         if (open) {
+            // setSelected(initialSelection);
             setLoading(true);
             axios
                 .get('/mcu-parameter/search')
@@ -53,14 +54,17 @@ export default function ParameterLookup({ open, onOpenChange, onSelect, initialS
                 })
                 .finally(() => setLoading(false));
         } else {
-            setSelected([]);
+            setSelected([]); // reset saat modal ditutup
         }
     }, [open]);
 
     const toggleSelect = (param: MCUParameter) => {
         setSelected((prev) => {
-            const exists = prev.some((p) => p.id === param.id);
-            return exists ? prev.filter((p) => p.id !== param.id) : [...prev, param];
+            const exists = prev.find((p) => p.id === param.id);
+            if (exists) {
+                return prev.filter((p) => p.id !== param.id);
+            }
+            return [...prev, param];
         });
     };
 
@@ -71,47 +75,69 @@ export default function ParameterLookup({ open, onOpenChange, onSelect, initialS
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="overflow-y-auto sm:max-h-[1200px] sm:max-w-[1200px]">
+            <DialogContent className="overflow-y-auto sm:max-h-[1200px] sm:max-w-[1200px]" aria-describedby="Pilih Parameter MCU">
                 <DialogHeader>
                     <DialogTitle>Parameter MCU</DialogTitle>
-                    <DialogDescription>Pilih parameter MCU berdasarkan kategori</DialogDescription>
+                    <DialogDescription>Pilih parameter MCU</DialogDescription>
                 </DialogHeader>
 
-                <div className="mt-2">
+                <div className="mt-2 max-h-80 space-y-3 overflow-y-auto">
                     {loading && (
-                        <div className="flex items-center justify-center gap-1 py-4 text-center text-muted-foreground">
+                        <div className="py-4 text-center text-muted-foreground">
                             <Spinner />
-                            <span>Memuat parameter...</span>
+                            Memuat parameter...
                         </div>
                     )}
 
-                    {!loading && groupedParameters && categories.length > 0 && (
-                        <Tabs defaultValue={categories[0]} className="w-full">
-                            <TabsList className="mb-3 flex flex-wrap gap-1">
-                                {categories.map((cat) => (
-                                    <TabsTrigger key={cat} value={cat}>
-                                        {cat}
-                                    </TabsTrigger>
-                                ))}
-                            </TabsList>
+                    {!loading &&
+                        categories.map((cat, index) => {
+                            const params = groupedParameters === null ? [] : groupedParameters[cat];
 
-                            {categories.map((cat) => (
-                                <TabsContent key={cat} value={cat}>
+                            return (
+                                <div key={index} className="grid">
+                                    <p className="text-sm font-bold">{cat}</p>
                                     <div className="grid auto-rows-auto grid-cols-5 gap-2 px-3">
-                                        {groupedParameters[cat]?.map((param) => {
+                                        {params.map((param) => {
                                             const checked = selected.some((p) => p.id === param.id);
                                             return (
                                                 <Label key={param.id} className="flex items-center gap-2">
                                                     <Checkbox checked={checked} onCheckedChange={() => toggleSelect(param)} />
+                                                    {/* <Input
+                                                        type="checkbox"
+                                                        value={param.id}
+                                                        // checked={selectedIds.includes(param.id)}
+                                                        onChange={(e) => {
+                                                            // if (e.target.checked) {
+                                                            //     setSelectedIds([...selectedIds, param.id]);
+                                                            // } else {
+                                                            //     setSelectedIds(selectedIds.filter((id) => id !== param.id));
+                                                            // }
+                                                        }}
+                                                    /> */}
                                                     <span className="text-sm">{param.name}</span>
                                                 </Label>
                                             );
                                         })}
                                     </div>
-                                </TabsContent>
-                            ))}
-                        </Tabs>
-                    )}
+                                </div>
+                            );
+                        })}
+
+                    {/* {!loading &&
+                        parameters.map((param) => {
+                            const checked = selected.some((p) => p.id === param.id);
+
+                            return (
+                                <div key={param.id} className="flex items-center space-x-3 rounded border p-2">
+                                    <Checkbox checked={checked} onCheckedChange={() => toggleSelect(param)} />
+
+                                    <div className="text-sm">
+                                        <div className="font-medium">{param.name}</div>
+                                        <div className="text-xs text-muted-foreground">{param.category?.name}</div>
+                                    </div>
+                                </div>
+                            );
+                        })} */}
                 </div>
 
                 <DialogFooter>

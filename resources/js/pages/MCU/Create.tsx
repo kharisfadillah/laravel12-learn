@@ -119,6 +119,32 @@ export default function Create({ providers }: Props) {
                 <p className="mt-1 text-sm text-gray-500">Masukkan data mcu baru. Klik simpan untuk menyimpan data.</p>
 
                 <form onSubmit={handleSubmit} className="mt-3">
+                    <Card className="mt-4 gap-3 py-3">
+                        <CardHeader className="px-3">
+                            <CardTitle>Kandidat</CardTitle>
+                            {/* <CardDescription>Card Description</CardDescription> */}
+                        </CardHeader>
+                        <CardContent className="grid grid-flow-col grid-rows-2 gap-2 px-3 py-0">
+                            <RecordItem label="Nama" value={participant?.name ?? '-'} />
+                            <RecordItem label="Jabatan" value={participant?.position ?? '-'} />
+                            <RecordItem label="Departemen" value={participant?.department?.name ?? '-'} />
+                            <RecordItem label="Tanggal Lahir" value={participant?.birth_date ?? '-'} />
+                            <RecordItem label="Jenis Kelamin" value={participant === null ? '-' : parseGender(participant?.gender)} />
+                        </CardContent>
+                        <CardFooter className="flex justify-end gap-2 px-3">
+                            {/* <p>Card Footer</p> */}
+                            <Button variant="outline" type="button" onClick={() => setOpenPartiLookup(true)}>
+                                <Search className="mr-2 h-4 w-4" />
+                                Cari Kandidat
+                            </Button>
+
+                            <Button type="button">
+                                <UserPlus className="mr-2 h-4 w-4" />
+                                Kandidat Baru
+                            </Button>
+                        </CardFooter>
+                    </Card>
+
                     <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-3">
                         <div>
                             <Label htmlFor="mcu_date">Tanggal MCU</Label>
@@ -169,32 +195,6 @@ export default function Create({ providers }: Props) {
                             {errors.provider_id && <p className="text-sm text-red-500">{errors.provider_id}</p>}
                         </div>
                     </div>
-
-                    <Card className="mt-4 gap-3 py-3">
-                        <CardHeader className="px-3">
-                            <CardTitle>Kandidat</CardTitle>
-                            {/* <CardDescription>Card Description</CardDescription> */}
-                        </CardHeader>
-                        <CardContent className="grid grid-flow-col grid-rows-2 gap-2 px-3 py-0">
-                            <RecordItem label="Nama" value={participant?.name ?? '-'} />
-                            <RecordItem label="Jabatan" value={participant?.position ?? '-'} />
-                            <RecordItem label="Departemen" value={participant?.department?.name ?? '-'} />
-                            <RecordItem label="Tanggal Lahir" value={participant?.birth_date ?? '-'} />
-                            <RecordItem label="Jenis Kelamin" value={participant === null ? '-' : parseGender(participant?.gender)} />
-                        </CardContent>
-                        <CardFooter className="flex justify-end gap-2 px-3">
-                            {/* <p>Card Footer</p> */}
-                            <Button variant="outline" type="button" onClick={() => setOpenPartiLookup(true)}>
-                                <Search className="mr-2 h-4 w-4" />
-                                Cari Kandidat
-                            </Button>
-
-                            <Button type="button">
-                                <UserPlus className="mr-2 h-4 w-4" />
-                                Kandidat Baru
-                            </Button>
-                        </CardFooter>
-                    </Card>
 
                     <div className="mt-3">
                         <Label>Dokumen MCU</Label>
