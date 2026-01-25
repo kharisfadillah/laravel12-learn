@@ -47,7 +47,7 @@ class ParticipantController extends Controller
             'department_id' => 'nullable',
             'birth_date' => 'nullable',
             'gender' => 'required|string',
-            'phone' => 'nullable|string|20',
+            'phone' => 'nullable|string',
         ]);
 
         Participant::create($validated);

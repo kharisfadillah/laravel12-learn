@@ -149,8 +149,8 @@ export default function Edit({ participant, companies, departments }: Props) {
                                 className="w-full rounded-md border p-2"
                             >
                                 <option value="">Pilih Jenis Kelamin</option>
-                                <option value="Laki-laki">Laki-laki</option>
-                                <option value="Perempuan">Perempuan</option>
+                                <option value="male">Laki-laki</option>
+                                <option value="female">Perempuan</option>
                             </select>
                             {errors.gender && <p className="text-sm text-red-500">{errors.gender}</p>}
                         </div>

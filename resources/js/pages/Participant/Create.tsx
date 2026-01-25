@@ -137,8 +137,8 @@ export default function Create({ companies, departments }: Props) {
                                 <SelectContent>
                                     <SelectGroup>
                                         {/* <SelectLabel>Jenis Kelamin</SelectLabel> */}
-                                        <SelectItem value="Laki-laki">Laki-laki</SelectItem>
-                                        <SelectItem value="Perempuan">Perempuan</SelectItem>
+                                        <SelectItem value="male">Laki-laki</SelectItem>
+                                        <SelectItem value="female">Perempuan</SelectItem>
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>

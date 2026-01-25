@@ -127,25 +127,6 @@ export default function Index({ mcus, stats, filters }: Props) {
                             </Card>
                         );
                     })}
-
-                    {/* <Card className="gap-2 bg-yellow-400">
-                        <CardHeader className="px-3">
-                            <CardTitle>FIT DENGAN CATATAN</CardTitle>
-                        </CardHeader>
-                        <CardContent className="px-3 py-0">1.234</CardContent>
-                    </Card>
-                    <Card className="gap-2 bg-red-400">
-                        <CardHeader className="px-3">
-                            <CardTitle>TEMPORARY UNFIT</CardTitle>
-                        </CardHeader>
-                        <CardContent className="px-3 py-0">1.234</CardContent>
-                    </Card>
-                    <Card className="gap-2 bg-gray-400">
-                        <CardHeader className="px-3">
-                            <CardTitle>UNFIT</CardTitle>
-                        </CardHeader>
-                        <CardContent className="px-3 py-0">1.234</CardContent>
-                    </Card> */}
                 </div>
 
                 {/* Table */}

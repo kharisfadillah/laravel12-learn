@@ -107,14 +107,19 @@ class MCUController extends Controller
             ->toArray();
 
         $indexed = [];
-
+        $total = 0;
         foreach ($stats_ as $n) {
             $indexed[$n->stat] = $n->total;
+            $total += $n->total;
         }
 
         foreach ($stats as &$item) {
             if (isset($indexed[$item['stat']])) {
                 $item['total'] = $indexed[$item['stat']];
+            }
+            if ($item['stat'] == 'TOTAL')
+            {
+                $item['total'] = $total;
             }
         }
 
@@ -134,7 +139,7 @@ class MCUController extends Controller
 
     public function create()
     {
-        $providers = Provider::get();
+        $providers = Provider::all();
         // $departments = Department::select('id', 'name', 'company_id')->get();
 
         return Inertia::render('MCU/Create', [
